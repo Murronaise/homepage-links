@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Quick Links</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #searchBox { width: 80%; padding: 10px; font-size: 16px; margin-bottom: 20px; }
+        .link-item { margin: 5px 0; font-size: 18px; }
+        a { text-decoration: none; color: blue; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script>
+        function searchLinks() {
+            let input = document.getElementById('searchBox').value.toLowerCase();
+            let links = document.getElementsByClassName('link-item');
+            for (let i = 0; i < links.length; i++) {
+                let link = links[i];
+                if (link.textContent.toLowerCase().includes(input)) {
+                    link.style.display = '';
+                } else {
+                    link.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>My Quick Links</h1>
+    <input type="text" id="searchBox" onkeyup="searchLinks()" placeholder="Search links...">
+    <div id="linksList">
+        <div class="link-item"><a href="https://example.com">Example Site</a></div>
+        <div class="link-item"><a href="https://google.com">Google</a></div>
+        <div class="link-item"><a href="https://github.com">GitHub</a></div>
+        <div class="link-item"><a href="https://bbc.com">BBC News</a></div>
+        <div class="link-item"><a href="https://reddit.com">Reddit</a></div>
+    </div>
+</body>
+</html>
