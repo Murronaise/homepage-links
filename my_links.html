@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Quick Links page with improved dark mode, interactive features, and link management" />
+  <meta
+    name="description"
+    content="Quick Links page with improved dark mode, interactive features, link management, and persistence"
+  />
   <title>My Quick Links</title>
+
   <!-- Preconnect for font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     /* -------------------------------
        COLOUR VARIABLES & THEME SETTINGS
@@ -16,7 +23,6 @@
       /* Light mode variables */
       --bg-color: #f0f2f5;
       --text-color: #333;
-      /* Stronger, clearer gradient */
       --gradient-bg: linear-gradient(135deg, #b3d9ff 0%, #e6f2ff 100%);
       
       /* Card & Button colors in light mode */
@@ -34,7 +40,6 @@
       /* Dark mode variables */
       --bg-color: #111111;
       --text-color: #e0e0e0;
-      /* Stronger gradient for dark mode */
       --gradient-bg: linear-gradient(135deg, #141414 0%, #0f0f0f 100%);
       
       /* Card background & hover in dark mode */
@@ -130,7 +135,7 @@
       background-color: var(--card-hover-bg);
     }
     
-    /* Search bar: autofocus added */
+    /* Search bar: autofocus added via JS */
     #searchBox {
       flex: 1;
       padding: 10px;
@@ -188,15 +193,21 @@
       filter: brightness(0.9);
     }
     
+    /* Links List container: match width with manage panel */
+    #linksList {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
     /* -------------------------------
        CARD STYLES
        ------------------------------- */
     .card {
       background-color: var(--card-bg);
       padding: 20px;
-      margin: 10px auto;
+      margin: 10px 0; /* space between cards */
       width: 100%;
-      max-width: 600px;
       border-radius: 12px;
       box-shadow: 0 2px 10px var(--shadow-color);
       transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
@@ -208,13 +219,22 @@
       align-items: center;
       transform-origin: center;
     }
-    /* Vibrant hover animation */
+    /* Vibrant hover animation:
+       - Increase card size
+       - Green glow
+       - Double link text size
+    */
     .card:hover {
-      transform: translateY(-20px) scale(1.2) rotateZ(5deg);
-      box-shadow: 0 20px 40px var(--shadow-color);
+      transform: scale(1.2);
+      box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
       background: var(--card-hover-bg);
     }
-    /* Link styles: no underline; increased gap after icon */
+    .card:hover a {
+      font-size: 2em; /* double the size */
+      transition: font-size 0.3s;
+    }
+    
+    /* Link: remove underline, add bigger icon gap */
     .card a {
       text-decoration: none;
       color: var(--button-color);
@@ -223,10 +243,6 @@
       flex: 1;
       display: inline-flex;
       align-items: center;
-    }
-    .card a:hover {
-      text-decoration: none;
-      color: var(--button-color);
     }
     .card a::before {
       content: "\1F517";
@@ -285,7 +301,6 @@
       border-radius: 50%;
       cursor: pointer;
       box-shadow: 0 2px 5px var(--shadow-color);
-      transition: transform 0.4s ease-in-out;
       font-size: 1.5rem;
       display: flex;
       align-items: center;
@@ -332,15 +347,21 @@
       <button onclick="filterCategory('nonhosted')">Non Hosted</button>
     </nav>
     
-    <!-- Search Bar with autofocus -->
-    <input type="text" id="searchBox" autofocus aria-label="Search links" onkeyup="searchLinks()" placeholder="Search links..." />
+    <!-- Search Bar -->
+    <input
+      type="text"
+      id="searchBox"
+      aria-label="Search links"
+      onkeyup="searchLinks()"
+      placeholder="Search links..."
+    />
   </header>
   
   <main>
     <!-- Manage URLs Panel -->
     <div class="manage-panel">
       <h2>Manage URLs</h2>
-      <form onsubmit="addLink(event)">
+      <form onsubmit="submitForm(event)">
         <input type="text" id="linkName" placeholder="Link Name" required />
         <input type="url" id="linkURL" placeholder="Link URL" required />
         <select id="linkCategory" required>
@@ -348,7 +369,7 @@
           <option value="hosted">Hosted</option>
           <option value="nonhosted">Non Hosted</option>
         </select>
-        <button type="submit">Add Link</button>
+        <button id="submitBtn" type="submit">Add Link</button>
       </form>
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
@@ -360,20 +381,22 @@
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    /* Data structure for links:
-       Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
-    */
+    // Data structure for links:
+    // Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
     let linksData = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale",       url: "https://allerdale.casemanageronline.com",       category: "hosted" },
       { name: "Angus",           url: "https://angus.casemanageronline.com",           category: "hosted" },
-      // Additional links...
+      // Add more as needed...
     ];
     
     // Filter state: "all", "hosted", or "nonhosted"
     let currentCategory = "all";
-    
-    // On page load, focus the search bar, set theme from storage (or default to dark), and render links.
+
+    // Track if we're editing an existing link
+    let editIndex = null;
+
+    // On page load, set theme from storage, load links from storage, and render links
     window.addEventListener("DOMContentLoaded", () => {
       // Theme persistence
       const storedTheme = localStorage.getItem("theme");
@@ -387,12 +410,20 @@
         themeToggle.checked = true;
         localStorage.setItem("theme", "dark");
       }
-      // Focus search bar
+      
+      // Load any saved links from storage
+      loadLinksFromStorage();
+      
+      // Focus the search bar
       document.getElementById("searchBox").focus();
+      
+      // Render the list
       renderLinks();
     });
-    
-    // Toggle dark/light mode and store preference
+
+    /* ---------------------------------
+       THEME TOGGLE
+       --------------------------------- */
     function toggleTheme() {
       const htmlEl = document.documentElement;
       const toggle = document.getElementById("themeToggle");
@@ -404,8 +435,23 @@
         localStorage.setItem("theme", "light");
       }
     }
-    
-    // Render links based on current filters
+
+    /* ---------------------------------
+       LOAD/SAVE LINKS FROM LOCALSTORAGE
+       --------------------------------- */
+    function loadLinksFromStorage() {
+      const storedLinks = localStorage.getItem("linksData");
+      if (storedLinks) {
+        linksData = JSON.parse(storedLinks);
+      }
+    }
+    function saveLinksToStorage() {
+      localStorage.setItem("linksData", JSON.stringify(linksData));
+    }
+
+    /* ---------------------------------
+       RENDER & FILTER
+       --------------------------------- */
     function renderLinks() {
       const linksList = document.getElementById("linksList");
       linksList.innerHTML = ""; // Clear previous
@@ -419,13 +465,9 @@
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
         
-        // Create anchor. For nonhosted links, redirect to a details page.
+        // Create anchor. For nonhosted links, you might link to a "nonhosted.html" details page, if desired:
         const anchor = document.createElement("a");
-        if (link.category === "nonhosted") {
-          anchor.href = "nonhosted.html?site=" + encodeURIComponent(link.url);
-        } else {
-          anchor.href = link.url;
-        }
+        anchor.href = link.url;
         anchor.target = "_blank";
         anchor.textContent = link.name;
         
@@ -439,7 +481,9 @@
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
-        editBtn.onclick = () => editLink(idx);
+        editBtn.onclick = () => {
+          fillFormForEdit(idx);
+        };
         
         // Remove button
         const removeBtn = document.createElement("button");
@@ -459,8 +503,69 @@
       // Reapply search filter after rendering
       searchLinks();
     }
-    
-    // Copy URL to clipboard with feedback
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      renderLinks();
+    }
+
+    // Filter displayed cards based on search input
+    function searchLinks() {
+      const input = document.getElementById("searchBox").value.toLowerCase();
+      const cards = document.querySelectorAll(".link-item");
+      cards.forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
+      });
+    }
+
+    /* ---------------------------------
+       ADD/EDIT LINKS
+       --------------------------------- */
+    function submitForm(event) {
+      event.preventDefault();
+      const name = document.getElementById("linkName").value.trim();
+      const url = document.getElementById("linkURL").value.trim();
+      const category = document.getElementById("linkCategory").value;
+      if (!name || !url || !category) return;
+      
+      if (editIndex !== null) {
+        // Update existing link
+        linksData[editIndex].name = name;
+        linksData[editIndex].url = url;
+        linksData[editIndex].category = category;
+        editIndex = null;
+        document.getElementById("submitBtn").textContent = "Add Link";
+      } else {
+        // Add new link
+        linksData.push({ name, url, category });
+      }
+      
+      // Save changes, reset form, re-render
+      saveLinksToStorage();
+      event.target.reset();
+      renderLinks();
+    }
+
+    function fillFormForEdit(index) {
+      editIndex = index;
+      document.getElementById("linkName").value = linksData[index].name;
+      document.getElementById("linkURL").value = linksData[index].url;
+      document.getElementById("linkCategory").value = linksData[index].category;
+      document.getElementById("submitBtn").textContent = "Save Changes";
+    }
+
+    /* ---------------------------------
+       REMOVE LINK
+       --------------------------------- */
+    function removeLink(index) {
+      linksData.splice(index, 1);
+      saveLinksToStorage();
+      renderLinks();
+    }
+
+    /* ---------------------------------
+       COPY URL
+       --------------------------------- */
     function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
         .then(() => {
@@ -470,21 +575,13 @@
         })
         .catch(err => console.error("Copy failed: ", err));
     }
-    
-    // Filter displayed cards based on search input
-    function searchLinks() {
-      const input = document.getElementById("searchBox").value.toLowerCase();
-      const cards = document.querySelectorAll(".link-item");
-      cards.forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
-      });
-    }
-    
-    // Smooth scroll to top
+
+    /* ---------------------------------
+       BACK TO TOP
+       --------------------------------- */
     function topFunction() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    
     // Show/hide back to top button on scroll
     window.addEventListener("scroll", function() {
       const topBtn = document.getElementById("topBtn");
@@ -494,40 +591,6 @@
         topBtn.style.display = "none";
       }
     });
-    
-    // Filter links by category
-    function filterCategory(cat) {
-      currentCategory = cat;
-      renderLinks();
-    }
-    
-    // Add link via the management form
-    function addLink(event) {
-      event.preventDefault();
-      const name = document.getElementById("linkName").value.trim();
-      const url = document.getElementById("linkURL").value.trim();
-      const category = document.getElementById("linkCategory").value;
-      if (!name || !url || !category) return;
-      
-      linksData.push({ name, url, category });
-      event.target.reset();
-      renderLinks();
-    }
-    
-    // Remove link
-    function removeLink(index) {
-      linksData.splice(index, 1);
-      renderLinks();
-    }
-    
-    // Edit link: repopulate form and remove old link for re-addition
-    function editLink(index) {
-      const link = linksData[index];
-      document.getElementById("linkName").value = link.name;
-      document.getElementById("linkURL").value = link.url;
-      document.getElementById("linkCategory").value = link.category;
-      removeLink(index);
-    }
   </script>
 </body>
 </html>
