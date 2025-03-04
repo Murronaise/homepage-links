@@ -135,7 +135,7 @@
       background-color: var(--card-hover-bg);
     }
     
-    /* Search bar: autofocus added via JS */
+    /* Search bar: also uses autofocus (plus JS focus) */
     #searchBox {
       flex: 1;
       padding: 10px;
@@ -157,11 +157,11 @@
       align-items: center;
     }
     
-    /* Manage URLs panel */
+    /* Manage URLs panel: aligned & max width */
     .manage-panel {
       width: 100%;
       max-width: 600px;
-      margin-bottom: 20px;
+      margin: 0 auto 20px; /* center with auto, spacing below */
       background-color: var(--card-bg);
       padding: 15px;
       border-radius: 8px;
@@ -193,7 +193,7 @@
       filter: brightness(0.9);
     }
     
-    /* Links List container: match width with manage panel */
+    /* Links List container: same alignment & width as manage panel */
     #linksList {
       width: 100%;
       max-width: 600px;
@@ -210,7 +210,7 @@
       width: 100%;
       border-radius: 12px;
       box-shadow: 0 2px 10px var(--shadow-color);
-      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s, margin 0.3s;
       cursor: pointer;
       opacity: 0;
       animation: fadeInRotate 0.7s ease-out forwards;
@@ -218,36 +218,42 @@
       justify-content: space-between;
       align-items: center;
       transform-origin: center;
+      position: relative; /* so z-index can be applied on hover */
+      z-index: 1;
     }
     /* Vibrant hover animation:
        - Increase card size
        - Green glow
-       - Double link text size
+       - Add extra margin so it "separates" from neighbors
+       - 1.6x link text size
     */
     .card:hover {
+      margin: 20px 0; /* more spacing from neighbors */
       transform: scale(1.2);
       box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
       background: var(--card-hover-bg);
+      z-index: 2;
     }
     .card:hover a {
-      font-size: 2em; /* double the size */
+      font-size: 1.6em;
       transition: font-size 0.3s;
     }
     
-    /* Link: remove underline, add bigger icon gap */
+    /* Link: same color as Manage URLs text, no underline, bigger icon gap */
     .card a {
       text-decoration: none;
-      color: var(--button-color);
+      color: var(--text-color);
       font-weight: 500;
-      transition: color 0.3s;
       flex: 1;
       display: inline-flex;
       align-items: center;
+      transition: color 0.3s, font-size 0.3s;
     }
     .card a::before {
       content: "\1F517";
       display: inline-block;
       margin-right: 1.2em;
+      color: var(--text-color);
     }
     
     /* Copy Button for URL: even duller */
@@ -347,10 +353,11 @@
       <button onclick="filterCategory('nonhosted')">Non Hosted</button>
     </nav>
     
-    <!-- Search Bar -->
+    <!-- Search Bar with autofocus -->
     <input
       type="text"
       id="searchBox"
+      autofocus
       aria-label="Search links"
       onkeyup="searchLinks()"
       placeholder="Search links..."
@@ -381,7 +388,7 @@
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    // Data structure for links:
+    // Data structure for links
     // Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
     let linksData = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
@@ -465,7 +472,7 @@
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
         
-        // Create anchor. For nonhosted links, you might link to a "nonhosted.html" details page, if desired:
+        // Create anchor
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.target = "_blank";
