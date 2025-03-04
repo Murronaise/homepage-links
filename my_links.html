@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Quick Links page with improved dark mode and interactive features">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta
+    name="description"
+    content="Quick Links page with improved dark mode and interactive features"
+  />
   <title>My Quick Links</title>
   <!-- Preconnect to speed up font loading -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     /* --- Colour Variables & Theme Settings --- */
     :root {
@@ -18,9 +24,9 @@
       
       /* Card & Button colors in light mode */
       --card-bg: #fff;
-      --card-hover-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.7));
-      --button-color: #007bff;
-      
+      --card-hover-bg: #e6e6e6; /* Darker gray on hover */
+      --button-color: #5397c9;  /* Dimmer button color */
+
       /* Search bar background in light mode */
       --search-bg: #fff;
       
@@ -36,10 +42,10 @@
 
       /* A lighter gray for card backgrounds in dark mode */
       --card-bg: #2c2c2c;
-      /* Slightly lighter hover state so text remains visible */
-      --card-hover-bg: linear-gradient(135deg, #333, #2f2f2f);
+      /* Lighter hover state in dark mode for clarity */
+      --card-hover-bg: #3a3a3a;
       /* Dimmer button color in dark mode */
-      --button-color: #5ea6d8;
+      --button-color: #4ea2d5;
 
       /* Search bar background in dark mode */
       --search-bg: #2c2c2c;
@@ -108,7 +114,10 @@
     }
     .toggle-switch label {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background-color: #ccc;
       border-radius: 25px;
       cursor: pointer;
@@ -117,10 +126,12 @@
     .toggle-switch label:before {
       content: "";
       position: absolute;
-      width: 21px; height: 21px;
+      width: 21px;
+      height: 21px;
       border-radius: 50%;
       background-color: white;
-      top: 2px; left: 2px;
+      top: 2px;
+      left: 2px;
       transition: transform 0.3s;
     }
     .toggle-switch input:checked + label {
@@ -148,26 +159,30 @@
       align-items: center;
       transform-origin: center;
     }
+    /* Bigger, more noticeable hover animation */
     .card:hover {
-      transform: translateY(-10px) scale(1.03) rotateZ(1deg);
+      transform: translateY(-10px) scale(1.07) rotateZ(2deg);
       box-shadow: 0 12px 24px var(--shadow-color);
       background: var(--card-hover-bg);
     }
+
+    /* Link: remove underline entirely */
     .card a {
       text-decoration: none;
       color: var(--button-color);
       font-weight: 500;
       transition: color 0.3s;
       flex: 1;
+      display: inline-flex;
+      align-items: center;
     }
-    .card a:hover {
-      text-decoration: underline;
-      /* Slightly darker shade on hover */
-      color: #0056b3;
-    }
+    /* More space between the icon and the text */
     .card a::before {
-      content: '\1F517 '; /* Link icon */
+      content: "\1F517";
+      display: inline-block;
+      margin-right: 0.5em;
     }
+
     /* Copy Button for URL */
     .copy-btn {
       margin-left: 10px;
@@ -177,7 +192,7 @@
       background-color: var(--button-color);
       color: #fff;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, filter 0.3s;
     }
     .copy-btn:hover {
       filter: brightness(0.9);
@@ -221,10 +236,16 @@
   <header>
     <!-- Animated Dark Mode Toggle Switch -->
     <div class="toggle-switch">
-      <input type="checkbox" id="themeToggle" onclick="toggleTheme()">
+      <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
     </div>
-    <input type="text" id="searchBox" aria-label="Search links" onkeyup="searchLinks()" placeholder="Search links...">
+    <input
+      type="text"
+      id="searchBox"
+      aria-label="Search links"
+      onkeyup="searchLinks()"
+      placeholder="Search links..."
+    />
   </header>
   
   <main id="linksList">
@@ -616,13 +637,15 @@
     // Copy URL to clipboard and provide feedback
     function copyURL(btn) {
       const url = btn.parentElement.querySelector('a').href;
-      navigator.clipboard.writeText(url).then(() => {
-        const originalText = btn.innerText;
-        btn.innerText = "Copied!";
-        setTimeout(() => { btn.innerText = originalText; }, 2000);
-      }).catch(err => {
-        console.error("Failed to copy: ", err);
-      });
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          const originalText = btn.innerText;
+          btn.innerText = "Copied!";
+          setTimeout(() => { btn.innerText = originalText; }, 2000);
+        })
+        .catch(err => {
+          console.error("Failed to copy: ", err);
+        });
     }
     
     // Filter cards based on search input
