@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta
     name="description"
-    content="Quick Links page with improved dark mode and interactive features"
+    content="Quick Links page with improved dark mode, interactive features, and link management"
   />
   <title>My Quick Links</title>
+
   <!-- Preconnect to speed up font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -15,17 +16,20 @@
     rel="stylesheet"
   />
   <style>
-    /* --- Colour Variables & Theme Settings --- */
+    /* -------------------------------
+       COLOUR VARIABLES & THEME SETTINGS
+       ------------------------------- */
     :root {
       /* Light mode variables */
       --bg-color: #f0f2f5;
       --text-color: #333;
-      --gradient-bg: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      /* Stronger gradient for clarity */
+      --gradient-bg: linear-gradient(135deg, #b3d9ff 0%, #e6f2ff 100%);
       
       /* Card & Button colors in light mode */
       --card-bg: #fff;
       --card-hover-bg: #e6e6e6; /* Darker gray on hover */
-      --button-color: #5397c9;  /* Dimmer button color */
+      --button-color: #6a90ab;  /* Duller button color in light mode */
 
       /* Search bar background in light mode */
       --search-bg: #fff;
@@ -36,16 +40,17 @@
 
     [data-theme="dark"] {
       /* Dark mode variables */
-      --bg-color: #121212;
+      --bg-color: #111111;
       --text-color: #e0e0e0;
-      --gradient-bg: linear-gradient(135deg, #1e1e1e, #121212);
+      /* Stronger gradient for clarity */
+      --gradient-bg: linear-gradient(135deg, #141414 0%, #0f0f0f 100%);
 
-      /* A lighter gray for card backgrounds in dark mode */
+      /* Card background & hover in dark mode */
       --card-bg: #2c2c2c;
-      /* Lighter hover state in dark mode for clarity */
       --card-hover-bg: #3a3a3a;
-      /* Dimmer button color in dark mode */
-      --button-color: #4ea2d5;
+
+      /* Duller button color in dark mode */
+      --button-color: #5b8fa8;
 
       /* Search bar background in dark mode */
       --search-bg: #2c2c2c;
@@ -53,7 +58,9 @@
       --shadow-color: rgba(0, 0, 0, 0.5);
     }
 
-    /* --- Global Styles --- */
+    /* -------------------------------
+       GLOBAL STYLES
+       ------------------------------- */
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -63,7 +70,7 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
-    /* Sticky Header with Toggle & Search */
+    /* Sticky Header with Toggle, Categories, & Search */
     header {
       position: fixed;
       top: 0;
@@ -73,39 +80,16 @@
       z-index: 1000;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 10px 20px;
       box-shadow: 0 2px 5px var(--shadow-color);
+      gap: 20px;
     }
-    #searchBox {
-      flex: 1;
-      margin: 0 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 25px;
-      background-color: var(--search-bg);
-      color: var(--text-color);
-      /* Tweak placeholder color so it's readable in dark mode */
-      caret-color: var(--text-color);
-    }
-    /* Placeholder color in all browsers */
-    #searchBox::placeholder {
-      color: #aaa;
-    }
-
-    /* Margin for content to appear below fixed header */
-    main {
-      margin-top: 70px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Toggle Switch for Dark Mode */
+    /* Dark mode toggle switch */
     .toggle-switch {
       position: relative;
       width: 50px;
       height: 25px;
+      flex-shrink: 0;
     }
     .toggle-switch input {
       opacity: 0;
@@ -114,10 +98,7 @@
     }
     .toggle-switch label {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: #ccc;
       border-radius: 25px;
       cursor: pointer;
@@ -126,12 +107,10 @@
     .toggle-switch label:before {
       content: "";
       position: absolute;
-      width: 21px;
-      height: 21px;
+      width: 21px; height: 21px;
       border-radius: 50%;
       background-color: white;
-      top: 2px;
-      left: 2px;
+      top: 2px; left: 2px;
       transition: transform 0.3s;
     }
     .toggle-switch input:checked + label {
@@ -141,7 +120,85 @@
       transform: translateX(25px);
     }
 
-    /* Card Styles with a Fresh Animation */
+    /* Category buttons */
+    .categories {
+      display: flex;
+      gap: 10px;
+    }
+    .categories button {
+      background-color: transparent;
+      border: 1px solid var(--text-color);
+      color: var(--text-color);
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .categories button:hover {
+      background-color: var(--card-hover-bg);
+    }
+
+    /* Search bar */
+    #searchBox {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      background-color: var(--search-bg);
+      color: var(--text-color);
+      caret-color: var(--text-color);
+    }
+    #searchBox::placeholder {
+      color: #aaa;
+    }
+
+    /* Margin for content to appear below fixed header */
+    main {
+      margin-top: 100px; /* slightly bigger to fit the new elements */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Manage URLs panel */
+    .manage-panel {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 20px;
+      background-color: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px var(--shadow-color);
+    }
+    .manage-panel form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .manage-panel input,
+    .manage-panel select {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: var(--search-bg);
+      color: var(--text-color);
+    }
+    .manage-panel button {
+      background-color: var(--button-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .manage-panel button:hover {
+      filter: brightness(0.9);
+    }
+
+    /* ---------------
+       CARD STYLES
+       --------------- */
     .card {
       background-color: var(--card-bg);
       padding: 20px;
@@ -159,14 +216,13 @@
       align-items: center;
       transform-origin: center;
     }
-    /* Bigger, more noticeable hover animation */
+    /* Bolder, more dramatic hover animation */
     .card:hover {
-      transform: translateY(-10px) scale(1.07) rotateZ(2deg);
-      box-shadow: 0 12px 24px var(--shadow-color);
+      transform: translateY(-15px) scale(1.15) rotateZ(3deg);
+      box-shadow: 0 16px 32px var(--shadow-color);
       background: var(--card-hover-bg);
     }
-
-    /* Link: remove underline entirely */
+    /* Link: remove underline entirely, even on hover */
     .card a {
       text-decoration: none;
       color: var(--button-color);
@@ -176,11 +232,15 @@
       display: inline-flex;
       align-items: center;
     }
+    .card a:hover {
+      text-decoration: none;
+      color: var(--button-color); /* no color change on hover */
+    }
     /* More space between the icon and the text */
     .card a::before {
       content: "\1F517";
       display: inline-block;
-      margin-right: 0.5em;
+      margin-right: 1em;
     }
 
     /* Copy Button for URL */
@@ -198,23 +258,56 @@
       filter: brightness(0.9);
     }
 
-    /* Back to Top Button */
+    /* Remove & Edit Buttons for link management */
+    .remove-btn,
+    .edit-btn {
+      margin-left: 10px;
+      padding: 5px 8px;
+      border: none;
+      border-radius: 4px;
+      background-color: #c85a5a; /* red for remove, just an example */
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.3s;
+    }
+    .remove-btn:hover,
+    .edit-btn:hover {
+      filter: brightness(0.9);
+    }
+    .edit-btn {
+      background-color: #6d6f6f; /* grey for edit, just an example */
+    }
+
+    /* ---------------
+       BACK TO TOP
+       --------------- */
     #topBtn {
       display: none;
       position: fixed;
       bottom: 20px;
       right: 30px;
+      width: 50px;
+      height: 50px;
       background-color: var(--button-color);
       color: #fff;
       border: none;
       border-radius: 50%;
-      padding: 10px;
       cursor: pointer;
       box-shadow: 0 2px 5px var(--shadow-color);
       transition: transform 0.4s ease-in-out;
+      font-size: 1.5rem;
     }
+    /* Up-down bounce on hover */
     #topBtn:hover {
-      transform: rotate(360deg);
+      animation: bounceUpDown 0.8s infinite alternate;
+    }
+    @keyframes bounceUpDown {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-5px);
+      }
     }
 
     /* Card Entrance Animation: Fades in with a slight rotation and upward slide */
@@ -239,6 +332,14 @@
       <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
     </div>
+
+    <!-- Category Buttons -->
+    <nav class="categories">
+      <button onclick="filterCategory('hosted')">Hosted</button>
+      <button onclick="filterCategory('nonhosted')">Non Hosted</button>
+    </nav>
+
+    <!-- Search Bar -->
     <input
       type="text"
       id="searchBox"
@@ -247,396 +348,117 @@
       placeholder="Search links..."
     />
   </header>
-  
-  <main id="linksList">
-    <!-- Link Cards with Copy Button -->
-    <div class="card link-item">
-      <a href="https://adur-worthing.casemanageronline.com" target="_blank">Adur &amp; Worthing</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://allerdale.casemanageronline.com" target="_blank">Allerdale</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://angus.casemanageronline.com" target="_blank">Angus</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://arun.casemanageronline.com" target="_blank">Arun</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://barnsley.casemanageronline.com" target="_blank">Barnsley</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://barnsleyeducation.casemanageronline.com" target="_blank">Barnsley Education</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://bmsdc.casemanageronline.com" target="_blank">BMSDC</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://brentwood.casemanageronline.com" target="_blank">Brentwood</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://bristol.casemanageronline.com" target="_blank">Bristol</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://buckinghamshire.casemanageronline.com" target="_blank">Buckinghamshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://buckinghamshirefpns.casemanageronline.com/" target="_blank">Buckinghamshire FPNS</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://cardiff.casemanageronline.com" target="_blank">Cardiff</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://chichester.casemanageronline.com" target="_blank">Chichester</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://chipside.bathnes.gov.uk/v5" target="_blank">Chipside Bathnes</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://chipside.carlisle.gov.uk" target="_blank">Chipside Carlisle</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://copeland.casemanageronline.com" target="_blank">Copeland</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://cotswold.casemanageronline.com" target="_blank">Cotswold</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://crawley.casemanageronline.com" target="_blank">Crawley</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://cumberland.casemanageronline.com" target="_blank">Cumberland</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://cumbriacc.casemanageronline.com" target="_blank">Cumbria CC</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://devoncc.casemanageronline.com" target="_blank">Devon CC</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://doncaster.casemanageronline.com" target="_blank">Doncaster</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://doncastereducation.casemanageronline.com" target="_blank">Doncaster Education</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://dvla.casemanageronline.com" target="_blank">DVLA</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://eastcambs.casemanageronline.com" target="_blank">East Cambs</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://eastleigh.casemanageronline.com" target="_blank">Eastleigh</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://eastlindsey.casemanageronline.com" target="_blank">East Lindsey</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://eastriding.casemanageronline.com" target="_blank">East Riding</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://elmbridge.casemanageronline.com" target="_blank">Elmbridge</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://epping.casemanageronline.com" target="_blank">Epping</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://essexcountryparks.casemanageronline.com/v5" target="_blank">Essex Country Parks</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://gloucester.casemanageronline.com" target="_blank">Gloucester</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://gloucestershire.casemanageronline.com" target="_blank">Gloucestershire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://gosport.casemanageronline.com" target="_blank">Gosport</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://guildford.casemanageronline.com" target="_blank">Guildford</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://halstead.casemanageronline.com" target="_blank">Halstead</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://hampshire.casemanageronline.com" target="_blank">Hampshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://hart.casemanageronline.com" target="_blank">Hart</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://havering.casemanageronline.com" target="_blank">Havering</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://henley.casemanageronline.com" target="_blank">Henley</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://herefordshire.casemanageronline.com" target="_blank">Herefordshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://horsham.casemanageronline.com" target="_blank">Horsham</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://hull.casemanageronline.com" target="_blank">Hull</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://hulleducation.casemanageronline.com" target="_blank">Hull Education</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://iow.casemanageronline.com" target="_blank">IOW</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://ipswich.casemanageronline.com" target="_blank">Ipswich</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://lancashire.casemanageronline.com" target="_blank">Lancashire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://leicestercity.casemanageronline.com" target="_blank">Leicester City</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://leicestershire.casemanageronline.com" target="_blank">Leicestershire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://maldon.casemanageronline.com" target="_blank">Maldon</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://midsussex.casemanageronline.com" target="_blank">Mid Sussex</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://nepp.casemanageronline.com" target="_blank">NEPP</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://newforest.casemanageronline.com" target="_blank">New Forest</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://newham.casemanageronline.com" target="_blank">Newham</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://nhsairedale.casemanageronline.com" target="_blank">NHS Airedale</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://northlincolnshire.casemanageronline.com" target="_blank">North Lincolnshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://northsomerset.casemanageronline.com" target="_blank">North Somerset</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://northwarks.casemanageronline.com" target="_blank">North Warks</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://nottinghamshire.casemanageronline.com" target="_blank">Nottinghamshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://npt.casemanageronline.com" target="_blank">NPT</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://nuneaton.casemanageronline.com" target="_blank">Nuneaton</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://rbwm.casemanageronline.com/v5" target="_blank">RBWM</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://rugby.casemanageronline.com" target="_blank">Rugby</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://salford.casemanageronline.com" target="_blank">Salford</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://sandwell.casemanageronline.com" target="_blank">Sandwell</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://sepp.casemanageronline.com" target="_blank">SEPP</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://sevenoaks.casemanageronline.com" target="_blank">Sevenoaks</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://shropshire.casemanageronline.com/v5" target="_blank">Shropshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://solihull.casemanageronline.com" target="_blank">Solihull</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://somerset.casemanageronline.com/v5" target="_blank">Somerset</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://somersetunitary.casemanageronline.com" target="_blank">Somerset Unitary</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://southandvale.casemanageronline.com" target="_blank">South and Vale</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://southglos.casemanageronline.com" target="_blank">South Glos</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://stockport.casemanageronline.com" target="_blank">Stockport</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://stockton.casemanageronline.com" target="_blank">Stockton</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://stroud.casemanageronline.com" target="_blank">Stroud</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://surreyheath.casemanageronline.com" target="_blank">Surrey Heath</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://swansea.casemanageronline.com" target="_blank">Swansea</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://swindon.casemanageronline.com" target="_blank">Swindon</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://telford.casemanageronline.com" target="_blank">Telford</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://tendring.casemanageronline.com" target="_blank">Tendring</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://tewkesbury.casemanageronline.com" target="_blank">Tewkesbury</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://translink.casemanageronline.com" target="_blank">Translink</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://vowh.casemanageronline.com" target="_blank">VoWH</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://wakefield.casemanageronline.com" target="_blank">Wakefield</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://warwick.casemanageronline.com" target="_blank">Warwick</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://waverley.casemanageronline.com" target="_blank">Waverley</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://westmorland.casemanageronline.com" target="_blank">Westmorland</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://wiltshire.casemanageronline.com" target="_blank">Wiltshire</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://woking.casemanageronline.com" target="_blank">Woking</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://wolverhampton.casemanageronline.com" target="_blank">Wolverhampton</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
-    <div class="card link-item">
-      <a href="https://wychavon.casemanageronline.com" target="_blank">Wychavon</a>
-      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
-    </div>
+
+  <main>
+    <!-- Manage URLs Panel -->
+    <div class="manage-panel">
+      <h2>Manage URLs</h2>
+      <form onsubmit="addLink(event)">
+        <input type="text" id="linkName" placeholder="Link Name" required />
+        <input type="url" id="linkURL" placeholder="Link URL" required />
+        <select id="linkCategory" required>
+          <option value="">Select Category</option>
+          <option value="hosted">Hosted</option>
+          <option value="nonhosted">Non Hosted</option>
+        </select>
+        <button type="submit">Add Link</button>
+      </form>
+      <p>Edit or remove links by using the buttons on each card below.</p>
+    </div>
+
+    <!-- Links List (dynamically populated) -->
+    <div id="linksList"></div>
   </main>
   
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
+    /* 
+      Data structure for your links. 
+      Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
+    */
+    let linksData = [
+      { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
+      { name: "Allerdale",       url: "https://allerdale.casemanageronline.com",       category: "nonhosted" },
+      { name: "Angus",           url: "https://angus.casemanageronline.com",           category: "hosted" },
+      // Add more links here...
+    ];
+
+    // Filter states
+    let currentCategory = ""; // 'hosted', 'nonhosted', or empty for all
+
+    // On page load, focus the search bar & render links
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("searchBox").focus();
+      renderLinks();
+    });
+
     // Toggle dark/light mode using the checkbox
     function toggleTheme() {
       const htmlEl = document.documentElement;
-      const toggle = document.getElementById('themeToggle');
+      const toggle = document.getElementById("themeToggle");
       if (toggle.checked) {
-        htmlEl.setAttribute('data-theme', 'dark');
+        htmlEl.setAttribute("data-theme", "dark");
       } else {
-        htmlEl.removeAttribute('data-theme');
+        htmlEl.removeAttribute("data-theme");
       }
     }
-    
+
+    // Renders the list of links based on the current filters
+    function renderLinks() {
+      const linksList = document.getElementById("linksList");
+      linksList.innerHTML = ""; // clear existing
+
+      // Filter by category if one is selected
+      const filteredData = currentCategory
+        ? linksData.filter(link => link.category === currentCategory)
+        : linksData;
+
+      // Build each card
+      filteredData.forEach((link, idx) => {
+        const card = document.createElement("div");
+        card.classList.add("card", "link-item");
+
+        // The link anchor
+        const anchor = document.createElement("a");
+        anchor.href = link.url;
+        anchor.target = "_blank";
+        anchor.textContent = link.name;
+
+        // The copy button
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "Copy";
+        copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
+
+        // The edit button
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => editLink(idx);
+
+        // The remove button
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-btn";
+        removeBtn.textContent = "X";
+        removeBtn.onclick = () => removeLink(idx);
+
+        // Append them to the card
+        card.appendChild(anchor);
+        card.appendChild(copyBtn);
+        card.appendChild(editBtn);
+        card.appendChild(removeBtn);
+
+        // Finally add the card to the container
+        linksList.appendChild(card);
+      });
+
+      // Apply any active text filter after rendering
+      searchLinks();
+    }
+
     // Copy URL to clipboard and provide feedback
-    function copyURL(btn) {
-      const url = btn.parentElement.querySelector('a').href;
+    function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
         .then(() => {
           const originalText = btn.innerText;
@@ -647,30 +469,69 @@
           console.error("Failed to copy: ", err);
         });
     }
-    
+
     // Filter cards based on search input
     function searchLinks() {
-      const input = document.getElementById('searchBox').value.toLowerCase();
-      const cards = document.querySelectorAll('.link-item');
+      const input = document.getElementById("searchBox").value.toLowerCase();
+      const cards = document.querySelectorAll(".link-item");
       cards.forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(input) ? 'flex' : 'none';
+        card.style.display = card.textContent.toLowerCase().includes(input)
+          ? "flex"
+          : "none";
       });
     }
-    
+
     // Smooth scroll to top
     function topFunction() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    
+
     // Show or hide the "Back to top" button on scroll
-    window.addEventListener('scroll', function() {
-      const topBtn = document.getElementById('topBtn');
+    window.addEventListener("scroll", function() {
+      const topBtn = document.getElementById("topBtn");
       if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-        topBtn.style.display = 'block';
+        topBtn.style.display = "block";
       } else {
-        topBtn.style.display = 'none';
+        topBtn.style.display = "none";
       }
     });
+
+    // Filter links by category
+    function filterCategory(cat) {
+      currentCategory = cat;
+      renderLinks();
+    }
+
+    // Manage panel: Add link
+    function addLink(event) {
+      event.preventDefault();
+      const name = document.getElementById("linkName").value.trim();
+      const url = document.getElementById("linkURL").value.trim();
+      const category = document.getElementById("linkCategory").value;
+
+      if (!name || !url || !category) return;
+
+      linksData.push({ name, url, category });
+      event.target.reset(); // clear form
+      renderLinks();
+    }
+
+    // Remove link
+    function removeLink(index) {
+      linksData.splice(index, 1);
+      renderLinks();
+    }
+
+    // Edit link (simple approach: repopulate form with existing data)
+    function editLink(index) {
+      const link = linksData[index];
+      document.getElementById("linkName").value = link.name;
+      document.getElementById("linkURL").value = link.url;
+      document.getElementById("linkCategory").value = link.category;
+
+      // Remove the old link so we can re-add it when the form is submitted
+      removeLink(index);
+    }
   </script>
 </body>
 </html>
