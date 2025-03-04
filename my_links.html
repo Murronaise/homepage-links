@@ -3,18 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta
-    name="description"
-    content="Quick Links page with improved dark mode, interactive features, and link management"
-  />
+  <meta name="description" content="Quick Links page with improved dark mode, interactive features, and link management" />
   <title>My Quick Links</title>
-
-  <!-- Preconnect to speed up font loading -->
+  <!-- Preconnect for font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     /* -------------------------------
        COLOUR VARIABLES & THEME SETTINGS
@@ -23,41 +16,40 @@
       /* Light mode variables */
       --bg-color: #f0f2f5;
       --text-color: #333;
-      /* Stronger gradient for clarity */
+      /* Stronger, clearer gradient */
       --gradient-bg: linear-gradient(135deg, #b3d9ff 0%, #e6f2ff 100%);
       
       /* Card & Button colors in light mode */
       --card-bg: #fff;
-      --card-hover-bg: #e6e6e6; /* Darker gray on hover */
-      --button-color: #6a90ab;  /* Duller button color in light mode */
-
+      --card-hover-bg: #e6e6e6; /* darker gray on hover */
+      --button-color: #6a90ab;  /* duller blue */
+      
       /* Search bar background in light mode */
       --search-bg: #fff;
       
       /* Shadow */
       --shadow-color: rgba(0, 0, 0, 0.15);
     }
-
     [data-theme="dark"] {
       /* Dark mode variables */
       --bg-color: #111111;
       --text-color: #e0e0e0;
-      /* Stronger gradient for clarity */
+      /* Stronger gradient for dark mode */
       --gradient-bg: linear-gradient(135deg, #141414 0%, #0f0f0f 100%);
-
+      
       /* Card background & hover in dark mode */
       --card-bg: #2c2c2c;
       --card-hover-bg: #3a3a3a;
-
+      
       /* Duller button color in dark mode */
       --button-color: #5b8fa8;
-
+      
       /* Search bar background in dark mode */
       --search-bg: #2c2c2c;
-
+      
       --shadow-color: rgba(0, 0, 0, 0.5);
     }
-
+    
     /* -------------------------------
        GLOBAL STYLES
        ------------------------------- */
@@ -69,7 +61,7 @@
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
     }
-
+    
     /* Sticky Header with Toggle, Categories, & Search */
     header {
       position: fixed;
@@ -119,7 +111,7 @@
     .toggle-switch input:checked + label:before {
       transform: translateX(25px);
     }
-
+    
     /* Category buttons */
     .categories {
       display: flex;
@@ -137,8 +129,8 @@
     .categories button:hover {
       background-color: var(--card-hover-bg);
     }
-
-    /* Search bar */
+    
+    /* Search bar: autofocus added */
     #searchBox {
       flex: 1;
       padding: 10px;
@@ -151,15 +143,15 @@
     #searchBox::placeholder {
       color: #aaa;
     }
-
+    
     /* Margin for content to appear below fixed header */
     main {
-      margin-top: 100px; /* slightly bigger to fit the new elements */
+      margin-top: 100px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
+    
     /* Manage URLs panel */
     .manage-panel {
       width: 100%;
@@ -195,10 +187,10 @@
     .manage-panel button:hover {
       filter: brightness(0.9);
     }
-
-    /* ---------------
+    
+    /* -------------------------------
        CARD STYLES
-       --------------- */
+       ------------------------------- */
     .card {
       background-color: var(--card-bg);
       padding: 20px;
@@ -216,13 +208,13 @@
       align-items: center;
       transform-origin: center;
     }
-    /* Bolder, more dramatic hover animation */
+    /* Vibrant hover animation */
     .card:hover {
-      transform: translateY(-15px) scale(1.15) rotateZ(3deg);
-      box-shadow: 0 16px 32px var(--shadow-color);
+      transform: translateY(-20px) scale(1.2) rotateZ(5deg);
+      box-shadow: 0 20px 40px var(--shadow-color);
       background: var(--card-hover-bg);
     }
-    /* Link: remove underline entirely, even on hover */
+    /* Link styles: no underline; increased gap after icon */
     .card a {
       text-decoration: none;
       color: var(--button-color);
@@ -234,16 +226,15 @@
     }
     .card a:hover {
       text-decoration: none;
-      color: var(--button-color); /* no color change on hover */
+      color: var(--button-color);
     }
-    /* More space between the icon and the text */
     .card a::before {
       content: "\1F517";
       display: inline-block;
-      margin-right: 1em;
+      margin-right: 1.2em;
     }
-
-    /* Copy Button for URL */
+    
+    /* Copy Button for URL: even duller */
     .copy-btn {
       margin-left: 10px;
       padding: 5px 10px;
@@ -255,9 +246,9 @@
       transition: background-color 0.3s, filter 0.3s;
     }
     .copy-btn:hover {
-      filter: brightness(0.9);
+      filter: brightness(0.85);
     }
-
+    
     /* Remove & Edit Buttons for link management */
     .remove-btn,
     .edit-btn {
@@ -265,7 +256,7 @@
       padding: 5px 8px;
       border: none;
       border-radius: 4px;
-      background-color: #c85a5a; /* red for remove, just an example */
+      background-color: #c85a5a; /* red for remove */
       color: #fff;
       cursor: pointer;
       transition: filter 0.3s;
@@ -275,19 +266,19 @@
       filter: brightness(0.9);
     }
     .edit-btn {
-      background-color: #6d6f6f; /* grey for edit, just an example */
+      background-color: #6d6f6f; /* grey for edit */
     }
-
-    /* ---------------
-       BACK TO TOP
-       --------------- */
+    
+    /* -------------------------------
+       BACK TO TOP BUTTON
+       ------------------------------- */
     #topBtn {
       display: none;
       position: fixed;
       bottom: 20px;
       right: 30px;
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       background-color: var(--button-color);
       color: #fff;
       border: none;
@@ -296,21 +287,22 @@
       box-shadow: 0 2px 5px var(--shadow-color);
       transition: transform 0.4s ease-in-out;
       font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    /* Up-down bounce on hover */
+    /* Bounce up/down on hover */
     #topBtn:hover {
       animation: bounceUpDown 0.8s infinite alternate;
     }
     @keyframes bounceUpDown {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(-5px);
-      }
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
     }
-
-    /* Card Entrance Animation: Fades in with a slight rotation and upward slide */
+    
+    /* -------------------------------
+       CARD ENTRANCE ANIMATION
+       ------------------------------- */
     @keyframes fadeInRotate {
       0% {
         opacity: 0;
@@ -332,23 +324,18 @@
       <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
     </div>
-
+    
     <!-- Category Buttons -->
     <nav class="categories">
+      <button onclick="filterCategory('all')">All Sites</button>
       <button onclick="filterCategory('hosted')">Hosted</button>
       <button onclick="filterCategory('nonhosted')">Non Hosted</button>
     </nav>
-
-    <!-- Search Bar -->
-    <input
-      type="text"
-      id="searchBox"
-      aria-label="Search links"
-      onkeyup="searchLinks()"
-      placeholder="Search links..."
-    />
+    
+    <!-- Search Bar with autofocus -->
+    <input type="text" id="searchBox" autofocus aria-label="Search links" onkeyup="searchLinks()" placeholder="Search links..." />
   </header>
-
+  
   <main>
     <!-- Manage URLs Panel -->
     <div class="manage-panel">
@@ -363,101 +350,117 @@
         </select>
         <button type="submit">Add Link</button>
       </form>
-      <p>Edit or remove links by using the buttons on each card below.</p>
+      <p>Edit or remove links using the buttons on each card below.</p>
     </div>
-
-    <!-- Links List (dynamically populated) -->
+    
+    <!-- Links List (populated dynamically) -->
     <div id="linksList"></div>
   </main>
   
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    /* 
-      Data structure for your links. 
-      Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
+    /* Data structure for links:
+       Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
     */
     let linksData = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
-      { name: "Allerdale",       url: "https://allerdale.casemanageronline.com",       category: "nonhosted" },
+      { name: "Allerdale",       url: "https://allerdale.casemanageronline.com",       category: "hosted" },
       { name: "Angus",           url: "https://angus.casemanageronline.com",           category: "hosted" },
-      // Add more links here...
+      // Additional links...
     ];
-
-    // Filter states
-    let currentCategory = ""; // 'hosted', 'nonhosted', or empty for all
-
-    // On page load, focus the search bar & render links
+    
+    // Filter state: "all", "hosted", or "nonhosted"
+    let currentCategory = "all";
+    
+    // On page load, focus the search bar, set theme from storage (or default to dark), and render links.
     window.addEventListener("DOMContentLoaded", () => {
+      // Theme persistence
+      const storedTheme = localStorage.getItem("theme");
+      const themeToggle = document.getElementById("themeToggle");
+      if (storedTheme) {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+        themeToggle.checked = (storedTheme === "dark");
+      } else {
+        // Default to dark mode
+        document.documentElement.setAttribute("data-theme", "dark");
+        themeToggle.checked = true;
+        localStorage.setItem("theme", "dark");
+      }
+      // Focus search bar
       document.getElementById("searchBox").focus();
       renderLinks();
     });
-
-    // Toggle dark/light mode using the checkbox
+    
+    // Toggle dark/light mode and store preference
     function toggleTheme() {
       const htmlEl = document.documentElement;
       const toggle = document.getElementById("themeToggle");
       if (toggle.checked) {
         htmlEl.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
       } else {
-        htmlEl.removeAttribute("data-theme");
+        htmlEl.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
       }
     }
-
-    // Renders the list of links based on the current filters
+    
+    // Render links based on current filters
     function renderLinks() {
       const linksList = document.getElementById("linksList");
-      linksList.innerHTML = ""; // clear existing
-
-      // Filter by category if one is selected
-      const filteredData = currentCategory
-        ? linksData.filter(link => link.category === currentCategory)
-        : linksData;
-
-      // Build each card
+      linksList.innerHTML = ""; // Clear previous
+      
+      // Filter links: if "all", show everything; else filter by category.
+      const filteredData = (currentCategory === "all")
+        ? linksData
+        : linksData.filter(link => link.category === currentCategory);
+      
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
-
-        // The link anchor
+        
+        // Create anchor. For nonhosted links, redirect to a details page.
         const anchor = document.createElement("a");
-        anchor.href = link.url;
+        if (link.category === "nonhosted") {
+          anchor.href = "nonhosted.html?site=" + encodeURIComponent(link.url);
+        } else {
+          anchor.href = link.url;
+        }
         anchor.target = "_blank";
         anchor.textContent = link.name;
-
-        // The copy button
+        
+        // Copy button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
-
-        // The edit button
+        
+        // Edit button
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => editLink(idx);
-
-        // The remove button
+        
+        // Remove button
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
-
-        // Append them to the card
+        
+        // Append elements to card
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
         card.appendChild(removeBtn);
-
-        // Finally add the card to the container
+        
         linksList.appendChild(card);
       });
-
-      // Apply any active text filter after rendering
+      
+      // Reapply search filter after rendering
       searchLinks();
     }
-
-    // Copy URL to clipboard and provide feedback
+    
+    // Copy URL to clipboard with feedback
     function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
         .then(() => {
@@ -465,71 +468,64 @@
           btn.innerText = "Copied!";
           setTimeout(() => { btn.innerText = originalText; }, 2000);
         })
-        .catch(err => {
-          console.error("Failed to copy: ", err);
-        });
+        .catch(err => console.error("Copy failed: ", err));
     }
-
-    // Filter cards based on search input
+    
+    // Filter displayed cards based on search input
     function searchLinks() {
       const input = document.getElementById("searchBox").value.toLowerCase();
       const cards = document.querySelectorAll(".link-item");
       cards.forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(input)
-          ? "flex"
-          : "none";
+        card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
       });
     }
-
+    
     // Smooth scroll to top
     function topFunction() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    // Show or hide the "Back to top" button on scroll
+    
+    // Show/hide back to top button on scroll
     window.addEventListener("scroll", function() {
       const topBtn = document.getElementById("topBtn");
       if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-        topBtn.style.display = "block";
+        topBtn.style.display = "flex";
       } else {
         topBtn.style.display = "none";
       }
     });
-
+    
     // Filter links by category
     function filterCategory(cat) {
       currentCategory = cat;
       renderLinks();
     }
-
-    // Manage panel: Add link
+    
+    // Add link via the management form
     function addLink(event) {
       event.preventDefault();
       const name = document.getElementById("linkName").value.trim();
       const url = document.getElementById("linkURL").value.trim();
       const category = document.getElementById("linkCategory").value;
-
       if (!name || !url || !category) return;
-
+      
       linksData.push({ name, url, category });
-      event.target.reset(); // clear form
+      event.target.reset();
       renderLinks();
     }
-
+    
     // Remove link
     function removeLink(index) {
       linksData.splice(index, 1);
       renderLinks();
     }
-
-    // Edit link (simple approach: repopulate form with existing data)
+    
+    // Edit link: repopulate form and remove old link for re-addition
     function editLink(index) {
       const link = linksData[index];
       document.getElementById("linkName").value = link.name;
       document.getElementById("linkURL").value = link.url;
       document.getElementById("linkCategory").value = link.category;
-
-      // Remove the old link so we can re-add it when the form is submitted
       removeLink(index);
     }
   </script>
