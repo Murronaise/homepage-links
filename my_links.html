@@ -3,80 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Quick Links page with dark mode toggle and search functionality">
+  <meta name="description" content="Quick Links page with improved design, dark mode, and interactive features">
   <title>My Quick Links</title>
-  <!-- Preconnect for faster font loading -->
+  <!-- Preconnect to speed up font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Variables and Theme Settings */
+    /* Colour Variables & Theme Settings */
     :root {
-      --bg-color: #f5f5f5;
+      --bg-color: #f0f2f5;
       --text-color: #333;
       --link-color: #007bff;
-      --card-bg: rgba(255, 255, 255, 0.2);
-      --gradient-bg: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-      --shadow-color: rgba(0, 0, 0, 0.2);
+      --card-bg: #fff;
+      --gradient-bg: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      --shadow-color: rgba(0, 0, 0, 0.15);
     }
     [data-theme="dark"] {
-      --bg-color: #1e1e1e;
-      --text-color: #fff;
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
       --link-color: #90caf9;
-      --card-bg: rgba(30, 30, 30, 0.8);
+      --card-bg: #1e1e1e;
+      --gradient-bg: linear-gradient(135deg, #1e1e1e, #121212);
       --shadow-color: rgba(0, 0, 0, 0.5);
     }
     
     /* Global Styles */
     body {
       font-family: 'Roboto', sans-serif;
+      margin: 0;
       padding: 20px;
       background: var(--gradient-bg);
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
     }
     
+    /* Sticky Header with Toggle & Search */
     header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-color);
+      z-index: 1000;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px var(--shadow-color);
     }
-    
-    /* Theme Toggle Button */
-    #themeToggle {
-      padding: 5px 15px;
-      border-radius: 20px;
-      background-color: var(--link-color);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-    #themeToggle:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
-    }
-    
-    /* Search Box */
     #searchBox {
-      flex: 1 1 300px;
+      flex: 1;
+      margin: 0 20px;
       padding: 10px;
-      margin: 10px;
       border: 1px solid #ccc;
       border-radius: 25px;
       backdrop-filter: blur(10px);
       background-color: rgba(255, 255, 255, 0.2);
     }
     
-    /* Main Content */
+    /* Margin for content to appear below fixed header */
     main {
+      margin-top: 70px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     
-    /* Card Styles */
+    /* Toggle Switch for Dark Mode */
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 25px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-switch label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .toggle-switch label:before {
+      content: "";
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background-color: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+    }
+    .toggle-switch input:checked + label {
+      background-color: var(--link-color);
+    }
+    .toggle-switch input:checked + label:before {
+      transform: translateX(25px);
+    }
+    
+    /* Card Styles with Enhanced Animation */
     .card {
       background-color: var(--card-bg);
       padding: 20px;
@@ -88,18 +121,22 @@
       transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
       cursor: pointer;
       opacity: 0;
-      animation: fadeIn 0.5s ease-in-out forwards;
+      animation: fadeInScale 0.5s ease-in-out forwards;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-5px) scale(1.02);
       box-shadow: 0 8px 20px var(--shadow-color);
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
     }
     .card a {
       text-decoration: none;
       color: var(--link-color);
       font-weight: 500;
       transition: color 0.3s;
+      flex: 1;
     }
     .card a:hover {
       text-decoration: underline;
@@ -107,6 +144,20 @@
     }
     .card a::before {
       content: '\1F517 '; /* Link icon */
+    }
+    /* Copy Button for URL */
+    .copy-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--link-color);
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .copy-btn:hover {
+      background-color: #0056b3;
     }
     
     /* Back to Top Button */
@@ -128,9 +179,10 @@
       transform: rotate(360deg);
     }
     
-    /* Fade In Animation */
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    /* Card Entrance Animation */
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
@@ -138,133 +190,427 @@
   <noscript>Please enable JavaScript to experience full functionality of this page.</noscript>
   
   <header>
-    <button id="themeToggle" aria-label="Toggle dark mode" onclick="toggleTheme()">Toggle Dark Mode</button>
+    <!-- Animated Dark Mode Toggle Switch -->
+    <div class="toggle-switch">
+      <input type="checkbox" id="themeToggle" onclick="toggleTheme()">
+      <label for="themeToggle" aria-label="Toggle dark mode"></label>
+    </div>
     <input type="text" id="searchBox" aria-label="Search links" onkeyup="searchLinks()" placeholder="Search links...">
   </header>
   
   <main id="linksList">
-    <div class="card link-item"><a href="https://adur-worthing.casemanageronline.com">Adur & Worthing</a></div>
-	<div class="card link-item"><a href="https://allerdale.casemanageronline.com">Allerdale</a></div>
-	<div class="card link-item"><a href="https://angus.casemanageronline.com">Angus</a></div>
-	<div class="card link-item"><a href="https://arun.casemanageronline.com">Arun</a></div>
-	<div class="card link-item"><a href="https://barnsley.casemanageronline.com">Barnsley</a></div>
-	<div class="card link-item"><a href="https://barnsleyeducation.casemanageronline.com">Barnsley Education</a></div>
-	<div class="card link-item"><a href="https://bmsdc.casemanageronline.com">BMSDC</a></div>
-	<div class="card link-item"><a href="https://brentwood.casemanageronline.com">Brentwood</a></div>
-	<div class="card link-item"><a href="https://bristol.casemanageronline.com">Bristol</a></div>
-	<div class="card link-item"><a href="https://buckinghamshire.casemanageronline.com">Buckinghamshire</a></div>
-	<div class="card link-item"><a href="https://buckinghamshirefpns.casemanageronline.com/">Buckinghamshire FPNS</a></div>
-	<div class="card link-item"><a href="https://cardiff.casemanageronline.com">Cardiff</a></div>
-	<div class="card link-item"><a href="https://chichester.casemanageronline.com">Chichester</a></div>
-	<div class="card link-item"><a href="https://chipside.bathnes.gov.uk/v5">Chipside Bathnes</a></div>
-	<div class="card link-item"><a href="https://chipside.carlisle.gov.uk">Chipside Carlisle</a></div>
-	<div class="card link-item"><a href="https://copeland.casemanageronline.com">Copeland</a></div>
-	<div class="card link-item"><a href="https://cotswold.casemanageronline.com">Cotswold</a></div>
-	<div class="card link-item"><a href="https://crawley.casemanageronline.com">Crawley</a></div>
-	<div class="card link-item"><a href="https://cumberland.casemanageronline.com">Cumberland</a></div>
-	<div class="card link-item"><a href="https://cumbriacc.casemanageronline.com">Cumbria CC</a></div>
-	<div class="card link-item"><a href="https://devoncc.casemanageronline.com">Devon CC</a></div>
-	<div class="card link-item"><a href="https://doncaster.casemanageronline.com">Doncaster</a></div>
-	<div class="card link-item"><a href="https://doncastereducation.casemanageronline.com">Doncaster Education</a></div>
-	<div class="card link-item"><a href="https://dvla.casemanageronline.com">DVLA</a></div>
-	<div class="card link-item"><a href="https://eastcambs.casemanageronline.com">East Cambs</a></div>
-	<div class="card link-item"><a href="https://eastleigh.casemanageronline.com">Eastleigh</a></div>
-	<div class="card link-item"><a href="https://eastlindsey.casemanageronline.com">East Lindsey</a></div>
-	<div class="card link-item"><a href="https://eastriding.casemanageronline.com">East Riding</a></div>
-	<div class="card link-item"><a href="https://elmbridge.casemanageronline.com">Elmbridge</a></div>
-	<div class="card link-item"><a href="https://epping.casemanageronline.com">Epping</a></div>
-	<div class="card link-item"><a href="https://essexcountryparks.casemanageronline.com/v5">Essex Country Parks</a></div>
-	<div class="card link-item"><a href="https://gloucester.casemanageronline.com">Gloucester</a></div>
-	<div class="card link-item"><a href="https://gloucestershire.casemanageronline.com">Gloucestershire</a></div>
-	<div class="card link-item"><a href="https://gosport.casemanageronline.com">Gosport</a></div>
-	<div class="card link-item"><a href="https://guildford.casemanageronline.com">Guildford</a></div>
-	<div class="card link-item"><a href="https://halstead.casemanageronline.com">Halstead</a></div>
-	<div class="card link-item"><a href="https://hampshire.casemanageronline.com">Hampshire</a></div>
-	<div class="card link-item"><a href="https://hart.casemanageronline.com">Hart</a></div>
-	<div class="card link-item"><a href="https://havering.casemanageronline.com">Havering</a></div>
-	<div class="card link-item"><a href="https://henley.casemanageronline.com">Henley</a></div>
-	<div class="card link-item"><a href="https://herefordshire.casemanageronline.com">Herefordshire</a></div>
-	<div class="card link-item"><a href="https://horsham.casemanageronline.com">Horsham</a></div>
-	<div class="card link-item"><a href="https://hull.casemanageronline.com">Hull</a></div>
-	<div class="card link-item"><a href="https://hulleducation.casemanageronline.com">Hull Education</a></div>
-	<div class="card link-item"><a href="https://iow.casemanageronline.com">IOW</a></div>
-	<div class="card link-item"><a href="https://ipswich.casemanageronline.com">Ipswich</a></div>
-	<div class="card link-item"><a href="https://lancashire.casemanageronline.com">Lancashire</a></div>
-	<div class="card link-item"><a href="https://leicestercity.casemanageronline.com">Leicester City</a></div>
-	<div class="card link-item"><a href="https://leicestershire.casemanageronline.com">Leicestershire</a></div>
-	<div class="card link-item"><a href="https://maldon.casemanageronline.com">Maldon</a></div>
-	<div class="card link-item"><a href="https://midsussex.casemanageronline.com">Mid Sussex</a></div>
-	<div class="card link-item"><a href="https://nepp.casemanageronline.com">NEPP</a></div>
-	<div class="card link-item"><a href="https://newforest.casemanageronline.com">New Forest</a></div>
-	<div class="card link-item"><a href="https://newham.casemanageronline.com">Newham</a></div>
-	<div class="card link-item"><a href="https://nhsairedale.casemanageronline.com">NHS Airedale</a></div>
-	<div class="card link-item"><a href="https://northlincolnshire.casemanageronline.com">North Lincolnshire</a></div>
-	<div class="card link-item"><a href="https://northsomerset.casemanageronline.com">North Somerset</a></div>
-	<div class="card link-item"><a href="https://northwarks.casemanageronline.com">North Warks</a></div>
-	<div class="card link-item"><a href="https://nottinghamshire.casemanageronline.com">Nottinghamshire</a></div>
-	<div class="card link-item"><a href="https://npt.casemanageronline.com">NPT</a></div>
-	<div class="card link-item"><a href="https://nuneaton.casemanageronline.com">Nuneaton</a></div>
-	<div class="card link-item"><a href="https://rbwm.casemanageronline.com/v5">RBWM</a></div>
-	<div class="card link-item"><a href="https://rugby.casemanageronline.com">Rugby</a></div>
-	<div class="card link-item"><a href="https://salford.casemanageronline.com">Salford</a></div>
-	<div class="card link-item"><a href="https://sandwell.casemanageronline.com">Sandwell</a></div>
-	<div class="card link-item"><a href="https://sepp.casemanageronline.com">SEPP</a></div>
-	<div class="card link-item"><a href="https://sevenoaks.casemanageronline.com">Sevenoaks</a></div>
-	<div class="card link-item"><a href="https://shropshire.casemanageronline.com/v5">Shropshire</a></div>
-	<div class="card link-item"><a href="https://solihull.casemanageronline.com">Solihull</a></div>
-	<div class="card link-item"><a href="https://somerset.casemanageronline.com/v5">Somerset</a></div>
-	<div class="card link-item"><a href="https://somersetunitary.casemanageronline.com">Somerset Unitary</a></div>
-	<div class="card link-item"><a href="https://southandvale.casemanageronline.com">South and Vale</a></div>
-	<div class="card link-item"><a href="https://southglos.casemanageronline.com">South Glos</a></div>
-	<div class="card link-item"><a href="https://stockport.casemanageronline.com">Stockport</a></div>
-	<div class="card link-item"><a href="https://stockton.casemanageronline.com">Stockton</a></div>
-	<div class="card link-item"><a href="https://stroud.casemanageronline.com">Stroud</a></div>
-	<div class="card link-item"><a href="https://surreyheath.casemanageronline.com">Surrey Heath</a></div>
-	<div class="card link-item"><a href="https://swansea.casemanageronline.com">Swansea</a></div>
-	<div class="card link-item"><a href="https://swindon.casemanageronline.com">Swindon</a></div>
-	<div class="card link-item"><a href="https://telford.casemanageronline.com">Telford</a></div>
-	<div class="card link-item"><a href="https://tendring.casemanageronline.com">Tendring</a></div>
-	<div class="card link-item"><a href="https://tewkesbury.casemanageronline.com">Tewkesbury</a></div>
-	<div class="card link-item"><a href="https://translink.casemanageronline.com">Translink</a></div>
-	<div class="card link-item"><a href="https://vowh.casemanageronline.com">VoWH</a></div>
-	<div class="card link-item"><a href="https://wakefield.casemanageronline.com">Wakefield</a></div>
-	<div class="card link-item"><a href="https://warwick.casemanageronline.com">Warwick</a></div>
-	<div class="card link-item"><a href="https://waverley.casemanageronline.com">Waverley</a></div>
-	<div class="card link-item"><a href="https://westmorland.casemanageronline.com">Westmorland</a></div>
-	<div class="card link-item"><a href="https://wiltshire.casemanageronline.com">Wiltshire</a></div>
-	<div class="card link-item"><a href="https://woking.casemanageronline.com">Woking</a></div>
-	<div class="card link-item"><a href="https://wolverhampton.casemanageronline.com">Wolverhampton</a></div>
-	<div class="card link-item"><a href="https://wychavon.casemanageronline.com">Wychavon</a></div>
+    <!-- Link Cards with Copy Button -->
+    <div class="card link-item">
+      <a href="https://adur-worthing.casemanageronline.com" target="_blank">Adur &amp; Worthing</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://allerdale.casemanageronline.com" target="_blank">Allerdale</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://angus.casemanageronline.com" target="_blank">Angus</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://arun.casemanageronline.com" target="_blank">Arun</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://barnsley.casemanageronline.com" target="_blank">Barnsley</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://barnsleyeducation.casemanageronline.com" target="_blank">Barnsley Education</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://bmsdc.casemanageronline.com" target="_blank">BMSDC</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://brentwood.casemanageronline.com" target="_blank">Brentwood</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://bristol.casemanageronline.com" target="_blank">Bristol</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://buckinghamshire.casemanageronline.com" target="_blank">Buckinghamshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://buckinghamshirefpns.casemanageronline.com/" target="_blank">Buckinghamshire FPNS</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://cardiff.casemanageronline.com" target="_blank">Cardiff</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://chichester.casemanageronline.com" target="_blank">Chichester</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://chipside.bathnes.gov.uk/v5" target="_blank">Chipside Bathnes</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://chipside.carlisle.gov.uk" target="_blank">Chipside Carlisle</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://copeland.casemanageronline.com" target="_blank">Copeland</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://cotswold.casemanageronline.com" target="_blank">Cotswold</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://crawley.casemanageronline.com" target="_blank">Crawley</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://cumberland.casemanageronline.com" target="_blank">Cumberland</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://cumbriacc.casemanageronline.com" target="_blank">Cumbria CC</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://devoncc.casemanageronline.com" target="_blank">Devon CC</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://doncaster.casemanageronline.com" target="_blank">Doncaster</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://doncastereducation.casemanageronline.com" target="_blank">Doncaster Education</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://dvla.casemanageronline.com" target="_blank">DVLA</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://eastcambs.casemanageronline.com" target="_blank">East Cambs</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://eastleigh.casemanageronline.com" target="_blank">Eastleigh</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://eastlindsey.casemanageronline.com" target="_blank">East Lindsey</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://eastriding.casemanageronline.com" target="_blank">East Riding</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://elmbridge.casemanageronline.com" target="_blank">Elmbridge</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://epping.casemanageronline.com" target="_blank">Epping</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://essexcountryparks.casemanageronline.com/v5" target="_blank">Essex Country Parks</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://gloucester.casemanageronline.com" target="_blank">Gloucester</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://gloucestershire.casemanageronline.com" target="_blank">Gloucestershire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://gosport.casemanageronline.com" target="_blank">Gosport</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://guildford.casemanageronline.com" target="_blank">Guildford</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://halstead.casemanageronline.com" target="_blank">Halstead</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://hampshire.casemanageronline.com" target="_blank">Hampshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://hart.casemanageronline.com" target="_blank">Hart</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://havering.casemanageronline.com" target="_blank">Havering</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://henley.casemanageronline.com" target="_blank">Henley</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://herefordshire.casemanageronline.com" target="_blank">Herefordshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://horsham.casemanageronline.com" target="_blank">Horsham</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://hull.casemanageronline.com" target="_blank">Hull</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://hulleducation.casemanageronline.com" target="_blank">Hull Education</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://iow.casemanageronline.com" target="_blank">IOW</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://ipswich.casemanageronline.com" target="_blank">Ipswich</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://lancashire.casemanageronline.com" target="_blank">Lancashire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://leicestercity.casemanageronline.com" target="_blank">Leicester City</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://leicestershire.casemanageronline.com" target="_blank">Leicestershire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://maldon.casemanageronline.com" target="_blank">Maldon</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://midsussex.casemanageronline.com" target="_blank">Mid Sussex</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://nepp.casemanageronline.com" target="_blank">NEPP</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://newforest.casemanageronline.com" target="_blank">New Forest</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://newham.casemanageronline.com" target="_blank">Newham</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://nhsairedale.casemanageronline.com" target="_blank">NHS Airedale</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://northlincolnshire.casemanageronline.com" target="_blank">North Lincolnshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://northsomerset.casemanageronline.com" target="_blank">North Somerset</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://northwarks.casemanageronline.com" target="_blank">North Warks</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://nottinghamshire.casemanageronline.com" target="_blank">Nottinghamshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://npt.casemanageronline.com" target="_blank">NPT</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://nuneaton.casemanageronline.com" target="_blank">Nuneaton</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://rbwm.casemanageronline.com/v5" target="_blank">RBWM</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://rugby.casemanageronline.com" target="_blank">Rugby</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://salford.casemanageronline.com" target="_blank">Salford</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://sandwell.casemanageronline.com" target="_blank">Sandwell</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://sepp.casemanageronline.com" target="_blank">SEPP</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://sevenoaks.casemanageronline.com" target="_blank">Sevenoaks</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://shropshire.casemanageronline.com/v5" target="_blank">Shropshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://solihull.casemanageronline.com" target="_blank">Solihull</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://somerset.casemanageronline.com/v5" target="_blank">Somerset</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://somersetunitary.casemanageronline.com" target="_blank">Somerset Unitary</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://southandvale.casemanageronline.com" target="_blank">South and Vale</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://southglos.casemanageronline.com" target="_blank">South Glos</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://stockport.casemanageronline.com" target="_blank">Stockport</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://stockton.casemanageronline.com" target="_blank">Stockton</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://stroud.casemanageronline.com" target="_blank">Stroud</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://surreyheath.casemanageronline.com" target="_blank">Surrey Heath</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://swansea.casemanageronline.com" target="_blank">Swansea</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://swindon.casemanageronline.com" target="_blank">Swindon</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://telford.casemanageronline.com" target="_blank">Telford</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://tendring.casemanageronline.com" target="_blank">Tendring</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://tewkesbury.casemanageronline.com" target="_blank">Tewkesbury</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://translink.casemanageronline.com" target="_blank">Translink</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://vowh.casemanageronline.com" target="_blank">VoWH</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://wakefield.casemanageronline.com" target="_blank">Wakefield</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://warwick.casemanageronline.com" target="_blank">Warwick</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://waverley.casemanageronline.com" target="_blank">Waverley</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://westmorland.casemanageronline.com" target="_blank">Westmorland</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://wiltshire.casemanageronline.com" target="_blank">Wiltshire</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://woking.casemanageronline.com" target="_blank">Woking</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://wolverhampton.casemanageronline.com" target="_blank">Wolverhampton</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
+    <div class="card link-item">
+      <a href="https://wychavon.casemanageronline.com" target="_blank">Wychavon</a>
+      <button class="copy-btn" onclick="copyURL(this)" aria-label="Copy URL">Copy</button>
+    </div>
   </main>
   
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    // Toggle dark/light mode by switching the data-theme attribute on the root element
+    // Toggle dark/light mode using the checkbox
     function toggleTheme() {
       const htmlEl = document.documentElement;
-      if (htmlEl.getAttribute('data-theme') === 'dark') {
-        htmlEl.removeAttribute('data-theme');
-      } else {
+      const toggle = document.getElementById('themeToggle');
+      if (toggle.checked) {
         htmlEl.setAttribute('data-theme', 'dark');
+      } else {
+        htmlEl.removeAttribute('data-theme');
       }
     }
-
-    // Filter link cards based on search input
+    
+    // Copy URL to clipboard and provide feedback
+    function copyURL(btn) {
+      const url = btn.parentElement.querySelector('a').href;
+      navigator.clipboard.writeText(url).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = "Copied!";
+        setTimeout(() => { btn.innerText = originalText; }, 2000);
+      }).catch(err => {
+        console.error("Failed to copy: ", err);
+      });
+    }
+    
+    // Filter cards based on search input
     function searchLinks() {
       const input = document.getElementById('searchBox').value.toLowerCase();
       const cards = document.querySelectorAll('.link-item');
       cards.forEach(card => {
-        card.style.display = card.textContent.toLowerCase().includes(input) ? '' : 'none';
+        card.style.display = card.textContent.toLowerCase().includes(input) ? 'flex' : 'none';
       });
     }
-
-    // Scroll back to top functionality
+    
+    // Smooth scroll to top
     function topFunction() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    // Show or hide the "Back to top" button based on scroll position
+    
+    // Show or hide the "Back to top" button on scroll
     window.addEventListener('scroll', function() {
       const topBtn = document.getElementById('topBtn');
       if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
