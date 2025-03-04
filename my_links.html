@@ -1,133 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Quick Links</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-        :root {
-            --bg-color: #f5f5f5;
-            --text-color: #333;
-            --link-color: #007bff;
-            --card-bg: rgba(255, 255, 255, 0.2);
-            --gradient-bg: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-        }
-        [data-theme="dark"] {
-            --bg-color: #1e1e1e;
-            --text-color: #fff;
-            --link-color: #90caf9;
-            --card-bg: rgba(30, 30, 30, 0.8);
-        }
-        body { font-family: 'Roboto', sans-serif; text-align: center; padding: 20px; background: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; background-size: 400% 400%; animation: gradientShift 10s ease infinite; }
-        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        #searchBox { width: 40%; padding: 10px; font-size: 16px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 25px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); transition: all 0.3s ease-in-out; position: sticky; top: 10px; z-index: 100; }
-        .link-item { margin: 10px 0; }
-        a { text-decoration: none; color: var(--link-color); font-weight: 500; transition: color 0.3s; }
-        a:hover { text-decoration: underline; color: #0056b3; }
-        .card { background-color: var(--card-bg); padding: 20px; margin: 5px auto; width: 60%; max-width: 600px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        #topBtn { display: none; position: fixed; bottom: 20px; right: 30px; background-color: #007bff; color: #fff; border: none; border-radius: 50%; padding: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: transform 0.4s ease-in-out; }
-        #topBtn:hover { transform: rotate(360deg); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Quick Links page with dark mode toggle and search functionality">
+  <title>My Quick Links</title>
+  <!-- Preconnect for faster font loading -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables and Theme Settings */
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --link-color: #007bff;
+      --card-bg: rgba(255, 255, 255, 0.2);
+      --gradient-bg: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+      --shadow-color: rgba(0, 0, 0, 0.2);
+    }
+    [data-theme="dark"] {
+      --bg-color: #1e1e1e;
+      --text-color: #fff;
+      --link-color: #90caf9;
+      --card-bg: rgba(30, 30, 30, 0.8);
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Global Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: var(--gradient-bg);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    /* Theme Toggle Button */
+    #themeToggle {
+      padding: 5px 15px;
+      border-radius: 20px;
+      background-color: var(--link-color);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    #themeToggle:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    
+    /* Search Box */
+    #searchBox {
+      flex: 1 1 300px;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Main Content */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Card Styles */
+    .card {
+      background-color: var(--card-bg);
+      padding: 20px;
+      margin: 10px auto;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px var(--shadow-color);
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px var(--shadow-color);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    }
+    .card a {
+      text-decoration: none;
+      color: var(--link-color);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .card a:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+    .card a::before {
+      content: '\1F517 '; /* Link icon */
+    }
+    
+    /* Back to Top Button */
+    #topBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      background-color: var(--link-color);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      padding: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      transition: transform 0.4s ease-in-out;
+    }
+    #topBtn:hover {
+      transform: rotate(360deg);
+    }
+    
+    /* Fade In Animation */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-    <button id="themeToggle" onclick="toggleTheme()">Toggle Dark Mode</button>
-    <input type="text" id="searchBox" onkeyup="searchLinks()" placeholder="Search links...">
-    <div id="linksList">
-		<div class="card link-item"><a href="https://adur-worthing.casemanageronline.com">Adur & Worthing</a></div>
-		<div class="card link-item"><a href="https://allerdale.casemanageronline.com">Allerdale</a></div>
-		<div class="card link-item"><a href="https://angus.casemanageronline.com">Angus</a></div>
-		<div class="card link-item"><a href="https://arun.casemanageronline.com">Arun</a></div>
-		<div class="card link-item"><a href="https://barnsley.casemanageronline.com">Barnsley</a></div>
-		<div class="card link-item"><a href="https://barnsleyeducation.casemanageronline.com">Barnsley Education</a></div>
-		<div class="card link-item"><a href="https://bmsdc.casemanageronline.com">BMSDC</a></div>
-		<div class="card link-item"><a href="https://brentwood.casemanageronline.com">Brentwood</a></div>
-		<div class="card link-item"><a href="https://bristol.casemanageronline.com">Bristol</a></div>
-		<div class="card link-item"><a href="https://buckinghamshire.casemanageronline.com">Buckinghamshire</a></div>
-		<div class="card link-item"><a href="https://buckinghamshirefpns.casemanageronline.com/">Buckinghamshire FPNS</a></div>
-		<div class="card link-item"><a href="https://cardiff.casemanageronline.com">Cardiff</a></div>
-		<div class="card link-item"><a href="https://chichester.casemanageronline.com">Chichester</a></div>
-		<div class="card link-item"><a href="https://chipside.bathnes.gov.uk/v5">Chipside Bathnes</a></div>
-		<div class="card link-item"><a href="https://chipside.carlisle.gov.uk">Chipside Carlisle</a></div>
-		<div class="card link-item"><a href="https://copeland.casemanageronline.com">Copeland</a></div>
-		<div class="card link-item"><a href="https://cotswold.casemanageronline.com">Cotswold</a></div>
-		<div class="card link-item"><a href="https://crawley.casemanageronline.com">Crawley</a></div>
-		<div class="card link-item"><a href="https://cumberland.casemanageronline.com">Cumberland</a></div>
-		<div class="card link-item"><a href="https://cumbriacc.casemanageronline.com">Cumbria CC</a></div>
-		<div class="card link-item"><a href="https://devoncc.casemanageronline.com">Devon CC</a></div>
-		<div class="card link-item"><a href="https://doncaster.casemanageronline.com">Doncaster</a></div>
-		<div class="card link-item"><a href="https://doncastereducation.casemanageronline.com">Doncaster Education</a></div>
-		<div class="card link-item"><a href="https://dvla.casemanageronline.com">DVLA</a></div>
-		<div class="card link-item"><a href="https://eastcambs.casemanageronline.com">East Cambs</a></div>
-		<div class="card link-item"><a href="https://eastleigh.casemanageronline.com">Eastleigh</a></div>
-		<div class="card link-item"><a href="https://eastlindsey.casemanageronline.com">East Lindsey</a></div>
-		<div class="card link-item"><a href="https://eastriding.casemanageronline.com">East Riding</a></div>
-		<div class="card link-item"><a href="https://elmbridge.casemanageronline.com">Elmbridge</a></div>
-		<div class="card link-item"><a href="https://epping.casemanageronline.com">Epping</a></div>
-		<div class="card link-item"><a href="https://essexcountryparks.casemanageronline.com/v5">Essex Country Parks</a></div>
-		<div class="card link-item"><a href="https://gloucester.casemanageronline.com">Gloucester</a></div>
-		<div class="card link-item"><a href="https://gloucestershire.casemanageronline.com">Gloucestershire</a></div>
-		<div class="card link-item"><a href="https://gosport.casemanageronline.com">Gosport</a></div>
-		<div class="card link-item"><a href="https://guildford.casemanageronline.com">Guildford</a></div>
-		<div class="card link-item"><a href="https://halstead.casemanageronline.com">Halstead</a></div>
-		<div class="card link-item"><a href="https://hampshire.casemanageronline.com">Hampshire</a></div>
-		<div class="card link-item"><a href="https://hart.casemanageronline.com">Hart</a></div>
-		<div class="card link-item"><a href="https://havering.casemanageronline.com">Havering</a></div>
-		<div class="card link-item"><a href="https://henley.casemanageronline.com">Henley</a></div>
-		<div class="card link-item"><a href="https://herefordshire.casemanageronline.com">Herefordshire</a></div>
-		<div class="card link-item"><a href="https://horsham.casemanageronline.com">Horsham</a></div>
-		<div class="card link-item"><a href="https://hull.casemanageronline.com">Hull</a></div>
-		<div class="card link-item"><a href="https://hulleducation.casemanageronline.com">Hull Education</a></div>
-		<div class="card link-item"><a href="https://iow.casemanageronline.com">IOW</a></div>
-		<div class="card link-item"><a href="https://ipswich.casemanageronline.com">Ipswich</a></div>
-		<div class="card link-item"><a href="https://lancashire.casemanageronline.com">Lancashire</a></div>
-		<div class="card link-item"><a href="https://leicestercity.casemanageronline.com">Leicester City</a></div>
-		<div class="card link-item"><a href="https://leicestershire.casemanageronline.com">Leicestershire</a></div>
-		<div class="card link-item"><a href="https://maldon.casemanageronline.com">Maldon</a></div>
-		<div class="card link-item"><a href="https://midsussex.casemanageronline.com">Mid Sussex</a></div>
-		<div class="card link-item"><a href="https://nepp.casemanageronline.com">NEPP</a></div>
-		<div class="card link-item"><a href="https://newforest.casemanageronline.com">New Forest</a></div>
-		<div class="card link-item"><a href="https://newham.casemanageronline.com">Newham</a></div>
-		<div class="card link-item"><a href="https://nhsairedale.casemanageronline.com">NHS Airedale</a></div>
-		<div class="card link-item"><a href="https://northlincolnshire.casemanageronline.com">North Lincolnshire</a></div>
-		<div class="card link-item"><a href="https://northsomerset.casemanageronline.com">North Somerset</a></div>
-		<div class="card link-item"><a href="https://northwarks.casemanageronline.com">North Warks</a></div>
-		<div class="card link-item"><a href="https://nottinghamshire.casemanageronline.com">Nottinghamshire</a></div>
-		<div class="card link-item"><a href="https://npt.casemanageronline.com">NPT</a></div>
-		<div class="card link-item"><a href="https://nuneaton.casemanageronline.com">Nuneaton</a></div>
-		<div class="card link-item"><a href="https://rbwm.casemanageronline.com/v5">RBWM</a></div>
-		<div class="card link-item"><a href="https://rugby.casemanageronline.com">Rugby</a></div>
-		<div class="card link-item"><a href="https://salford.casemanageronline.com">Salford</a></div>
-		<div class="card link-item"><a href="https://sandwell.casemanageronline.com">Sandwell</a></div>
-		<div class="card link-item"><a href="https://sepp.casemanageronline.com">SEPP</a></div>
-		<div class="card link-item"><a href="https://sevenoaks.casemanageronline.com">Sevenoaks</a></div>
-		<div class="card link-item"><a href="https://shropshire.casemanageronline.com/v5">Shropshire</a></div>
-		<div class="card link-item"><a href="https://solihull.casemanageronline.com">Solihull</a></div>
-		<div class="card link-item"><a href="https://somerset.casemanageronline.com/v5">Somerset</a></div>
-		<div class="card link-item"><a href="https://somersetunitary.casemanageronline.com">Somerset Unitary</a></div>
-		<div class="card link-item"><a href="https://southandvale.casemanageronline.com">South and Vale</a></div>
-		<div class="card link-item"><a href="https://southglos.casemanageronline.com">South Glos</a></div>
-		<div class="card link-item"><a href="https://stockport.casemanageronline.com">Stockport</a></div>
-		<div class="card link-item"><a href="https://stockton.casemanageronline.com">Stockton</a></div>
-		<div class="card link-item"><a href="https://stroud.casemanageronline.com">Stroud</a></div>
-		<div class="card link-item"><a href="https://surreyheath.casemanageronline.com">Surrey Heath</a></div>
-		<div class="card link-item"><a href="https://swansea.casemanageronline.com">Swansea</a></div>
-		<div class="card link-item"><a href="https://swindon.casemanageronline.com">Swindon</a></div>
-		<div class="card link-item"><a href="https://telford.casemanageronline.com">Telford</a></div>
-		<div class="card link-item"><a href="https://tendring.casemanageronline.com">Tendring</a></div>
-		<div class="card link-item"><a href="https://tewkesbury.casemanageronline.com">Tewkesbury</a></div>
-		<div class="card link-item"><a href="https://translink.casemanageronline.com">Translink</a></div>
-		<div class="card link-item"><a href="https://vowh.casemanageronline.com">VoWH</a></div>
-		<div class="card link-item"><a href="https://wakefield.casemanageronline.com">Wakefield</a></div>
-		<div class="card link-item"><a href="https://warwick.casemanageronline.com">Warwick</a></div>
-		<div class="card link-item"><a href="https://waverley.casemanageronline.com">Waverley</a></div>
-		<div class="card link-item"><a href="https://westmorland.casemanageronline.com">Westmorland</a></div>
-		<div class="card link-item"><a href="https://wiltshire.casemanageronline.com">Wiltshire</a></div>
-		<div class="card link-item"><a href="https://woking.casemanageronline.com">Woking</a></div>
-		<div class="card link-item"><a href="https://wolverhampton.casemanageronline.com">Wolverhampton</a></div>
-		<div class="card link-item"><a href="https://wychavon.casemanageronline.com">Wychavon</a></div>
-    </div>
-    <button onclick="topFunction()" id="topBtn">↑</button>
+  <noscript>Please enable JavaScript to experience full functionality of this page.</noscript>
+  
+  <header>
+    <button id="themeToggle" aria-label="Toggle dark mode" onclick="toggleTheme()">Toggle Dark Mode</button>
+    <input type="text" id="searchBox" aria-label="Search links" onkeyup="searchLinks()" placeholder="Search links...">
+  </header>
+  
+  <main id="linksList">
+    <div class="card link-item"><a href="https://adur-worthing.casemanageronline.com">Adur & Worthing</a></div>
+	<div class="card link-item"><a href="https://allerdale.casemanageronline.com">Allerdale</a></div>
+	<div class="card link-item"><a href="https://angus.casemanageronline.com">Angus</a></div>
+	<div class="card link-item"><a href="https://arun.casemanageronline.com">Arun</a></div>
+	<div class="card link-item"><a href="https://barnsley.casemanageronline.com">Barnsley</a></div>
+	<div class="card link-item"><a href="https://barnsleyeducation.casemanageronline.com">Barnsley Education</a></div>
+	<div class="card link-item"><a href="https://bmsdc.casemanageronline.com">BMSDC</a></div>
+	<div class="card link-item"><a href="https://brentwood.casemanageronline.com">Brentwood</a></div>
+	<div class="card link-item"><a href="https://bristol.casemanageronline.com">Bristol</a></div>
+	<div class="card link-item"><a href="https://buckinghamshire.casemanageronline.com">Buckinghamshire</a></div>
+	<div class="card link-item"><a href="https://buckinghamshirefpns.casemanageronline.com/">Buckinghamshire FPNS</a></div>
+	<div class="card link-item"><a href="https://cardiff.casemanageronline.com">Cardiff</a></div>
+	<div class="card link-item"><a href="https://chichester.casemanageronline.com">Chichester</a></div>
+	<div class="card link-item"><a href="https://chipside.bathnes.gov.uk/v5">Chipside Bathnes</a></div>
+	<div class="card link-item"><a href="https://chipside.carlisle.gov.uk">Chipside Carlisle</a></div>
+	<div class="card link-item"><a href="https://copeland.casemanageronline.com">Copeland</a></div>
+	<div class="card link-item"><a href="https://cotswold.casemanageronline.com">Cotswold</a></div>
+	<div class="card link-item"><a href="https://crawley.casemanageronline.com">Crawley</a></div>
+	<div class="card link-item"><a href="https://cumberland.casemanageronline.com">Cumberland</a></div>
+	<div class="card link-item"><a href="https://cumbriacc.casemanageronline.com">Cumbria CC</a></div>
+	<div class="card link-item"><a href="https://devoncc.casemanageronline.com">Devon CC</a></div>
+	<div class="card link-item"><a href="https://doncaster.casemanageronline.com">Doncaster</a></div>
+	<div class="card link-item"><a href="https://doncastereducation.casemanageronline.com">Doncaster Education</a></div>
+	<div class="card link-item"><a href="https://dvla.casemanageronline.com">DVLA</a></div>
+	<div class="card link-item"><a href="https://eastcambs.casemanageronline.com">East Cambs</a></div>
+	<div class="card link-item"><a href="https://eastleigh.casemanageronline.com">Eastleigh</a></div>
+	<div class="card link-item"><a href="https://eastlindsey.casemanageronline.com">East Lindsey</a></div>
+	<div class="card link-item"><a href="https://eastriding.casemanageronline.com">East Riding</a></div>
+	<div class="card link-item"><a href="https://elmbridge.casemanageronline.com">Elmbridge</a></div>
+	<div class="card link-item"><a href="https://epping.casemanageronline.com">Epping</a></div>
+	<div class="card link-item"><a href="https://essexcountryparks.casemanageronline.com/v5">Essex Country Parks</a></div>
+	<div class="card link-item"><a href="https://gloucester.casemanageronline.com">Gloucester</a></div>
+	<div class="card link-item"><a href="https://gloucestershire.casemanageronline.com">Gloucestershire</a></div>
+	<div class="card link-item"><a href="https://gosport.casemanageronline.com">Gosport</a></div>
+	<div class="card link-item"><a href="https://guildford.casemanageronline.com">Guildford</a></div>
+	<div class="card link-item"><a href="https://halstead.casemanageronline.com">Halstead</a></div>
+	<div class="card link-item"><a href="https://hampshire.casemanageronline.com">Hampshire</a></div>
+	<div class="card link-item"><a href="https://hart.casemanageronline.com">Hart</a></div>
+	<div class="card link-item"><a href="https://havering.casemanageronline.com">Havering</a></div>
+	<div class="card link-item"><a href="https://henley.casemanageronline.com">Henley</a></div>
+	<div class="card link-item"><a href="https://herefordshire.casemanageronline.com">Herefordshire</a></div>
+	<div class="card link-item"><a href="https://horsham.casemanageronline.com">Horsham</a></div>
+	<div class="card link-item"><a href="https://hull.casemanageronline.com">Hull</a></div>
+	<div class="card link-item"><a href="https://hulleducation.casemanageronline.com">Hull Education</a></div>
+	<div class="card link-item"><a href="https://iow.casemanageronline.com">IOW</a></div>
+	<div class="card link-item"><a href="https://ipswich.casemanageronline.com">Ipswich</a></div>
+	<div class="card link-item"><a href="https://lancashire.casemanageronline.com">Lancashire</a></div>
+	<div class="card link-item"><a href="https://leicestercity.casemanageronline.com">Leicester City</a></div>
+	<div class="card link-item"><a href="https://leicestershire.casemanageronline.com">Leicestershire</a></div>
+	<div class="card link-item"><a href="https://maldon.casemanageronline.com">Maldon</a></div>
+	<div class="card link-item"><a href="https://midsussex.casemanageronline.com">Mid Sussex</a></div>
+	<div class="card link-item"><a href="https://nepp.casemanageronline.com">NEPP</a></div>
+	<div class="card link-item"><a href="https://newforest.casemanageronline.com">New Forest</a></div>
+	<div class="card link-item"><a href="https://newham.casemanageronline.com">Newham</a></div>
+	<div class="card link-item"><a href="https://nhsairedale.casemanageronline.com">NHS Airedale</a></div>
+	<div class="card link-item"><a href="https://northlincolnshire.casemanageronline.com">North Lincolnshire</a></div>
+	<div class="card link-item"><a href="https://northsomerset.casemanageronline.com">North Somerset</a></div>
+	<div class="card link-item"><a href="https://northwarks.casemanageronline.com">North Warks</a></div>
+	<div class="card link-item"><a href="https://nottinghamshire.casemanageronline.com">Nottinghamshire</a></div>
+	<div class="card link-item"><a href="https://npt.casemanageronline.com">NPT</a></div>
+	<div class="card link-item"><a href="https://nuneaton.casemanageronline.com">Nuneaton</a></div>
+	<div class="card link-item"><a href="https://rbwm.casemanageronline.com/v5">RBWM</a></div>
+	<div class="card link-item"><a href="https://rugby.casemanageronline.com">Rugby</a></div>
+	<div class="card link-item"><a href="https://salford.casemanageronline.com">Salford</a></div>
+	<div class="card link-item"><a href="https://sandwell.casemanageronline.com">Sandwell</a></div>
+	<div class="card link-item"><a href="https://sepp.casemanageronline.com">SEPP</a></div>
+	<div class="card link-item"><a href="https://sevenoaks.casemanageronline.com">Sevenoaks</a></div>
+	<div class="card link-item"><a href="https://shropshire.casemanageronline.com/v5">Shropshire</a></div>
+	<div class="card link-item"><a href="https://solihull.casemanageronline.com">Solihull</a></div>
+	<div class="card link-item"><a href="https://somerset.casemanageronline.com/v5">Somerset</a></div>
+	<div class="card link-item"><a href="https://somersetunitary.casemanageronline.com">Somerset Unitary</a></div>
+	<div class="card link-item"><a href="https://southandvale.casemanageronline.com">South and Vale</a></div>
+	<div class="card link-item"><a href="https://southglos.casemanageronline.com">South Glos</a></div>
+	<div class="card link-item"><a href="https://stockport.casemanageronline.com">Stockport</a></div>
+	<div class="card link-item"><a href="https://stockton.casemanageronline.com">Stockton</a></div>
+	<div class="card link-item"><a href="https://stroud.casemanageronline.com">Stroud</a></div>
+	<div class="card link-item"><a href="https://surreyheath.casemanageronline.com">Surrey Heath</a></div>
+	<div class="card link-item"><a href="https://swansea.casemanageronline.com">Swansea</a></div>
+	<div class="card link-item"><a href="https://swindon.casemanageronline.com">Swindon</a></div>
+	<div class="card link-item"><a href="https://telford.casemanageronline.com">Telford</a></div>
+	<div class="card link-item"><a href="https://tendring.casemanageronline.com">Tendring</a></div>
+	<div class="card link-item"><a href="https://tewkesbury.casemanageronline.com">Tewkesbury</a></div>
+	<div class="card link-item"><a href="https://translink.casemanageronline.com">Translink</a></div>
+	<div class="card link-item"><a href="https://vowh.casemanageronline.com">VoWH</a></div>
+	<div class="card link-item"><a href="https://wakefield.casemanageronline.com">Wakefield</a></div>
+	<div class="card link-item"><a href="https://warwick.casemanageronline.com">Warwick</a></div>
+	<div class="card link-item"><a href="https://waverley.casemanageronline.com">Waverley</a></div>
+	<div class="card link-item"><a href="https://westmorland.casemanageronline.com">Westmorland</a></div>
+	<div class="card link-item"><a href="https://wiltshire.casemanageronline.com">Wiltshire</a></div>
+	<div class="card link-item"><a href="https://woking.casemanageronline.com">Woking</a></div>
+	<div class="card link-item"><a href="https://wolverhampton.casemanageronline.com">Wolverhampton</a></div>
+	<div class="card link-item"><a href="https://wychavon.casemanageronline.com">Wychavon</a></div>
+  </main>
+  
+  <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
+  
+  <script>
+    // Toggle dark/light mode by switching the data-theme attribute on the root element
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      if (htmlEl.getAttribute('data-theme') === 'dark') {
+        htmlEl.removeAttribute('data-theme');
+      } else {
+        htmlEl.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    // Filter link cards based on search input
+    function searchLinks() {
+      const input = document.getElementById('searchBox').value.toLowerCase();
+      const cards = document.querySelectorAll('.link-item');
+      cards.forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(input) ? '' : 'none';
+      });
+    }
+
+    // Scroll back to top functionality
+    function topFunction() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Show or hide the "Back to top" button based on scroll position
+    window.addEventListener('scroll', function() {
+      const topBtn = document.getElementById('topBtn');
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        topBtn.style.display = 'block';
+      } else {
+        topBtn.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
