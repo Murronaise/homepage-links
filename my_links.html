@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Quick Links</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        #searchBox { width: 80%; padding: 10px; font-size: 16px; margin-bottom: 20px; }
-        .link-item { margin: 5px 0; font-size: 18px; }
-        a { text-decoration: none; color: blue; }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f5f5f5; }
+        #searchBox { width: 60%; padding: 10px; font-size: 16px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .link-item { margin: 10px 0; }
+        a { text-decoration: none; color: #007bff; }
         a:hover { text-decoration: underline; }
+        .card { background-color: #fff; padding: 10px 20px; margin: 5px auto; width: 80%; max-width: 600px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
     </style>
     <script>
         function searchLinks() {
@@ -27,102 +29,101 @@
     </script>
 </head>
 <body>
-    <h1>My Quick Links</h1>
+    <h1 style="color: #333;">My Quick Links</h1>
     <input type="text" id="searchBox" onkeyup="searchLinks()" placeholder="Search links...">
-    
     <div id="linksList">
-		<div class="link-item"><a href="https://adur-worthing.casemanageronline.com">Adur & Worthing</a></div>
-		<div class="link-item"><a href="https://allerdale.casemanageronline.com">Allerdale</a></div>
-		<div class="link-item"><a href="https://angus.casemanageronline.com">Angus</a></div>
-		<div class="link-item"><a href="https://arun.casemanageronline.com">Arun</a></div>
-		<div class="link-item"><a href="https://barnsley.casemanageronline.com">Barnsley</a></div>
-		<div class="link-item"><a href="https://barnsleyeducation.casemanageronline.com">Barnsley Education</a></div>
-		<div class="link-item"><a href="https://bmsdc.casemanageronline.com">BMSDC</a></div>
-		<div class="link-item"><a href="https://brentwood.casemanageronline.com">Brentwood</a></div>
-		<div class="link-item"><a href="https://bristol.casemanageronline.com">Bristol</a></div>
-		<div class="link-item"><a href="https://buckinghamshire.casemanageronline.com">Buckinghamshire</a></div>
-		<div class="link-item"><a href="https://buckinghamshirefpns.casemanageronline.com/">Buckinghamshire FPNS</a></div>
-		<div class="link-item"><a href="https://cardiff.casemanageronline.com">Cardiff</a></div>
-		<div class="link-item"><a href="https://chichester.casemanageronline.com">Chichester</a></div>
-		<div class="link-item"><a href="https://chipside.bathnes.gov.uk/v5">Chipside Bathnes</a></div>
-		<div class="link-item"><a href="https://chipside.carlisle.gov.uk">Chipside Carlisle</a></div>
-		<div class="link-item"><a href="https://copeland.casemanageronline.com">Copeland</a></div>
-		<div class="link-item"><a href="https://cotswold.casemanageronline.com">Cotswold</a></div>
-		<div class="link-item"><a href="https://crawley.casemanageronline.com">Crawley</a></div>
-		<div class="link-item"><a href="https://cumberland.casemanageronline.com">Cumberland</a></div>
-		<div class="link-item"><a href="https://cumbriacc.casemanageronline.com">Cumbria CC</a></div>
-		<div class="link-item"><a href="https://devoncc.casemanageronline.com">Devon CC</a></div>
-		<div class="link-item"><a href="https://doncaster.casemanageronline.com">Doncaster</a></div>
-		<div class="link-item"><a href="https://doncastereducation.casemanageronline.com">Doncaster Education</a></div>
-		<div class="link-item"><a href="https://dvla.casemanageronline.com">DVLA</a></div>
-		<div class="link-item"><a href="https://eastcambs.casemanageronline.com">East Cambs</a></div>
-		<div class="link-item"><a href="https://eastleigh.casemanageronline.com">Eastleigh</a></div>
-		<div class="link-item"><a href="https://eastlindsey.casemanageronline.com">East Lindsey</a></div>
-		<div class="link-item"><a href="https://eastriding.casemanageronline.com">East Riding</a></div>
-		<div class="link-item"><a href="https://elmbridge.casemanageronline.com">Elmbridge</a></div>
-		<div class="link-item"><a href="https://epping.casemanageronline.com">Epping</a></div>
-		<div class="link-item"><a href="https://essexcountryparks.casemanageronline.com/v5">Essex Country Parks</a></div>
-		<div class="link-item"><a href="https://gloucester.casemanageronline.com">Gloucester</a></div>
-		<div class="link-item"><a href="https://gloucestershire.casemanageronline.com">Gloucestershire</a></div>
-		<div class="link-item"><a href="https://gosport.casemanageronline.com">Gosport</a></div>
-		<div class="link-item"><a href="https://guildford.casemanageronline.com">Guildford</a></div>
-		<div class="link-item"><a href="https://halstead.casemanageronline.com">Halstead</a></div>
-		<div class="link-item"><a href="https://hampshire.casemanageronline.com">Hampshire</a></div>
-		<div class="link-item"><a href="https://hart.casemanageronline.com">Hart</a></div>
-		<div class="link-item"><a href="https://havering.casemanageronline.com">Havering</a></div>
-		<div class="link-item"><a href="https://henley.casemanageronline.com">Henley</a></div>
-		<div class="link-item"><a href="https://herefordshire.casemanageronline.com">Herefordshire</a></div>
-		<div class="link-item"><a href="https://horsham.casemanageronline.com">Horsham</a></div>
-		<div class="link-item"><a href="https://hull.casemanageronline.com">Hull</a></div>
-		<div class="link-item"><a href="https://hulleducation.casemanageronline.com">Hull Education</a></div>
-		<div class="link-item"><a href="https://iow.casemanageronline.com">IOW</a></div>
-		<div class="link-item"><a href="https://ipswich.casemanageronline.com">Ipswich</a></div>
-		<div class="link-item"><a href="https://lancashire.casemanageronline.com">Lancashire</a></div>
-		<div class="link-item"><a href="https://leicestercity.casemanageronline.com">Leicester City</a></div>
-		<div class="link-item"><a href="https://leicestershire.casemanageronline.com">Leicestershire</a></div>
-		<div class="link-item"><a href="https://maldon.casemanageronline.com">Maldon</a></div>
-		<div class="link-item"><a href="https://midsussex.casemanageronline.com">Mid Sussex</a></div>
-		<div class="link-item"><a href="https://nepp.casemanageronline.com">NEPP</a></div>
-		<div class="link-item"><a href="https://newforest.casemanageronline.com">New Forest</a></div>
-		<div class="link-item"><a href="https://newham.casemanageronline.com">Newham</a></div>
-		<div class="link-item"><a href="https://nhsairedale.casemanageronline.com">NHS Airedale</a></div>
-		<div class="link-item"><a href="https://northlincolnshire.casemanageronline.com">North Lincolnshire</a></div>
-		<div class="link-item"><a href="https://northsomerset.casemanageronline.com">North Somerset</a></div>
-		<div class="link-item"><a href="https://northwarks.casemanageronline.com">North Warks</a></div>
-		<div class="link-item"><a href="https://nottinghamshire.casemanageronline.com">Nottinghamshire</a></div>
-		<div class="link-item"><a href="https://npt.casemanageronline.com">NPT</a></div>
-		<div class="link-item"><a href="https://nuneaton.casemanageronline.com">Nuneaton</a></div>
-		<div class="link-item"><a href="https://rbwm.casemanageronline.com/v5">RBWM</a></div>
-		<div class="link-item"><a href="https://rugby.casemanageronline.com">Rugby</a></div>
-		<div class="link-item"><a href="https://salford.casemanageronline.com">Salford</a></div>
-		<div class="link-item"><a href="https://sandwell.casemanageronline.com">Sandwell</a></div>
-		<div class="link-item"><a href="https://sepp.casemanageronline.com">SEPP</a></div>
-		<div class="link-item"><a href="https://sevenoaks.casemanageronline.com">Sevenoaks</a></div>
-		<div class="link-item"><a href="https://shropshire.casemanageronline.com/v5">Shropshire</a></div>
-		<div class="link-item"><a href="https://solihull.casemanageronline.com">Solihull</a></div>
-		<div class="link-item"><a href="https://somerset.casemanageronline.com/v5">Somerset</a></div>
-		<div class="link-item"><a href="https://somersetunitary.casemanageronline.com">Somerset Unitary</a></div>
-		<div class="link-item"><a href="https://southandvale.casemanageronline.com">South and Vale</a></div>
-		<div class="link-item"><a href="https://southglos.casemanageronline.com">South Glos</a></div>
-		<div class="link-item"><a href="https://stockport.casemanageronline.com">Stockport</a></div>
-		<div class="link-item"><a href="https://stockton.casemanageronline.com">Stockton</a></div>
-		<div class="link-item"><a href="https://stroud.casemanageronline.com">Stroud</a></div>
-		<div class="link-item"><a href="https://surreyheath.casemanageronline.com">Surrey Heath</a></div>
-		<div class="link-item"><a href="https://swansea.casemanageronline.com">Swansea</a></div>
-		<div class="link-item"><a href="https://swindon.casemanageronline.com">Swindon</a></div>
-		<div class="link-item"><a href="https://telford.casemanageronline.com">Telford</a></div>
-		<div class="link-item"><a href="https://tendring.casemanageronline.com">Tendring</a></div>
-		<div class="link-item"><a href="https://tewkesbury.casemanageronline.com">Tewkesbury</a></div>
-		<div class="link-item"><a href="https://translink.casemanageronline.com">Translink</a></div>
-		<div class="link-item"><a href="https://vowh.casemanageronline.com">VoWH</a></div>
-		<div class="link-item"><a href="https://wakefield.casemanageronline.com">Wakefield</a></div>
-		<div class="link-item"><a href="https://warwick.casemanageronline.com">Warwick</a></div>
-		<div class="link-item"><a href="https://waverley.casemanageronline.com">Waverley</a></div>
-		<div class="link-item"><a href="https://westmorland.casemanageronline.com">Westmorland</a></div>
-		<div class="link-item"><a href="https://wiltshire.casemanageronline.com">Wiltshire</a></div>
-		<div class="link-item"><a href="https://woking.casemanageronline.com">Woking</a></div>
-		<div class="link-item"><a href="https://wolverhampton.casemanageronline.com">Wolverhampton</a></div>
-		<div class="link-item"><a href="https://wychavon.casemanageronline.com">Wychavon</a></div>
+		<div class="card link-item"><a href="https://adur-worthing.casemanageronline.com">Adur & Worthing</a></div>
+		<div class="card link-item"><a href="https://allerdale.casemanageronline.com">Allerdale</a></div>
+		<div class="card link-item"><a href="https://angus.casemanageronline.com">Angus</a></div>
+		<div class="card link-item"><a href="https://arun.casemanageronline.com">Arun</a></div>
+		<div class="card link-item"><a href="https://barnsley.casemanageronline.com">Barnsley</a></div>
+		<div class="card link-item"><a href="https://barnsleyeducation.casemanageronline.com">Barnsley Education</a></div>
+		<div class="card link-item"><a href="https://bmsdc.casemanageronline.com">BMSDC</a></div>
+		<div class="card link-item"><a href="https://brentwood.casemanageronline.com">Brentwood</a></div>
+		<div class="card link-item"><a href="https://bristol.casemanageronline.com">Bristol</a></div>
+		<div class="card link-item"><a href="https://buckinghamshire.casemanageronline.com">Buckinghamshire</a></div>
+		<div class="card link-item"><a href="https://buckinghamshirefpns.casemanageronline.com/">Buckinghamshire FPNS</a></div>
+		<div class="card link-item"><a href="https://cardiff.casemanageronline.com">Cardiff</a></div>
+		<div class="card link-item"><a href="https://chichester.casemanageronline.com">Chichester</a></div>
+		<div class="card link-item"><a href="https://chipside.bathnes.gov.uk/v5">Chipside Bathnes</a></div>
+		<div class="card link-item"><a href="https://chipside.carlisle.gov.uk">Chipside Carlisle</a></div>
+		<div class="card link-item"><a href="https://copeland.casemanageronline.com">Copeland</a></div>
+		<div class="card link-item"><a href="https://cotswold.casemanageronline.com">Cotswold</a></div>
+		<div class="card link-item"><a href="https://crawley.casemanageronline.com">Crawley</a></div>
+		<div class="card link-item"><a href="https://cumberland.casemanageronline.com">Cumberland</a></div>
+		<div class="card link-item"><a href="https://cumbriacc.casemanageronline.com">Cumbria CC</a></div>
+		<div class="card link-item"><a href="https://devoncc.casemanageronline.com">Devon CC</a></div>
+		<div class="card link-item"><a href="https://doncaster.casemanageronline.com">Doncaster</a></div>
+		<div class="card link-item"><a href="https://doncastereducation.casemanageronline.com">Doncaster Education</a></div>
+		<div class="card link-item"><a href="https://dvla.casemanageronline.com">DVLA</a></div>
+		<div class="card link-item"><a href="https://eastcambs.casemanageronline.com">East Cambs</a></div>
+		<div class="card link-item"><a href="https://eastleigh.casemanageronline.com">Eastleigh</a></div>
+		<div class="card link-item"><a href="https://eastlindsey.casemanageronline.com">East Lindsey</a></div>
+		<div class="card link-item"><a href="https://eastriding.casemanageronline.com">East Riding</a></div>
+		<div class="card link-item"><a href="https://elmbridge.casemanageronline.com">Elmbridge</a></div>
+		<div class="card link-item"><a href="https://epping.casemanageronline.com">Epping</a></div>
+		<div class="card link-item"><a href="https://essexcountryparks.casemanageronline.com/v5">Essex Country Parks</a></div>
+		<div class="card link-item"><a href="https://gloucester.casemanageronline.com">Gloucester</a></div>
+		<div class="card link-item"><a href="https://gloucestershire.casemanageronline.com">Gloucestershire</a></div>
+		<div class="card link-item"><a href="https://gosport.casemanageronline.com">Gosport</a></div>
+		<div class="card link-item"><a href="https://guildford.casemanageronline.com">Guildford</a></div>
+		<div class="card link-item"><a href="https://halstead.casemanageronline.com">Halstead</a></div>
+		<div class="card link-item"><a href="https://hampshire.casemanageronline.com">Hampshire</a></div>
+		<div class="card link-item"><a href="https://hart.casemanageronline.com">Hart</a></div>
+		<div class="card link-item"><a href="https://havering.casemanageronline.com">Havering</a></div>
+		<div class="card link-item"><a href="https://henley.casemanageronline.com">Henley</a></div>
+		<div class="card link-item"><a href="https://herefordshire.casemanageronline.com">Herefordshire</a></div>
+		<div class="card link-item"><a href="https://horsham.casemanageronline.com">Horsham</a></div>
+		<div class="card link-item"><a href="https://hull.casemanageronline.com">Hull</a></div>
+		<div class="card link-item"><a href="https://hulleducation.casemanageronline.com">Hull Education</a></div>
+		<div class="card link-item"><a href="https://iow.casemanageronline.com">IOW</a></div>
+		<div class="card link-item"><a href="https://ipswich.casemanageronline.com">Ipswich</a></div>
+		<div class="card link-item"><a href="https://lancashire.casemanageronline.com">Lancashire</a></div>
+		<div class="card link-item"><a href="https://leicestercity.casemanageronline.com">Leicester City</a></div>
+		<div class="card link-item"><a href="https://leicestershire.casemanageronline.com">Leicestershire</a></div>
+		<div class="card link-item"><a href="https://maldon.casemanageronline.com">Maldon</a></div>
+		<div class="card link-item"><a href="https://midsussex.casemanageronline.com">Mid Sussex</a></div>
+		<div class="card link-item"><a href="https://nepp.casemanageronline.com">NEPP</a></div>
+		<div class="card link-item"><a href="https://newforest.casemanageronline.com">New Forest</a></div>
+		<div class="card link-item"><a href="https://newham.casemanageronline.com">Newham</a></div>
+		<div class="card link-item"><a href="https://nhsairedale.casemanageronline.com">NHS Airedale</a></div>
+		<div class="card link-item"><a href="https://northlincolnshire.casemanageronline.com">North Lincolnshire</a></div>
+		<div class="card link-item"><a href="https://northsomerset.casemanageronline.com">North Somerset</a></div>
+		<div class="card link-item"><a href="https://northwarks.casemanageronline.com">North Warks</a></div>
+		<div class="card link-item"><a href="https://nottinghamshire.casemanageronline.com">Nottinghamshire</a></div>
+		<div class="card link-item"><a href="https://npt.casemanageronline.com">NPT</a></div>
+		<div class="card link-item"><a href="https://nuneaton.casemanageronline.com">Nuneaton</a></div>
+		<div class="card link-item"><a href="https://rbwm.casemanageronline.com/v5">RBWM</a></div>
+		<div class="card link-item"><a href="https://rugby.casemanageronline.com">Rugby</a></div>
+		<div class="card link-item"><a href="https://salford.casemanageronline.com">Salford</a></div>
+		<div class="card link-item"><a href="https://sandwell.casemanageronline.com">Sandwell</a></div>
+		<div class="card link-item"><a href="https://sepp.casemanageronline.com">SEPP</a></div>
+		<div class="card link-item"><a href="https://sevenoaks.casemanageronline.com">Sevenoaks</a></div>
+		<div class="card link-item"><a href="https://shropshire.casemanageronline.com/v5">Shropshire</a></div>
+		<div class="card link-item"><a href="https://solihull.casemanageronline.com">Solihull</a></div>
+		<div class="card link-item"><a href="https://somerset.casemanageronline.com/v5">Somerset</a></div>
+		<div class="card link-item"><a href="https://somersetunitary.casemanageronline.com">Somerset Unitary</a></div>
+		<div class="card link-item"><a href="https://southandvale.casemanageronline.com">South and Vale</a></div>
+		<div class="card link-item"><a href="https://southglos.casemanageronline.com">South Glos</a></div>
+		<div class="card link-item"><a href="https://stockport.casemanageronline.com">Stockport</a></div>
+		<div class="card link-item"><a href="https://stockton.casemanageronline.com">Stockton</a></div>
+		<div class="card link-item"><a href="https://stroud.casemanageronline.com">Stroud</a></div>
+		<div class="card link-item"><a href="https://surreyheath.casemanageronline.com">Surrey Heath</a></div>
+		<div class="card link-item"><a href="https://swansea.casemanageronline.com">Swansea</a></div>
+		<div class="card link-item"><a href="https://swindon.casemanageronline.com">Swindon</a></div>
+		<div class="card link-item"><a href="https://telford.casemanageronline.com">Telford</a></div>
+		<div class="card link-item"><a href="https://tendring.casemanageronline.com">Tendring</a></div>
+		<div class="card link-item"><a href="https://tewkesbury.casemanageronline.com">Tewkesbury</a></div>
+		<div class="card link-item"><a href="https://translink.casemanageronline.com">Translink</a></div>
+		<div class="card link-item"><a href="https://vowh.casemanageronline.com">VoWH</a></div>
+		<div class="card link-item"><a href="https://wakefield.casemanageronline.com">Wakefield</a></div>
+		<div class="card link-item"><a href="https://warwick.casemanageronline.com">Warwick</a></div>
+		<div class="card link-item"><a href="https://waverley.casemanageronline.com">Waverley</a></div>
+		<div class="card link-item"><a href="https://westmorland.casemanageronline.com">Westmorland</a></div>
+		<div class="card link-item"><a href="https://wiltshire.casemanageronline.com">Wiltshire</a></div>
+		<div class="card link-item"><a href="https://woking.casemanageronline.com">Woking</a></div>
+		<div class="card link-item"><a href="https://wolverhampton.casemanageronline.com">Wolverhampton</a></div>
+		<div class="card link-item"><a href="https://wychavon.casemanageronline.com">Wychavon</a></div>
 	</div>
 </body>
 </html>
