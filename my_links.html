@@ -78,59 +78,66 @@
       box-shadow: 0 2px 5px var(--shadow-color);
       gap: 20px;
     }
-    /* Dark mode toggle switch with sun/moon icons */
+
+    /* --- DARK MODE TOGGLE SWITCH (ALIGNED ICONS) --- */
     .toggle-switch {
       position: relative;
-      width: 60px;
-      height: 30px;
+      width: 60px; /* overall width */
+      height: 30px; /* overall height */
       flex-shrink: 0;
     }
+    /* Hide the raw checkbox */
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+    /* The background track */
     .toggle-switch label {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      width: 60px;
+      height: 30px;
       border-radius: 25px;
       cursor: pointer;
-      /* Start with a sun gradient for checked state, but we invert logic below */
+      /* Start with a 'light mode' background; logic is reversed below */
       background: linear-gradient(90deg, #ffb347, #ffcc33);
       transition: background 0.3s;
     }
-    /* The icon circle */
-    .toggle-switch label:after {
-      content: "☀"; /* default to sun, but we'll invert logic below */
+    /* The circle icon (sun/moon) */
+    .toggle-switch label::after {
+      content: "☀"; /* default to sun, but invert logic for dark mode below */
       position: absolute;
-      top: 3px; 
+      top: 50%;
       left: 28px;
-      width: 24px; 
+      transform: translateY(-50%);
+      width: 24px;
       height: 24px;
+      border-radius: 50%;
+      background: #fff;
       font-size: 1.1rem;
       line-height: 24px;
       text-align: center;
-      border-radius: 50%;
-      background: #fff;
       transition: transform 0.3s, content 0.3s;
     }
-    /* If NOT checked => dark mode => show moon on the left */
+    /* If NOT checked => Dark mode => show moon on the left */
     .toggle-switch input:not(:checked) + label {
       background: linear-gradient(90deg, #333, #444);
     }
-    .toggle-switch input:not(:checked) + label:after {
+    .toggle-switch input:not(:checked) + label::after {
       content: "🌙";
-      transform: translateX(0);
+      transform: translate(0, -50%); /* Sits at the far left */
     }
-    /* If checked => light mode => show sun on the right */
+    /* If checked => Light mode => show sun on the right */
     .toggle-switch input:checked + label {
       background: linear-gradient(90deg, #ffb347, #ffcc33);
     }
-    .toggle-switch input:checked + label:after {
+    .toggle-switch input:checked + label::after {
       content: "☀";
-      transform: translateX(28px);
+      transform: translate(28px, -50%);
     }
-    
+
     /* Category buttons */
     .categories {
       display: flex;
@@ -149,7 +156,7 @@
       background-color: var(--card-hover-bg);
     }
     
-    /* Manage button in the header (replacing the old Manage panel location) */
+    /* Manage button in the header */
     .manage-btn {
       background-color: var(--button-color);
       border: none;
@@ -523,10 +530,10 @@
     // Track if we're editing an existing link
     let editIndex = null;
 
-    // On page load, set theme from storage, merge localStorage links, and render links
+    // On page load, set theme from storage, merge localStorage links, and render
     window.addEventListener("DOMContentLoaded", () => {
       setupTheme();
-      mergeLinksFromStorage();  // or overrideLocalStorage() if you prefer
+      mergeLinksFromStorage();  // Merges snippet data with any user-added localStorage data
       document.getElementById("searchBox").focus();
       renderLinks();
     });
@@ -576,10 +583,8 @@
       const storedLinks = localStorage.getItem("linksData");
       if (storedLinks) {
         const storedArr = JSON.parse(storedLinks);
-        // Merge the snippet links into any previously saved data
-        // so all your new links appear plus any the user had added
+        // Merge snippet links into any previously saved data
         for (const snippetLink of linksData) {
-          // If snippet link not found in stored array, add it
           if (!storedArr.some(x => x.name === snippetLink.name && x.url === snippetLink.url)) {
             storedArr.push(snippetLink);
           }
@@ -587,18 +592,16 @@
         linksData = storedArr;
         saveLinksToStorage();
       } else {
-        // No stored data, so just save the snippet array
+        // No stored data, so just save snippet array
         saveLinksToStorage();
       }
     }
 
-    // If you ever want to COMPLETELY overwrite localStorage with snippet data:
-    /*
-    function overrideLocalStorage() {
-      localStorage.removeItem("linksData");
-      saveLinksToStorage(); 
-    }
-    */
+    // If you want to override localStorage completely with snippet data:
+    // function overrideLocalStorage() {
+    //   localStorage.removeItem("linksData");
+    //   saveLinksToStorage(); 
+    // }
 
     function saveLinksToStorage() {
       localStorage.setItem("linksData", JSON.stringify(linksData));
