@@ -95,16 +95,16 @@
       top: 0; left: 0; right: 0; bottom: 0;
       border-radius: 25px;
       cursor: pointer;
-      /* A bigger color difference for more exaggeration */
-      background: linear-gradient(90deg, #333, #444);
-      transition: background-color 0.3s, background 0.3s;
+      /* Start with a sun gradient for checked state, but we invert logic below */
+      background: linear-gradient(90deg, #ffb347, #ffcc33);
+      transition: background 0.3s;
     }
     /* The icon circle */
     .toggle-switch label:after {
-      content: "🌙";
+      content: "☀"; /* default to sun, but we'll invert logic below */
       position: absolute;
       top: 3px; 
-      left: 5px;
+      left: 28px;
       width: 24px; 
       height: 24px;
       font-size: 1.1rem;
@@ -112,9 +112,17 @@
       text-align: center;
       border-radius: 50%;
       background: #fff;
-      transition: transform 0.3s;
+      transition: transform 0.3s, content 0.3s;
     }
-    /* When checked, we show a sun icon on the other side */
+    /* If NOT checked => dark mode => show moon on the left */
+    .toggle-switch input:not(:checked) + label {
+      background: linear-gradient(90deg, #333, #444);
+    }
+    .toggle-switch input:not(:checked) + label:after {
+      content: "🌙";
+      transform: translateX(0);
+    }
+    /* If checked => light mode => show sun on the right */
     .toggle-switch input:checked + label {
       background: linear-gradient(90deg, #ffb347, #ffcc33);
     }
@@ -363,6 +371,10 @@
   <header>
     <!-- Animated Dark Mode Toggle Switch -->
     <div class="toggle-switch">
+      <!-- 
+        If unchecked => dark mode => show moon 
+        If checked => light mode => show sun 
+      -->
       <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
     </div>
@@ -410,100 +422,99 @@
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    // Data structure for links
+    // Master list from snippet. 
     // Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
     let linksData = [
-		{ name: "Adur & Worthing",          url: "https://adur-worthing.casemanageronline.com",          category: "hosted" },
-		{ name: "Allerdale",                url: "https://allerdale.casemanageronline.com",               category: "hosted" },
-		{ name: "Angus",                    url: "https://angus.casemanageronline.com",                   category: "hosted" },
-		{ name: "Arun",                     url: "https://arun.casemanageronline.com",                    category: "hosted" },
-		{ name: "Barnsley",                 url: "https://barnsley.casemanageronline.com",                category: "hosted" },
-		{ name: "Barnsley Education",       url: "https://barnsleyeducation.casemanageronline.com",       category: "hosted" },
-		{ name: "Brentwood",                url: "https://brentwood.casemanageronline.com",               category: "hosted" },
-		{ name: "Bristol",                  url: "https://bristol.casemanageronline.com",                 category: "hosted" },
-		{ name: "Buckinghamshire",          url: "https://buckinghamshire.casemanageronline.com",         category: "hosted" },
-		{ name: "Buckinghamshire FPNS",     url: "https://buckinghamshirefpns.casemanageronline.com",     category: "hosted" },
-		{ name: "Cardiff",                  url: "https://cardiff.casemanageronline.com",                 category: "hosted" },
-		{ name: "Chichester",               url: "https://chichester.casemanageronline.com",              category: "hosted" },
-		{ name: "Chipside Bathnes",         url: "https://chipside.bathnes.gov.uk/v5",                    category: "hosted" },
-		{ name: "Chipside Carlisle",        url: "https://chipside.carlisle.gov.uk",                      category: "hosted" },
-		{ name: "Copeland",                 url: "https://copeland.casemanageronline.com",                category: "hosted" },
-		{ name: "Cotswold",                 url: "https://cotswold.casemanageronline.com",                category: "hosted" },
-		{ name: "Crawley",                  url: "https://crawley.casemanageronline.com",                 category: "hosted" },
-		{ name: "Cumberland",               url: "https://cumberland.casemanageronline.com",              category: "hosted" },
-		{ name: "Cumbria CC",               url: "https://cumbriacc.casemanageronline.com",               category: "hosted" },
-		{ name: "Devon CC",                 url: "https://devoncc.casemanageronline.com",                 category: "hosted" },
-		{ name: "Doncaster",                url: "https://doncaster.casemanageronline.com",               category: "hosted" },
-		{ name: "Doncaster Education",      url: "https://doncastereducation.casemanageronline.com",      category: "hosted" },
-		{ name: "DVLA",                     url: "https://dvla.casemanageronline.com",                    category: "hosted" },
-		{ name: "East Cambs",               url: "https://eastcambs.casemanageronline.com",               category: "hosted" },
-		{ name: "Eastleigh",                url: "https://eastleigh.casemanageronline.com",               category: "hosted" },
-		{ name: "East Lindsey",             url: "https://eastlindsey.casemanageronline.com",             category: "hosted" },
-		{ name: "East Riding",              url: "https://eastriding.casemanageronline.com",              category: "hosted" },
-		{ name: "Elmbridge",                url: "https://elmbridge.casemanageronline.com",               category: "hosted" },
-		{ name: "Epping",                   url: "https://epping.casemanageronline.com",                  category: "hosted" },
-		{ name: "Essex Country Parks",      url: "https://essexcountryparks.casemanageronline.com/v5",    category: "hosted" },
-		{ name: "Gloucester",               url: "https://gloucester.casemanageronline.com",              category: "hosted" },
-		{ name: "Gloucestershire",          url: "https://gloucestershire.casemanageronline.com",         category: "hosted" },
-		{ name: "Gosport",                  url: "https://gosport.casemanageronline.com",                 category: "hosted" },
-		{ name: "Guildford",                url: "https://guildford.casemanageronline.com",               category: "hosted" },
-		{ name: "Halstead",                 url: "https://halstead.casemanageronline.com",                category: "hosted" },
-		{ name: "Hampshire",                url: "https://hampshire.casemanageronline.com",               category: "hosted" },
-		{ name: "Hart",                     url: "https://hart.casemanageronline.com",                    category: "hosted" },
-		{ name: "Havering",                 url: "https://havering.casemanageronline.com",                category: "hosted" },
-		{ name: "Henley",                   url: "https://henley.casemanageronline.com",                  category: "hosted" },
-		{ name: "Herefordshire",            url: "https://herefordshire.casemanageronline.com",           category: "hosted" },
-		{ name: "Horsham",                  url: "https://horsham.casemanageronline.com",                 category: "hosted" },
-		{ name: "Hull",                     url: "https://hull.casemanageronline.com",                    category: "hosted" },
-		{ name: "Hull Education",           url: "https://hulleducation.casemanageronline.com",           category: "hosted" },
-		{ name: "IOW",                      url: "https://iow.casemanageronline.com",                     category: "hosted" },
-		{ name: "Ipswich",                  url: "https://ipswich.casemanageronline.com",                 category: "hosted" },
-		{ name: "Lancashire",              url: "https://lancashire.casemanageronline.com",               category: "hosted" },
-		{ name: "Leicester City",          url: "https://leicestercity.casemanageronline.com",            category: "hosted" },
-		{ name: "Leicestershire",          url: "https://leicestershire.casemanageronline.com",           category: "hosted" },
-		{ name: "Maldon",                  url: "https://maldon.casemanageronline.com",                   category: "hosted" },
-		{ name: "Mid Sussex",              url: "https://midsussex.casemanageronline.com",                category: "hosted" },
-		{ name: "NEPP",                    url: "https://nepp.casemanageronline.com",                     category: "hosted" },
-		{ name: "New Forest",              url: "https://newforest.casemanageronline.com",                category: "hosted" },
-		{ name: "Newham",                  url: "https://newham.casemanageronline.com",                   category: "hosted" },
-		{ name: "NHS Airedale",            url: "https://nhsairedale.casemanageronline.com",              category: "hosted" },
-		{ name: "North Lincolnshire",      url: "https://northlincolnshire.casemanageronline.com",        category: "hosted" },
-		{ name: "North Somerset",          url: "https://northsomerset.casemanageronline.com",            category: "hosted" },
-		{ name: "North Warks",             url: "https://northwarks.casemanageronline.com",               category: "hosted" },
-		{ name: "Nottinghamshire",         url: "https://nottinghamshire.casemanageronline.com",          category: "hosted" },
-		{ name: "NPT",                     url: "https://npt.casemanageronline.com",                      category: "hosted" },
-		{ name: "Nuneaton",                url: "https://nuneaton.casemanageronline.com",                category: "hosted" },
-		{ name: "RBWM",                    url: "https://rbwm.casemanageronline.com/v5",                  category: "hosted" },
-		{ name: "Rugby",                   url: "https://rugby.casemanageronline.com",                   category: "hosted" },
-		{ name: "Salford",                 url: "https://salford.casemanageronline.com",                 category: "hosted" },
-		{ name: "Sandwell",                url: "https://sandwell.casemanageronline.com",                category: "hosted" },
-		{ name: "SEPP",                    url: "https://sepp.casemanageronline.com",                   category: "hosted" },
-		{ name: "Sevenoaks",               url: "https://sevenoaks.casemanageronline.com",              category: "hosted" },
-		{ name: "Shropshire",              url: "https://shropshire.casemanageronline.com/v5",          category: "hosted" },
-		{ name: "Solihull",                url: "https://solihull.casemanageronline.com",               category: "hosted" },
-		{ name: "Somerset Unitary",        url: "https://somersetunitary.casemanageronline.com",        category: "hosted" },
-		{ name: "South and Vale",          url: "https://southandvale.casemanageronline.com",           category: "hosted" },
-		{ name: "South Glos",              url: "https://southglos.casemanageronline.com",              category: "hosted" },
-		{ name: "Stockport",               url: "https://stockport.casemanageronline.com",              category: "hosted" },
-		{ name: "Stockton",                url: "https://stockton.casemanageronline.com",               category: "hosted" },
-		{ name: "Stroud",                  url: "https://stroud.casemanageronline.com",                category: "hosted" },
-		{ name: "Surrey Heath",            url: "https://surreyheath.casemanageronline.com",           category: "hosted" },
-		{ name: "Swansea",                 url: "https://swansea.casemanageronline.com",               category: "hosted" },
-		{ name: "Swindon",                 url: "https://swindon.casemanageronline.com",               category: "hosted" },
-		{ name: "Telford",                 url: "https://telford.casemanageronline.com",               category: "hosted" },
-		{ name: "Tendring",                url: "https://tendring.casemanageronline.com",              category: "hosted" },
-		{ name: "Tewkesbury",              url: "https://tewkesbury.casemanageronline.com",            category: "hosted" },
-		{ name: "Translink",               url: "https://translink.casemanageronline.com",             category: "hosted" },
-		{ name: "VoWH",                    url: "https://vowh.casemanageronline.com",                  category: "hosted" },
-		{ name: "Wakefield",               url: "https://wakefield.casemanageronline.com",             category: "hosted" },
-		{ name: "Warwick",                 url: "https://warwick.casemanageronline.com",               category: "hosted" },
-		{ name: "Waverley",                url: "https://waverley.casemanageronline.com",              category: "hosted" },
-		{ name: "Westmorland",             url: "https://westmorland.casemanageronline.com",           category: "hosted" },
-		{ name: "Wiltshire",               url: "https://wiltshire.casemanageronline.com",             category: "hosted" },
-		{ name: "Woking",                  url: "https://woking.casemanageronline.com",                category: "hosted" },
-		{ name: "Wolverhampton",           url: "https://wolverhampton.casemanageronline.com",         category: "hosted" },
-		{ name: "Wychavon",                url: "https://wychavon.casemanageronline.com",              category: "hosted" }
-      // Add more as needed...
+      { name: "Adur & Worthing",          url: "https://adur-worthing.casemanageronline.com",          category: "hosted" },
+      { name: "Allerdale",                url: "https://allerdale.casemanageronline.com",               category: "hosted" },
+      { name: "Angus",                    url: "https://angus.casemanageronline.com",                   category: "hosted" },
+      { name: "Arun",                     url: "https://arun.casemanageronline.com",                    category: "hosted" },
+      { name: "Barnsley",                 url: "https://barnsley.casemanageronline.com",                category: "hosted" },
+      { name: "Barnsley Education",       url: "https://barnsleyeducation.casemanageronline.com",       category: "hosted" },
+      { name: "Brentwood",                url: "https://brentwood.casemanageronline.com",               category: "hosted" },
+      { name: "Bristol",                  url: "https://bristol.casemanageronline.com",                 category: "hosted" },
+      { name: "Buckinghamshire",          url: "https://buckinghamshire.casemanageronline.com",         category: "hosted" },
+      { name: "Buckinghamshire FPNS",     url: "https://buckinghamshirefpns.casemanageronline.com",     category: "hosted" },
+      { name: "Cardiff",                  url: "https://cardiff.casemanageronline.com",                 category: "hosted" },
+      { name: "Chichester",               url: "https://chichester.casemanageronline.com",              category: "hosted" },
+      { name: "Chipside Bathnes",         url: "https://chipside.bathnes.gov.uk/v5",                    category: "hosted" },
+      { name: "Chipside Carlisle",        url: "https://chipside.carlisle.gov.uk",                      category: "hosted" },
+      { name: "Copeland",                 url: "https://copeland.casemanageronline.com",                category: "hosted" },
+      { name: "Cotswold",                 url: "https://cotswold.casemanageronline.com",                category: "hosted" },
+      { name: "Crawley",                  url: "https://crawley.casemanageronline.com",                 category: "hosted" },
+      { name: "Cumberland",               url: "https://cumberland.casemanageronline.com",              category: "hosted" },
+      { name: "Cumbria CC",               url: "https://cumbriacc.casemanageronline.com",               category: "hosted" },
+      { name: "Devon CC",                 url: "https://devoncc.casemanageronline.com",                 category: "hosted" },
+      { name: "Doncaster",                url: "https://doncaster.casemanageronline.com",               category: "hosted" },
+      { name: "Doncaster Education",      url: "https://doncastereducation.casemanageronline.com",      category: "hosted" },
+      { name: "DVLA",                     url: "https://dvla.casemanageronline.com",                    category: "hosted" },
+      { name: "East Cambs",               url: "https://eastcambs.casemanageronline.com",               category: "hosted" },
+      { name: "Eastleigh",                url: "https://eastleigh.casemanageronline.com",               category: "hosted" },
+      { name: "East Lindsey",             url: "https://eastlindsey.casemanageronline.com",             category: "hosted" },
+      { name: "East Riding",              url: "https://eastriding.casemanageronline.com",              category: "hosted" },
+      { name: "Elmbridge",                url: "https://elmbridge.casemanageronline.com",               category: "hosted" },
+      { name: "Epping",                   url: "https://epping.casemanageronline.com",                  category: "hosted" },
+      { name: "Essex Country Parks",      url: "https://essexcountryparks.casemanageronline.com/v5",    category: "hosted" },
+      { name: "Gloucester",               url: "https://gloucester.casemanageronline.com",              category: "hosted" },
+      { name: "Gloucestershire",          url: "https://gloucestershire.casemanageronline.com",         category: "hosted" },
+      { name: "Gosport",                  url: "https://gosport.casemanageronline.com",                 category: "hosted" },
+      { name: "Guildford",                url: "https://guildford.casemanageronline.com",               category: "hosted" },
+      { name: "Halstead",                 url: "https://halstead.casemanageronline.com",                category: "hosted" },
+      { name: "Hampshire",                url: "https://hampshire.casemanageronline.com",               category: "hosted" },
+      { name: "Hart",                     url: "https://hart.casemanageronline.com",                    category: "hosted" },
+      { name: "Havering",                 url: "https://havering.casemanageronline.com",                category: "hosted" },
+      { name: "Henley",                   url: "https://henley.casemanageronline.com",                  category: "hosted" },
+      { name: "Herefordshire",            url: "https://herefordshire.casemanageronline.com",           category: "hosted" },
+      { name: "Horsham",                  url: "https://horsham.casemanageronline.com",                 category: "hosted" },
+      { name: "Hull",                     url: "https://hull.casemanageronline.com",                    category: "hosted" },
+      { name: "Hull Education",           url: "https://hulleducation.casemanageronline.com",           category: "hosted" },
+      { name: "IOW",                      url: "https://iow.casemanageronline.com",                     category: "hosted" },
+      { name: "Ipswich",                  url: "https://ipswich.casemanageronline.com",                 category: "hosted" },
+      { name: "Lancashire",               url: "https://lancashire.casemanageronline.com",              category: "hosted" },
+      { name: "Leicester City",           url: "https://leicestercity.casemanageronline.com",           category: "hosted" },
+      { name: "Leicestershire",           url: "https://leicestershire.casemanageronline.com",          category: "hosted" },
+      { name: "Maldon",                   url: "https://maldon.casemanageronline.com",                  category: "hosted" },
+      { name: "Mid Sussex",               url: "https://midsussex.casemanageronline.com",               category: "hosted" },
+      { name: "NEPP",                     url: "https://nepp.casemanageronline.com",                    category: "hosted" },
+      { name: "New Forest",               url: "https://newforest.casemanageronline.com",               category: "hosted" },
+      { name: "Newham",                   url: "https://newham.casemanageronline.com",                  category: "hosted" },
+      { name: "NHS Airedale",             url: "https://nhsairedale.casemanageronline.com",             category: "hosted" },
+      { name: "North Lincolnshire",       url: "https://northlincolnshire.casemanageronline.com",       category: "hosted" },
+      { name: "North Somerset",           url: "https://northsomerset.casemanageronline.com",           category: "hosted" },
+      { name: "North Warks",              url: "https://northwarks.casemanageronline.com",              category: "hosted" },
+      { name: "Nottinghamshire",          url: "https://nottinghamshire.casemanageronline.com",         category: "hosted" },
+      { name: "NPT",                      url: "https://npt.casemanageronline.com",                     category: "hosted" },
+      { name: "Nuneaton",                 url: "https://nuneaton.casemanageronline.com",                category: "hosted" },
+      { name: "RBWM",                     url: "https://rbwm.casemanageronline.com/v5",                 category: "hosted" },
+      { name: "Rugby",                    url: "https://rugby.casemanageronline.com",                   category: "hosted" },
+      { name: "Salford",                  url: "https://salford.casemanageronline.com",                 category: "hosted" },
+      { name: "Sandwell",                 url: "https://sandwell.casemanageronline.com",                category: "hosted" },
+      { name: "SEPP",                     url: "https://sepp.casemanageronline.com",                    category: "hosted" },
+      { name: "Sevenoaks",                url: "https://sevenoaks.casemanageronline.com",               category: "hosted" },
+      { name: "Shropshire",               url: "https://shropshire.casemanageronline.com/v5",           category: "hosted" },
+      { name: "Solihull",                 url: "https://solihull.casemanageronline.com",                category: "hosted" },
+      { name: "Somerset Unitary",         url: "https://somersetunitary.casemanageronline.com",         category: "hosted" },
+      { name: "South and Vale",           url: "https://southandvale.casemanageronline.com",            category: "hosted" },
+      { name: "South Glos",               url: "https://southglos.casemanageronline.com",               category: "hosted" },
+      { name: "Stockport",                url: "https://stockport.casemanageronline.com",               category: "hosted" },
+      { name: "Stockton",                 url: "https://stockton.casemanageronline.com",                category: "hosted" },
+      { name: "Stroud",                   url: "https://stroud.casemanageronline.com",                  category: "hosted" },
+      { name: "Surrey Heath",             url: "https://surreyheath.casemanageronline.com",             category: "hosted" },
+      { name: "Swansea",                  url: "https://swansea.casemanageronline.com",                 category: "hosted" },
+      { name: "Swindon",                  url: "https://swindon.casemanageronline.com",                 category: "hosted" },
+      { name: "Telford",                  url: "https://telford.casemanageronline.com",                 category: "hosted" },
+      { name: "Tendring",                 url: "https://tendring.casemanageronline.com",                category: "hosted" },
+      { name: "Tewkesbury",               url: "https://tewkesbury.casemanageronline.com",              category: "hosted" },
+      { name: "Translink",                url: "https://translink.casemanageronline.com",               category: "hosted" },
+      { name: "VoWH",                     url: "https://vowh.casemanageronline.com",                    category: "hosted" },
+      { name: "Wakefield",                url: "https://wakefield.casemanageronline.com",               category: "hosted" },
+      { name: "Warwick",                  url: "https://warwick.casemanageronline.com",                 category: "hosted" },
+      { name: "Waverley",                 url: "https://waverley.casemanageronline.com",                category: "hosted" },
+      { name: "Westmorland",              url: "https://westmorland.casemanageronline.com",             category: "hosted" },
+      { name: "Wiltshire",                url: "https://wiltshire.casemanageronline.com",               category: "hosted" },
+      { name: "Woking",                   url: "https://woking.casemanageronline.com",                  category: "hosted" },
+      { name: "Wolverhampton",            url: "https://wolverhampton.casemanageronline.com",           category: "hosted" },
+      { name: "Wychavon",                 url: "https://wychavon.casemanageronline.com",                category: "hosted" }
     ];
     
     // Filter state: "all", "hosted", or "nonhosted"
@@ -512,55 +523,83 @@
     // Track if we're editing an existing link
     let editIndex = null;
 
-    // On page load, set theme from storage, load links from storage, and render links
+    // On page load, set theme from storage, merge localStorage links, and render links
     window.addEventListener("DOMContentLoaded", () => {
-      // Theme persistence
-      const storedTheme = localStorage.getItem("theme");
-      const themeToggle = document.getElementById("themeToggle");
-      if (storedTheme) {
-        document.documentElement.setAttribute("data-theme", storedTheme);
-        themeToggle.checked = (storedTheme === "dark");
-      } else {
-        // Default to dark mode
-        document.documentElement.setAttribute("data-theme", "dark");
-        themeToggle.checked = true;
-        localStorage.setItem("theme", "dark");
-      }
-      
-      // Load any saved links from storage
-      loadLinksFromStorage();
-      
-      // Focus the search bar
+      setupTheme();
+      mergeLinksFromStorage();  // or overrideLocalStorage() if you prefer
       document.getElementById("searchBox").focus();
-      
-      // Render the list
       renderLinks();
     });
 
     /* ---------------------------------
-       THEME TOGGLE
+       THEME SETUP
        --------------------------------- */
+    function setupTheme() {
+      const storedTheme = localStorage.getItem("theme");
+      const themeToggle = document.getElementById("themeToggle");
+      if (storedTheme) {
+        // If 'light' => toggle is checked
+        // If 'dark' => toggle is unchecked
+        if (storedTheme === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+          themeToggle.checked = true;
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark");
+          themeToggle.checked = false;
+        }
+      } else {
+        // Default to dark mode
+        document.documentElement.setAttribute("data-theme", "dark");
+        themeToggle.checked = false;
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
     function toggleTheme() {
       const htmlEl = document.documentElement;
       const toggle = document.getElementById("themeToggle");
       if (toggle.checked) {
-        htmlEl.setAttribute("data-theme", "dark");
-        localStorage.setItem("theme", "dark");
-      } else {
+        // Light mode
         htmlEl.setAttribute("data-theme", "light");
         localStorage.setItem("theme", "light");
+      } else {
+        // Dark mode
+        htmlEl.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
       }
     }
 
     /* ---------------------------------
-       LOAD/SAVE LINKS FROM LOCALSTORAGE
+       MERGE OR OVERRIDE LINKS
        --------------------------------- */
-    function loadLinksFromStorage() {
+    function mergeLinksFromStorage() {
       const storedLinks = localStorage.getItem("linksData");
       if (storedLinks) {
-        linksData = JSON.parse(storedLinks);
+        const storedArr = JSON.parse(storedLinks);
+        // Merge the snippet links into any previously saved data
+        // so all your new links appear plus any the user had added
+        for (const snippetLink of linksData) {
+          // If snippet link not found in stored array, add it
+          if (!storedArr.some(x => x.name === snippetLink.name && x.url === snippetLink.url)) {
+            storedArr.push(snippetLink);
+          }
+        }
+        linksData = storedArr;
+        saveLinksToStorage();
+      } else {
+        // No stored data, so just save the snippet array
+        saveLinksToStorage();
       }
     }
+
+    // If you ever want to COMPLETELY overwrite localStorage with snippet data:
+    /*
+    function overrideLocalStorage() {
+      localStorage.removeItem("linksData");
+      saveLinksToStorage(); 
+    }
+    */
+
     function saveLinksToStorage() {
       localStorage.setItem("linksData", JSON.stringify(linksData));
     }
