@@ -7,16 +7,12 @@
   <title>My Quick Links - Protected</title>
   <!-- Preconnect for font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     /* -------------------------------
        GLOBAL & THEME SETTINGS
        ------------------------------- */
     :root {
-      /* Light mode variables */
       --bg-color: #f0f2f5;
       --text-color: #333;
       --gradient-bg: linear-gradient(135deg, #b3d9ff 0%, #e6f2ff 100%);
@@ -46,7 +42,7 @@
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
     }
-
+    
     /* -------------------------------
        LOGIN CONTAINER
        ------------------------------- */
@@ -92,15 +88,15 @@
       margin-top: 10px;
       display: none;
     }
-
+    
     /* -------------------------------
        PROTECTED CONTENT
        ------------------------------- */
     #mainContent {
       display: none; 
-      margin-top: 100px; /* so content isn't jammed under the header */
+      margin-top: 100px; /* ensures content is not squashed under the fixed header */
     }
-
+    
     /* -------------------------------
        HEADER
        ------------------------------- */
@@ -117,7 +113,6 @@
       box-shadow: 0 2px 5px var(--shadow-color);
       gap: 10px;
     }
-    /* Dark Mode Toggle (unchecked = dark, checked = light) */
     .toggle-switch {
       position: relative;
       width: 60px;
@@ -161,8 +156,7 @@
       content: "☀";
       transform: translate(28px, -50%);
     }
-
-    /* Category, Manage, Clear, Default Buttons */
+    
     .categories {
       display: flex;
       gap: 10px;
@@ -186,7 +180,6 @@
       filter: brightness(0.9);
     }
     
-    /* Search Bar */
     #searchBox {
       flex: 1;
       padding: 10px;
@@ -199,13 +192,12 @@
     #searchBox::placeholder {
       color: #aaa;
     }
-
-    /* Header layout order */
+    
+    /* Ensure header items use natural block layout */
     header > * { order: 1; }
     #searchBox { order: 2; }
     .default-btn { order: 3; }
     
-    /* Logout Button */
     .logout-btn {
       background-color: #c85a5a;
       border: none;
@@ -223,13 +215,17 @@
     /* -------------------------------
        MANAGE PANEL & LINKS LIST
        ------------------------------- */
+    /* Remove any flex centering from the inner container */
+    #mainContent > main {
+      display: block;
+    }
     #managePanel, #linksList {
       width: 100%;
       max-width: 600px;
       margin: 0 auto 20px;
     }
     #managePanel {
-      display: none; /* Hidden by default */
+      display: none; /* hidden by default */
       background-color: var(--card-bg);
       padding: 15px;
       border-radius: 8px;
@@ -272,21 +268,15 @@
       cursor: pointer;
       transition: filter 0.3s;
     }
-    .edit-btn {
-      background-color: #6d6f6f;
-    }
-    .remove-btn {
-      background-color: #c85a5a;
-    }
+    .edit-btn { background-color: #6d6f6f; }
+    .remove-btn { background-color: #c85a5a; }
     .edit-btn:hover,
-    .remove-btn:hover {
-      filter: brightness(0.9);
-    }
+    .remove-btn:hover { filter: brightness(0.9); }
     body.manage-mode .edit-btn,
     body.manage-mode .remove-btn {
       display: inline-block;
     }
-
+    
     /* Copy Button */
     .copy-btn {
       margin-left: 10px;
@@ -301,7 +291,7 @@
     .copy-btn:hover {
       filter: brightness(0.85);
     }
-
+    
     /* -------------------------------
        CARD STYLES
        ------------------------------- */
@@ -349,7 +339,7 @@
       margin-right: 1.2em;
       color: var(--text-color);
     }
-
+    
     /* -------------------------------
        BACK TO TOP BUTTON
        ------------------------------- */
@@ -394,7 +384,6 @@
   <!-- LOGIN CONTAINER -->
   <div id="loginContainer">
     <h2>Please Enter Password</h2>
-    <!-- Press Enter to submit -->
     <form onsubmit="submitLogin(event)">
       <input type="password" id="loginPassword" placeholder="Password" />
       <button type="submit">Login</button>
@@ -404,7 +393,6 @@
   
   <!-- PROTECTED CONTENT -->
   <div id="mainContent">
-    <!-- Header -->
     <header>
       <!-- Dark Mode Toggle -->
       <div class="toggle-switch">
@@ -422,16 +410,12 @@
       </nav>
       
       <!-- Search Bar -->
-      <input
-        type="text"
-        id="searchBox"
-        placeholder="Search links..."
-      />
+      <input type="text" id="searchBox" placeholder="Search links..." />
       
-      <!-- Default Button (placed on the right) -->
+      <!-- Default Button (on the right) -->
       <button class="default-btn" onclick="revertToDefault()">Default</button>
       
-      <!-- Logout Button (optional) -->
+      <!-- Logout Button -->
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
     
@@ -531,7 +515,7 @@
       }
     }
 
-    // Snippet array of 90 sites (please paste all 90 exact lines)
+    // Full snippet array of 90 sites (paste your full array here)
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -637,9 +621,7 @@
       const searchEl = document.getElementById("searchBox");
       searchEl.focus();
       searchEl.addEventListener("focus", () => searchEl.select());
-      // Add input listener to filter as user types
       searchEl.addEventListener("input", searchLinks);
-      // Press Enter in search => if exactly one result is visible, open it
       searchEl.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           const visibleCards = [...document.querySelectorAll(".link-item")].filter(
@@ -653,12 +635,11 @@
           }
         }
       });
-
       renderLinks();
     });
 
     /* ---------------------------------
-       MERGE / SAVE / REVERT
+       MERGE / SAVE / REVERT FUNCTIONS
        --------------------------------- */
     function mergeLinksFromStorage() {
       const storedLinks = localStorage.getItem("linksData");
@@ -692,7 +673,7 @@
     }
 
     /* ---------------------------------
-       RENDER & FILTER
+       RENDER & FILTER FUNCTIONS
        --------------------------------- */
     function renderLinks() {
       const linksList = document.getElementById("linksList");
@@ -703,38 +684,29 @@
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
-        
-        // Link anchor
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.target = "_blank";
         anchor.textContent = link.name;
-
-        // Copy button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
-
-        // Edit & Remove
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
-
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
-
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
         card.appendChild(removeBtn);
-        
         linksList.appendChild(card);
       });
-      searchLinks(); // reapply any search filter
+      searchLinks(); // reapply search filter if any
     }
     function clickCategory(cat) {
       document.getElementById("searchBox").value = "";
@@ -759,7 +731,7 @@
     }
 
     /* ---------------------------------
-       MANAGE PANEL
+       MANAGE PANEL FUNCTIONS
        --------------------------------- */
     function toggleManagePanel() {
       const panel = document.getElementById("managePanel");
@@ -773,7 +745,7 @@
     }
 
     /* ---------------------------------
-       ADD/EDIT LINKS
+       ADD/EDIT LINKS FUNCTIONS
        --------------------------------- */
     function submitForm(event) {
       event.preventDefault();
@@ -781,7 +753,6 @@
       const url = document.getElementById("linkURL").value.trim();
       const category = document.getElementById("linkCategory").value;
       if (!name || !url || !category) return;
-      
       if (editIndex !== null) {
         linksData[editIndex].name = name;
         linksData[editIndex].url = url;
@@ -791,7 +762,6 @@
       } else {
         linksData.push({ name, url, category });
       }
-      
       saveLinksToStorage();
       event.target.reset();
       renderLinks();
@@ -807,7 +777,7 @@
     }
 
     /* ---------------------------------
-       REMOVE LINK
+       REMOVE LINK FUNCTION
        --------------------------------- */
     function removeLink(index) {
       linksData.splice(index, 1);
@@ -816,7 +786,7 @@
     }
 
     /* ---------------------------------
-       COPY URL
+       COPY URL FUNCTION
        --------------------------------- */
     function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
@@ -829,7 +799,7 @@
     }
 
     /* ---------------------------------
-       BACK TO TOP
+       BACK TO TOP FUNCTION
        --------------------------------- */
     function topFunction() {
       window.scrollTo({ top: 0, behavior: "smooth" });
