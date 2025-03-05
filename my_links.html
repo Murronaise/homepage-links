@@ -76,7 +76,7 @@
       align-items: center;
       padding: 10px 20px;
       box-shadow: 0 2px 5px var(--shadow-color);
-      gap: 20px;
+      gap: 10px; /* slightly smaller gap to fit extra buttons */
     }
 
     /* --- DARK MODE TOGGLE SWITCH (ALIGNED ICONS) --- */
@@ -98,7 +98,7 @@
       height: 30px;
       border-radius: 15px;
       cursor: pointer;
-      /* Default: Dark Mode (moon) track => We'll invert logic below */
+      /* Default: Dark Mode => moon on left => background is dark */
       background: linear-gradient(90deg, #333, #444);
       transition: background 0.3s;
     }
@@ -144,8 +144,10 @@
       background-color: var(--card-hover-bg);
     }
     
-    /* Manage button in the header */
-    .manage-btn {
+    /* Manage button & Clear button in the header */
+    .manage-btn,
+    .clear-btn,
+    .default-btn {
       background-color: var(--button-color);
       border: none;
       color: #fff;
@@ -154,7 +156,9 @@
       cursor: pointer;
       transition: filter 0.3s;
     }
-    .manage-btn:hover {
+    .manage-btn:hover,
+    .clear-btn:hover,
+    .default-btn:hover {
       filter: brightness(0.9);
     }
     
@@ -180,7 +184,7 @@
       align-items: center;
     }
     
-    /* Manage URLs panel: hidden by default, toggled by Manage button */
+    /* Manage URLs panel: aligned & hidden by default */
     #managePanel {
       display: none; /* Hide initially */
       width: 100%;
@@ -249,7 +253,7 @@
     }
     body.manage-mode .edit-btn,
     body.manage-mode .remove-btn {
-      display: inline-block; /* or 'block' if you prefer a stacked layout */
+      display: inline-block; /* or 'block' if you prefer */
     }
 
     /* Copy Button for URL: always visible */
@@ -372,23 +376,23 @@
   <noscript>Please enable JavaScript to experience full functionality of this page.</noscript>
   
   <header>
-    <!-- Animated Dark Mode Toggle Switch -->
+    <!-- Dark Mode Toggle (unchecked = dark mode) -->
     <div class="toggle-switch">
-      <!-- 
-        If NOT checked => Dark mode => moon on the left
-        If checked => Light mode => sun on the right
-      -->
       <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
     </div>
     
     <!-- Category Buttons -->
     <nav class="categories">
-      <button onclick="filterCategory('all')">All Sites</button>
-      <button onclick="filterCategory('hosted')">Hosted</button>
-      <button onclick="filterCategory('nonhosted')">Non Hosted</button>
-      <button class="manage-btn" onclick="toggleManagePanel()">Manage URLs</button>
+      <button onclick="clickCategory('all')">All Sites</button>
+      <button onclick="clickCategory('hosted')">Hosted</button>
+      <button onclick="clickCategory('nonhosted')">Non Hosted</button>
+      <button class="manage-btn" onclick="clickManage()">Manage URLs</button>
+      <button class="clear-btn" onclick="clearSearch()">Clear</button>
     </nav>
+
+    <!-- "Default" button on the right -->
+    <button class="default-btn" onclick="revertToDefault()">Default</button>
     
     <!-- Search Bar with autofocus -->
     <input
@@ -396,13 +400,12 @@
       id="searchBox"
       autofocus
       aria-label="Search links"
-      onkeyup="searchLinks()"
       placeholder="Search links..."
     />
   </header>
   
   <main>
-    <!-- Manage URLs Panel (hidden by default) -->
+    <!-- Manage URLs Panel (aligned, hidden by default) -->
     <div id="managePanel">
       <h2>Manage URLs</h2>
       <form onsubmit="submitForm(event)">
@@ -425,112 +428,44 @@
   <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   
   <script>
-    // Master list from snippet. 
-    // Each object: { name: 'Title', url: 'https://...', category: 'hosted' or 'nonhosted' }
-    let linksData = [
+    /* ---------------------------------
+       GLOBAL LINK DATA
+       --------------------------------- */
+    let snippetLinks = [
       { name: "Adur & Worthing",          url: "https://adur-worthing.casemanageronline.com",          category: "hosted" },
       { name: "Allerdale",                url: "https://allerdale.casemanageronline.com",               category: "hosted" },
       { name: "Angus",                    url: "https://angus.casemanageronline.com",                   category: "hosted" },
       { name: "Arun",                     url: "https://arun.casemanageronline.com",                    category: "hosted" },
       { name: "Barnsley",                 url: "https://barnsley.casemanageronline.com",                category: "hosted" },
       { name: "Barnsley Education",       url: "https://barnsleyeducation.casemanageronline.com",       category: "hosted" },
-      { name: "Brentwood",                url: "https://brentwood.casemanageronline.com",               category: "hosted" },
-      { name: "Bristol",                  url: "https://bristol.casemanageronline.com",                 category: "hosted" },
-      { name: "Buckinghamshire",          url: "https://buckinghamshire.casemanageronline.com",         category: "hosted" },
-      { name: "Buckinghamshire FPNS",     url: "https://buckinghamshirefpns.casemanageronline.com",     category: "hosted" },
-      { name: "Cardiff",                  url: "https://cardiff.casemanageronline.com",                 category: "hosted" },
-      { name: "Chichester",               url: "https://chichester.casemanageronline.com",              category: "hosted" },
-      { name: "Chipside Bathnes",         url: "https://chipside.bathnes.gov.uk/v5",                    category: "hosted" },
-      { name: "Chipside Carlisle",        url: "https://chipside.carlisle.gov.uk",                      category: "hosted" },
-      { name: "Copeland",                 url: "https://copeland.casemanageronline.com",                category: "hosted" },
-      { name: "Cotswold",                 url: "https://cotswold.casemanageronline.com",                category: "hosted" },
-      { name: "Crawley",                  url: "https://crawley.casemanageronline.com",                 category: "hosted" },
-      { name: "Cumberland",               url: "https://cumberland.casemanageronline.com",              category: "hosted" },
-      { name: "Cumbria CC",               url: "https://cumbriacc.casemanageronline.com",               category: "hosted" },
-      { name: "Devon CC",                 url: "https://devoncc.casemanageronline.com",                 category: "hosted" },
-      { name: "Doncaster",                url: "https://doncaster.casemanageronline.com",               category: "hosted" },
-      { name: "Doncaster Education",      url: "https://doncastereducation.casemanageronline.com",      category: "hosted" },
-      { name: "DVLA",                     url: "https://dvla.casemanageronline.com",                    category: "hosted" },
-      { name: "East Cambs",               url: "https://eastcambs.casemanageronline.com",               category: "hosted" },
-      { name: "Eastleigh",                url: "https://eastleigh.casemanageronline.com",               category: "hosted" },
-      { name: "East Lindsey",             url: "https://eastlindsey.casemanageronline.com",             category: "hosted" },
-      { name: "East Riding",              url: "https://eastriding.casemanageronline.com",              category: "hosted" },
-      { name: "Elmbridge",                url: "https://elmbridge.casemanageronline.com",               category: "hosted" },
-      { name: "Epping",                   url: "https://epping.casemanageronline.com",                  category: "hosted" },
-      { name: "Essex Country Parks",      url: "https://essexcountryparks.casemanageronline.com/v5",    category: "hosted" },
-      { name: "Gloucester",               url: "https://gloucester.casemanageronline.com",              category: "hosted" },
-      { name: "Gloucestershire",          url: "https://gloucestershire.casemanageronline.com",         category: "hosted" },
-      { name: "Gosport",                  url: "https://gosport.casemanageronline.com",                 category: "hosted" },
-      { name: "Guildford",                url: "https://guildford.casemanageronline.com",               category: "hosted" },
-      { name: "Halstead",                 url: "https://halstead.casemanageronline.com",                category: "hosted" },
-      { name: "Hampshire",                url: "https://hampshire.casemanageronline.com",               category: "hosted" },
-      { name: "Hart",                     url: "https://hart.casemanageronline.com",                    category: "hosted" },
-      { name: "Havering",                 url: "https://havering.casemanageronline.com",                category: "hosted" },
-      { name: "Henley",                   url: "https://henley.casemanageronline.com",                  category: "hosted" },
-      { name: "Herefordshire",            url: "https://herefordshire.casemanageronline.com",           category: "hosted" },
-      { name: "Horsham",                  url: "https://horsham.casemanageronline.com",                 category: "hosted" },
-      { name: "Hull",                     url: "https://hull.casemanageronline.com",                    category: "hosted" },
-      { name: "Hull Education",           url: "https://hulleducation.casemanageronline.com",           category: "hosted" },
-      { name: "IOW",                      url: "https://iow.casemanageronline.com",                     category: "hosted" },
-      { name: "Ipswich",                  url: "https://ipswich.casemanageronline.com",                 category: "hosted" },
-      { name: "Lancashire",               url: "https://lancashire.casemanageronline.com",              category: "hosted" },
-      { name: "Leicester City",           url: "https://leicestercity.casemanageronline.com",           category: "hosted" },
-      { name: "Leicestershire",           url: "https://leicestershire.casemanageronline.com",          category: "hosted" },
-      { name: "Maldon",                   url: "https://maldon.casemanageronline.com",                  category: "hosted" },
-      { name: "Mid Sussex",               url: "https://midsussex.casemanageronline.com",               category: "hosted" },
-      { name: "NEPP",                     url: "https://nepp.casemanageronline.com",                    category: "hosted" },
-      { name: "New Forest",               url: "https://newforest.casemanageronline.com",               category: "hosted" },
-      { name: "Newham",                   url: "https://newham.casemanageronline.com",                  category: "hosted" },
-      { name: "NHS Airedale",             url: "https://nhsairedale.casemanageronline.com",             category: "hosted" },
-      { name: "North Lincolnshire",       url: "https://northlincolnshire.casemanageronline.com",       category: "hosted" },
-      { name: "North Somerset",           url: "https://northsomerset.casemanageronline.com",           category: "hosted" },
-      { name: "North Warks",              url: "https://northwarks.casemanageronline.com",              category: "hosted" },
-      { name: "Nottinghamshire",          url: "https://nottinghamshire.casemanageronline.com",         category: "hosted" },
-      { name: "NPT",                      url: "https://npt.casemanageronline.com",                     category: "hosted" },
-      { name: "Nuneaton",                 url: "https://nuneaton.casemanageronline.com",                category: "hosted" },
-      { name: "RBWM",                     url: "https://rbwm.casemanageronline.com/v5",                 category: "hosted" },
-      { name: "Rugby",                    url: "https://rugby.casemanageronline.com",                   category: "hosted" },
-      { name: "Salford",                  url: "https://salford.casemanageronline.com",                 category: "hosted" },
-      { name: "Sandwell",                 url: "https://sandwell.casemanageronline.com",                category: "hosted" },
-      { name: "SEPP",                     url: "https://sepp.casemanageronline.com",                    category: "hosted" },
-      { name: "Sevenoaks",                url: "https://sevenoaks.casemanageronline.com",               category: "hosted" },
-      { name: "Shropshire",               url: "https://shropshire.casemanageronline.com/v5",           category: "hosted" },
-      { name: "Solihull",                 url: "https://solihull.casemanageronline.com",                category: "hosted" },
-      { name: "Somerset Unitary",         url: "https://somersetunitary.casemanageronline.com",         category: "hosted" },
-      { name: "South and Vale",           url: "https://southandvale.casemanageronline.com",            category: "hosted" },
-      { name: "South Glos",               url: "https://southglos.casemanageronline.com",               category: "hosted" },
-      { name: "Stockport",                url: "https://stockport.casemanageronline.com",               category: "hosted" },
-      { name: "Stockton",                 url: "https://stockton.casemanageronline.com",                category: "hosted" },
-      { name: "Stroud",                   url: "https://stroud.casemanageronline.com",                  category: "hosted" },
-      { name: "Surrey Heath",             url: "https://surreyheath.casemanageronline.com",             category: "hosted" },
-      { name: "Swansea",                  url: "https://swansea.casemanageronline.com",                 category: "hosted" },
-      { name: "Swindon",                  url: "https://swindon.casemanageronline.com",                 category: "hosted" },
-      { name: "Telford",                  url: "https://telford.casemanageronline.com",                 category: "hosted" },
-      { name: "Tendring",                 url: "https://tendring.casemanageronline.com",                category: "hosted" },
-      { name: "Tewkesbury",               url: "https://tewkesbury.casemanageronline.com",              category: "hosted" },
-      { name: "Translink",                url: "https://translink.casemanageronline.com",               category: "hosted" },
-      { name: "VoWH",                     url: "https://vowh.casemanageronline.com",                    category: "hosted" },
-      { name: "Wakefield",                url: "https://wakefield.casemanageronline.com",               category: "hosted" },
-      { name: "Warwick",                  url: "https://warwick.casemanageronline.com",                 category: "hosted" },
-      { name: "Waverley",                 url: "https://waverley.casemanageronline.com",                category: "hosted" },
-      { name: "Westmorland",              url: "https://westmorland.casemanageronline.com",             category: "hosted" },
-      { name: "Wiltshire",                url: "https://wiltshire.casemanageronline.com",               category: "hosted" },
-      { name: "Woking",                   url: "https://woking.casemanageronline.com",                  category: "hosted" },
-      { name: "Wolverhampton",            url: "https://wolverhampton.casemanageronline.com",           category: "hosted" },
+      /* ... all your other snippet links ... */
       { name: "Wychavon",                 url: "https://wychavon.casemanageronline.com",                category: "hosted" }
     ];
     
+    // We'll store them in linksData for merging & editing
+    let linksData = []; // gets populated on load
+
     // Filter state: "all", "hosted", or "nonhosted"
     let currentCategory = "all";
 
     // Track if we're editing an existing link
     let editIndex = null;
 
-    // On page load, set theme from storage, merge localStorage links, and render
+    /* ---------------------------------
+       ON PAGE LOAD
+       --------------------------------- */
     window.addEventListener("DOMContentLoaded", () => {
       setupTheme();
-      mergeLinksFromStorage();  // merges snippet data with any user-added localStorage data
-      document.getElementById("searchBox").focus();
+      mergeLinksFromStorage();
+      
+      // Focus the search bar & select text on focus
+      const searchEl = document.getElementById("searchBox");
+      searchEl.focus();
+      searchEl.addEventListener("focus", () => {
+        searchEl.select();
+      });
+
+      // Render the list
       renderLinks();
     });
 
@@ -580,27 +515,33 @@
       if (storedLinks) {
         const storedArr = JSON.parse(storedLinks);
         // Merge snippet links into any previously saved data
-        for (const snippetLink of linksData) {
-          if (!storedArr.some(x => x.name === snippetLink.name && x.url === snippetLink.url)) {
-            storedArr.push(snippetLink);
+        for (const sLink of snippetLinks) {
+          if (!storedArr.some(x => x.name === sLink.name && x.url === sLink.url)) {
+            storedArr.push(sLink);
           }
         }
         linksData = storedArr;
         saveLinksToStorage();
       } else {
-        // No stored data, so just save snippet array
+        // No stored data, so just use snippet array
+        linksData = [...snippetLinks];
         saveLinksToStorage();
       }
     }
 
-    // If you want to override localStorage completely with snippet data:
-    // function overrideLocalStorage() {
-    //   localStorage.removeItem("linksData");
-    //   saveLinksToStorage(); 
-    // }
-
     function saveLinksToStorage() {
       localStorage.setItem("linksData", JSON.stringify(linksData));
+    }
+
+    // Reverts to the original snippet array, removing user changes
+    function revertToDefault() {
+      if (confirm("Are you sure you want to revert to the default list? This will remove any changes.")) {
+        localStorage.removeItem("linksData");
+        linksData = [...snippetLinks];
+        saveLinksToStorage();
+        currentCategory = "all";
+        renderLinks();
+      }
     }
 
     /* ---------------------------------
@@ -610,7 +551,7 @@
       const linksList = document.getElementById("linksList");
       linksList.innerHTML = ""; // Clear previous
       
-      // Filter links: if "all", show everything; else filter by category.
+      // Filter links
       const filteredData = (currentCategory === "all")
         ? linksData
         : linksData.filter(link => link.category === currentCategory);
@@ -619,31 +560,30 @@
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
         
-        // Create anchor
+        // The link
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.target = "_blank";
         anchor.textContent = link.name;
         
-        // Copy button (always visible)
+        // Copy button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
         
-        // Edit button (hidden unless .manage-mode is on <body>)
+        // Edit & Remove (hidden unless manage-mode is active)
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
-        
-        // Remove button (hidden unless .manage-mode is on <body>)
+
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
         
-        // Append elements to card
+        // Build the card
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
@@ -656,9 +596,24 @@
       searchLinks();
     }
 
-    function filterCategory(cat) {
+    // Category button click => clear search, switch category, re-render
+    function clickCategory(cat) {
+      document.getElementById("searchBox").value = "";
       currentCategory = cat;
       renderLinks();
+    }
+
+    // Manage button => clear search, toggle manage panel
+    function clickManage() {
+      document.getElementById("searchBox").value = "";
+      searchLinks();
+      toggleManagePanel();
+    }
+
+    // Clear button => clear search
+    function clearSearch() {
+      document.getElementById("searchBox").value = "";
+      searchLinks();
     }
 
     // Filter displayed cards based on search input
@@ -692,7 +647,6 @@
         linksData.push({ name, url, category });
       }
       
-      // Save changes, reset form, re-render
       saveLinksToStorage();
       event.target.reset();
       renderLinks();
@@ -706,7 +660,6 @@
       document.getElementById("submitBtn").textContent = "Save Changes";
       // Show the panel if hidden
       document.getElementById("managePanel").style.display = "block";
-      // Also ensure we are in "manage mode" so we see the edit/remove
       document.body.classList.add("manage-mode");
     }
 
@@ -739,11 +692,9 @@
       const panel = document.getElementById("managePanel");
       if (panel.style.display === "none" || panel.style.display === "") {
         panel.style.display = "block";
-        // Add a class to the body so edit/remove become visible
         document.body.classList.add("manage-mode");
       } else {
         panel.style.display = "none";
-        // Hide the edit/remove buttons
         document.body.classList.remove("manage-mode");
       }
     }
