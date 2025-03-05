@@ -193,7 +193,7 @@
       color: #aaa;
     }
     
-    /* Ensure header items use natural block layout */
+    /* Header order: search bar in the middle, default on the right */
     header > * { order: 1; }
     #searchBox { order: 2; }
     .default-btn { order: 3; }
@@ -215,10 +215,8 @@
     /* -------------------------------
        MANAGE PANEL & LINKS LIST
        ------------------------------- */
-    /* Remove any flex centering from the inner container */
-    #mainContent > main {
-      display: block;
-    }
+    /* The links list and manage panel containers are set to the same max-width and centered.
+       To align the Manage URLs panel with the site cards, an extra left margin is added. */
     #managePanel, #linksList {
       width: 100%;
       max-width: 600px;
@@ -230,6 +228,7 @@
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 10px var(--shadow-color);
+      margin-left: 20px; /* Shift over to the right to align with site cards */
     }
     #managePanel form {
       display: flex;
@@ -288,9 +287,7 @@
       cursor: pointer;
       transition: background-color 0.3s, filter 0.3s;
     }
-    .copy-btn:hover {
-      filter: brightness(0.85);
-    }
+    .copy-btn:hover { filter: brightness(0.85); }
     
     /* -------------------------------
        CARD STYLES
@@ -412,7 +409,7 @@
       <!-- Search Bar -->
       <input type="text" id="searchBox" placeholder="Search links..." />
       
-      <!-- Default Button (on the right) -->
+      <!-- Default Button -->
       <button class="default-btn" onclick="revertToDefault()">Default</button>
       
       <!-- Logout Button -->
@@ -515,7 +512,7 @@
       }
     }
 
-    // Full snippet array of 90 sites (paste your full array here)
+    // Snippet array of 90 sites – please replace this with your full array exactly as provided.
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -630,7 +627,7 @@
           if (visibleCards.length === 1) {
             const singleLink = visibleCards[0].querySelector("a");
             if (singleLink) {
-              window.open(singleLink.href, "_blank");
+              window.location.href = singleLink.href;
             }
           }
         }
@@ -684,29 +681,37 @@
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
+        
+        // Link anchor (opens in current tab)
         const anchor = document.createElement("a");
         anchor.href = link.url;
-        anchor.target = "_blank";
         anchor.textContent = link.name;
+        
+        // Copy button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
+        
+        // Edit & Remove
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
+        
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
+        
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
         card.appendChild(removeBtn);
+        
         linksList.appendChild(card);
       });
-      searchLinks(); // reapply search filter if any
+      searchLinks();
     }
     function clickCategory(cat) {
       document.getElementById("searchBox").value = "";
