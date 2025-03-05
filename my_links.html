@@ -98,14 +98,15 @@
       height: 30px;
       border-radius: 15px;
       cursor: pointer;
-      background: linear-gradient(90deg, #ffb347, #ffcc33); /* default: light mode track */
+      /* Default: Dark Mode (moon) track => We'll invert logic below */
+      background: linear-gradient(90deg, #333, #444);
       transition: background 0.3s;
     }
     .toggle-switch label::after {
-      content: "☀"; /* default: sun icon */
+      content: "🌙"; /* default: moon icon for dark mode */
       position: absolute;
       top: 50%;
-      left: 28px;
+      left: 4px;
       transform: translateY(-50%);
       width: 24px;
       height: 24px;
@@ -116,15 +117,7 @@
       text-align: center;
       transition: transform 0.3s, content 0.3s;
     }
-    /* If NOT checked => Dark mode => show moon on left */
-    .toggle-switch input:not(:checked) + label {
-      background: linear-gradient(90deg, #333, #444);
-    }
-    .toggle-switch input:not(:checked) + label::after {
-      content: "🌙";
-      transform: translate(4px, -50%);
-    }
-    /* If checked => Light mode => show sun on right */
+    /* If checked => Light mode => show sun on the right */
     .toggle-switch input:checked + label {
       background: linear-gradient(90deg, #ffb347, #ffcc33);
     }
@@ -238,11 +231,40 @@
     .edit-btn,
     .remove-btn {
       display: none;
+      margin-left: 10px;
+      padding: 5px 8px;
+      border: none;
+      border-radius: 4px;
+      background-color: #c85a5a; /* red for remove */
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.3s;
     }
-
+    .edit-btn {
+      background-color: #6d6f6f; /* grey for edit */
+    }
+    .edit-btn:hover,
+    .remove-btn:hover {
+      filter: brightness(0.9);
+    }
     body.manage-mode .edit-btn,
     body.manage-mode .remove-btn {
-      display: inline-block; /* or 'block' if you prefer */
+      display: inline-block; /* or 'block' if you prefer a stacked layout */
+    }
+
+    /* Copy Button for URL: always visible */
+    .copy-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--button-color);
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s, filter 0.3s;
+    }
+    .copy-btn:hover {
+      filter: brightness(0.85);
     }
 
     /* -------------------------------
@@ -301,21 +323,6 @@
       color: var(--text-color);
     }
     
-    /* Copy Button for URL: always visible */
-    .copy-btn {
-      margin-left: 10px;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--button-color);
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s, filter 0.3s;
-    }
-    .copy-btn:hover {
-      filter: brightness(0.85);
-    }
-    
     /* -------------------------------
        BACK TO TOP BUTTON
        ------------------------------- */
@@ -368,8 +375,8 @@
     <!-- Animated Dark Mode Toggle Switch -->
     <div class="toggle-switch">
       <!-- 
-        If unchecked => dark mode => show moon 
-        If checked => light mode => show sun 
+        If NOT checked => Dark mode => moon on the left
+        If checked => Light mode => sun on the right
       -->
       <input type="checkbox" id="themeToggle" onclick="toggleTheme()" />
       <label for="themeToggle" aria-label="Toggle dark mode"></label>
@@ -534,8 +541,8 @@
       const storedTheme = localStorage.getItem("theme");
       const themeToggle = document.getElementById("themeToggle");
       if (storedTheme) {
-        // If 'light' => toggle is checked
-        // If 'dark' => toggle is unchecked
+        // If 'light' => toggle is checked => sun
+        // If 'dark' => toggle is unchecked => moon
         if (storedTheme === "light") {
           document.documentElement.setAttribute("data-theme", "light");
           themeToggle.checked = true;
@@ -618,19 +625,19 @@
         anchor.target = "_blank";
         anchor.textContent = link.name;
         
-        // Copy button
+        // Copy button (always visible)
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
         
-        // Edit button (hidden by default; only shows in .manage-mode)
+        // Edit button (hidden unless .manage-mode is on <body>)
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
         
-        // Remove button (hidden by default; only shows in .manage-mode)
+        // Remove button (hidden unless .manage-mode is on <body>)
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
