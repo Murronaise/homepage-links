@@ -163,8 +163,7 @@
     }
     .categories button,
     .manage-btn,
-    .clear-btn,
-    .default-btn {
+    .clear-btn {
       background-color: var(--button-color);
       border: none;
       color: #fff;
@@ -175,8 +174,7 @@
     }
     .categories button:hover,
     .manage-btn:hover,
-    .clear-btn:hover,
-    .default-btn:hover {
+    .clear-btn:hover {
       filter: brightness(0.9);
     }
     
@@ -193,10 +191,28 @@
       color: #aaa;
     }
     
-    /* Header order: search bar in the middle, default on the right */
+    /* Header item order */
     header > * { order: 1; }
     #searchBox { order: 2; }
-    .default-btn { order: 3; }
+    
+    /* Default Reset Buttons Container */
+    .default-reset-buttons {
+      display: flex;
+      gap: 5px;
+      order: 3;
+    }
+    .default-reset-buttons button {
+      background-color: var(--button-color);
+      border: none;
+      color: #fff;
+      padding: 5px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: filter 0.3s;
+    }
+    .default-reset-buttons button:hover {
+      filter: brightness(0.9);
+    }
     
     .logout-btn {
       background-color: #c85a5a;
@@ -217,9 +233,9 @@
        ------------------------------- */
     #managePanel {
       position: fixed;
-      top: 120px;       /* below header */
-      left: 20px;       /* fixed left offset */
-      width: 300px;     /* portrait width */
+      top: 120px;
+      left: 20px;
+      width: 300px;
       max-height: 70vh;
       overflow-y: auto;
       background-color: var(--card-bg);
@@ -381,7 +397,7 @@
       transition: background-color 0.3s;
     }
     .copy-btn:hover {
-      background-color: #4a6d8c; /* a slightly darker shade for hover */
+      background-color: #4a6d8c;
     }
   </style>
 </head>
@@ -417,8 +433,12 @@
       <!-- Search Bar -->
       <input type="text" id="searchBox" placeholder="Search links..." />
       
-      <!-- Default Button -->
-      <button class="default-btn" onclick="defaultReset()">Default</button>
+      <!-- Default Reset Buttons -->
+      <div class="default-reset-buttons">
+        <button onclick="defaultResetAll()">Reset All Sites</button>
+        <button onclick="defaultResetHosted()">Reset Hosted</button>
+        <button onclick="defaultResetNonHosted()">Reset Non Hosted</button>
+      </div>
       
       <!-- Logout Button -->
       <button class="logout-btn" onclick="logout()">Logout</button>
@@ -451,7 +471,7 @@
     // Shared password
     const sharedPassword = "Chip751DE";
 
-    // Login functions
+    // LOGIN FUNCTIONS
     function submitLogin(event) {
       event.preventDefault();
       login();
@@ -487,8 +507,8 @@
       searchEl.focus();
       searchEl.select();
     }
-
-    // Theme functions
+    
+    // THEME FUNCTIONS
     function setupTheme() {
       const storedTheme = localStorage.getItem("theme");
       const themeToggle = document.getElementById("themeToggle");
@@ -517,8 +537,8 @@
         localStorage.setItem("theme", "dark");
       }
     }
-
-    // Full snippet array of 90 sites – please ensure these are exactly as provided.
+    
+    // FULL SNIPPET ARRAY OF 90 SITES (exactly as provided)
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -614,7 +634,7 @@
     ];
     
     let linksData = [];
-    let currentCategory = "all";
+    let currentCategory = "all"; // default is All Sites
     let editIndex = null;
     
     window.addEventListener("DOMContentLoaded", () => {
@@ -665,6 +685,7 @@
       localStorage.setItem("linksData", JSON.stringify(linksData));
     }
     function revertToDefault() {
+      // Fallback function if needed
       document.getElementById("searchBox").value = "";
       searchLinks();
       if (confirm("Are you sure you want to revert to the default 90 sites? This will remove any changes.")) {
@@ -677,27 +698,27 @@
     }
     
     /* ---------------------------------
-       DEFAULT RESET FUNCTION
+       DEFAULT RESET BUTTON FUNCTIONS
        --------------------------------- */
-    function defaultReset() {
-      const choice = prompt("Reset default to: type 'hosted', 'nonhosted', or 'both'");
-      if(choice === null) return;
-      // Reset the stored links to the full snippet
+    function defaultResetAll() {
       localStorage.removeItem("linksData");
       linksData = [...snippetLinks];
       saveLinksToStorage();
-    
-      const lowerChoice = choice.trim().toLowerCase();
-      if(lowerChoice === "hosted") {
-        currentCategory = "hosted";
-      } else if(lowerChoice === "nonhosted") {
-        currentCategory = "nonhosted";
-      } else if(lowerChoice === "both") {
-        currentCategory = "all";
-      } else {
-        alert("Invalid choice. Defaulting to both.");
-        currentCategory = "all";
-      }
+      currentCategory = "all";
+      renderLinks();
+    }
+    function defaultResetHosted() {
+      localStorage.removeItem("linksData");
+      linksData = [...snippetLinks];
+      saveLinksToStorage();
+      currentCategory = "hosted";
+      renderLinks();
+    }
+    function defaultResetNonHosted() {
+      localStorage.removeItem("linksData");
+      linksData = [...snippetLinks];
+      saveLinksToStorage();
+      currentCategory = "nonhosted";
       renderLinks();
     }
     
@@ -719,7 +740,7 @@
         anchor.href = link.url;
         anchor.textContent = link.name;
     
-        // Copy Button (modern style)
+        // Copy Button (modern style; remains unchanged)
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
@@ -742,7 +763,7 @@
         card.appendChild(removeBtn);
         linksList.appendChild(card);
       });
-      searchLinks(); // reapply search filter
+      searchLinks();
     }
     function clickCategory(cat) {
       document.getElementById("searchBox").value = "";
@@ -789,7 +810,6 @@
       const url = document.getElementById("linkURL").value.trim();
       const category = document.getElementById("linkCategory").value;
       if (!name || !url || !category) return;
-    
       if (editIndex !== null) {
         linksData[editIndex].name = name;
         linksData[editIndex].url = url;
