@@ -21,6 +21,8 @@
       --button-color: #6a90ab;
       --search-bg: #fff;
       --shadow-color: rgba(0, 0, 0, 0.15);
+      /* We'll use a CSS variable for hover scale */
+      --hover-scale: 1.2;
     }
     [data-theme="dark"] {
       --bg-color: #111111;
@@ -41,6 +43,18 @@
       background: var(--gradient-bg);
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
+    }
+    /* Disable animation if needed */
+    body.no-animation .card,
+    body.no-animation .card:hover {
+      transition: none;
+      transform: none;
+      box-shadow: none;
+    }
+    /* Always show edit/remove if setting enabled */
+    body.always-show-edit .edit-btn,
+    body.always-show-edit .remove-btn {
+      display: inline-block !important;
     }
     
     /* -------------------------------
@@ -94,7 +108,7 @@
        ------------------------------- */
     #mainContent {
       display: none;
-      margin-top: 100px; /* ensures content isn't squashed under the fixed header */
+      margin-top: 100px; /* ensures content isn't squashed under the header */
     }
     
     /* -------------------------------
@@ -118,6 +132,7 @@
       width: 60px;
       height: 30px;
       flex-shrink: 0;
+      order: 1;
     }
     .toggle-switch input {
       opacity: 0;
@@ -126,7 +141,8 @@
     }
     .toggle-switch label {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 60px;
       height: 30px;
       border-radius: 15px;
@@ -160,6 +176,7 @@
     .categories {
       display: flex;
       gap: 10px;
+      order: 2;
     }
     .categories button,
     .manage-btn,
@@ -186,20 +203,16 @@
       background-color: var(--search-bg);
       color: var(--text-color);
       caret-color: var(--text-color);
+      order: 3;
     }
     #searchBox::placeholder {
       color: #aaa;
     }
     
-    /* Header order */
-    header > * { order: 1; }
-    #searchBox { order: 2; }
-    
-    /* Default Reset Buttons Container */
     .default-reset-buttons {
       display: flex;
       gap: 5px;
-      order: 3;
+      order: 4;
     }
     .default-reset-buttons button {
       background-color: var(--button-color);
@@ -214,6 +227,20 @@
       filter: brightness(0.9);
     }
     
+    .settings-btn {
+      background-color: var(--button-color);
+      border: none;
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: filter 0.3s;
+      order: 5;
+    }
+    .settings-btn:hover {
+      filter: brightness(0.9);
+    }
+    
     .logout-btn {
       background-color: #c85a5a;
       border: none;
@@ -222,7 +249,7 @@
       border-radius: 5px;
       cursor: pointer;
       transition: filter 0.3s;
-      order: 4;
+      order: 6;
     }
     .logout-btn:hover {
       filter: brightness(0.9);
@@ -271,7 +298,34 @@
       filter: brightness(0.9);
     }
     
-    /* Hide Edit/Remove by default */
+    /* -------------------------------
+       SETTINGS PANEL (MODAL)
+       ------------------------------- */
+    #settingsPanel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px var(--shadow-color);
+      display: none;
+      z-index: 10000;
+    }
+    #settingsPanel form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #settingsPanel label {
+      display: block;
+    }
+    
+    /* -------------------------------
+       HIDE EDIT/REMOVE BUTTONS BY DEFAULT
+       ------------------------------- */
     .edit-btn,
     .remove-btn {
       display: none;
@@ -307,7 +361,7 @@
       box-shadow: 0 2px 10px var(--shadow-color);
       transition: transform 0.3s, box-shadow 0.3s, background 0.3s, margin 0.3s;
       cursor: pointer;
-      /* Removed animation for instant interactivity */
+      /* No animation delay for instant interactivity */
       opacity: 1;
       display: flex;
       justify-content: space-between;
@@ -318,7 +372,7 @@
     }
     .card:hover {
       margin: 20px 0;
-      transform: scale(1.2);
+      transform: scale(var(--hover-scale, 1.2));
       box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
       background: var(--card-hover-bg);
       z-index: 2;
@@ -440,6 +494,9 @@
         <button onclick="defaultResetNonHosted()">Reset Non Hosted</button>
       </div>
       
+      <!-- Settings Button -->
+      <button class="settings-btn" onclick="toggleSettings()">Settings</button>
+      
       <!-- Logout Button -->
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
@@ -460,6 +517,35 @@
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
     
+    <!-- SETTINGS PANEL (MODAL) -->
+    <div id="settingsPanel">
+      <h2>Settings</h2>
+      <form onsubmit="saveSettings(event)">
+        <div>
+          <p>Default Category:</p>
+          <label><input type="radio" name="defaultCategory" value="all"> All Sites</label>
+          <label><input type="radio" name="defaultCategory" value="hosted"> Hosted</label>
+          <label><input type="radio" name="defaultCategory" value="nonhosted"> Non Hosted</label>
+        </div>
+        <div>
+          <label><input type="checkbox" id="enableAnimation" checked> Enable Card Animation</label>
+        </div>
+        <div>
+          <label><input type="checkbox" id="alwaysShowEdit" checked> Always Show Edit/Remove Buttons</label>
+        </div>
+        <div>
+          <label>Hover Scale Factor: <input type="range" id="hoverScale" min="1" max="1.5" step="0.1" value="1.2"> <span id="hoverScaleDisplay">1.2</span></label>
+        </div>
+        <div>
+          <label>Primary Button Color: <input type="color" id="primaryButtonColor" value="#6a90ab"></label>
+        </div>
+        <div style="margin-top:10px;">
+          <button type="submit">Save Settings</button>
+          <button type="button" onclick="hideSettings()">Cancel</button>
+        </div>
+      </form>
+    </div>
+    
     <!-- SITE CARDS (CENTERED) -->
     <div id="linksList"></div>
     
@@ -471,7 +557,9 @@
     // Shared password
     const sharedPassword = "Chip751DE";
     
-    // LOGIN FUNCTIONS
+    /* -------------------------------
+       LOGIN FUNCTIONS
+       ------------------------------- */
     function submitLogin(event) {
       event.preventDefault();
       login();
@@ -508,7 +596,9 @@
       searchEl.select();
     }
     
-    // THEME FUNCTIONS
+    /* -------------------------------
+       THEME FUNCTIONS
+       ------------------------------- */
     function setupTheme() {
       const storedTheme = localStorage.getItem("theme");
       const themeToggle = document.getElementById("themeToggle");
@@ -538,7 +628,9 @@
       }
     }
     
-    // SNIPPET ARRAY OF 90 SITES (exactly as provided)
+    /* -------------------------------
+       SNIPPET ARRAY OF 90 SITES (FULL LIST)
+       ------------------------------- */
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -634,37 +726,88 @@
     ];
     
     let linksData = [];
-    let currentCategory = "all"; // default on load is All Sites
+    let currentCategory = "all"; // Default on load is All Sites
     let editIndex = null;
     
-    window.addEventListener("DOMContentLoaded", () => {
-      checkLogin();
-      setupTheme();
-      mergeLinksFromStorage();
+    // Load settings from localStorage
+    function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem("siteSettings")) || {
+        defaultCategory: "all",
+        enableAnimation: true,
+        alwaysShowEdit: false,
+        hoverScale: 1.2,
+        primaryButtonColor: "#6a90ab"
+      };
+      document.querySelector('input[name="defaultCategory"][value="'+settings.defaultCategory+'"]').checked = true;
+      document.getElementById("enableAnimation").checked = settings.enableAnimation;
+      document.getElementById("alwaysShowEdit").checked = settings.alwaysShowEdit;
+      document.getElementById("hoverScale").value = settings.hoverScale;
+      document.getElementById("hoverScaleDisplay").innerText = settings.hoverScale;
+      document.getElementById("primaryButtonColor").value = settings.primaryButtonColor;
+      
+      currentCategory = settings.defaultCategory;
+      if (!settings.enableAnimation) {
+        document.body.classList.add("no-animation");
+      } else {
+        document.body.classList.remove("no-animation");
+      }
+      if (settings.alwaysShowEdit) {
+        document.body.classList.add("always-show-edit");
+      } else {
+        document.body.classList.remove("always-show-edit");
+      }
+      document.documentElement.style.setProperty('--hover-scale', settings.hoverScale);
+      document.documentElement.style.setProperty('--button-color', settings.primaryButtonColor);
+    }
     
-      const searchEl = document.getElementById("searchBox");
-      searchEl.focus();
-      searchEl.addEventListener("focus", () => searchEl.select());
-      searchEl.addEventListener("input", searchLinks);
-      searchEl.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          const visibleCards = [...document.querySelectorAll(".link-item")].filter(
-            card => card.style.display !== "none"
-          );
-          if (visibleCards.length === 1) {
-            const singleLink = visibleCards[0].querySelector("a");
-            if (singleLink) {
-              window.location.href = singleLink.href;
-            }
-          }
-        }
-      });
+    // Save settings from modal
+    function saveSettings(event) {
+      event.preventDefault();
+      const defaultCategory = document.querySelector('input[name="defaultCategory"]:checked').value;
+      const enableAnimation = document.getElementById("enableAnimation").checked;
+      const alwaysShowEdit = document.getElementById("alwaysShowEdit").checked;
+      const hoverScale = document.getElementById("hoverScale").value;
+      const primaryButtonColor = document.getElementById("primaryButtonColor").value;
+      const settings = { defaultCategory, enableAnimation, alwaysShowEdit, hoverScale, primaryButtonColor };
+      localStorage.setItem("siteSettings", JSON.stringify(settings));
+      currentCategory = defaultCategory;
       renderLinks();
+      if(!enableAnimation) {
+        document.body.classList.add("no-animation");
+      } else {
+        document.body.classList.remove("no-animation");
+      }
+      if(alwaysShowEdit) {
+        document.body.classList.add("always-show-edit");
+      } else {
+        document.body.classList.remove("always-show-edit");
+      }
+      document.documentElement.style.setProperty('--hover-scale', hoverScale);
+      document.documentElement.style.setProperty('--button-color', primaryButtonColor);
+      hideSettings();
+    }
+    
+    function toggleSettings() {
+      const panel = document.getElementById("settingsPanel");
+      if(panel.style.display === "none" || panel.style.display === "") {
+        loadSettings();
+        panel.style.display = "block";
+      } else {
+        panel.style.display = "none";
+      }
+    }
+    function hideSettings() {
+      document.getElementById("settingsPanel").style.display = "none";
+    }
+    
+    // Update hover scale display as user moves slider
+    document.getElementById("hoverScale")?.addEventListener("input", function() {
+      document.getElementById("hoverScaleDisplay").innerText = this.value;
     });
     
-    /* ---------------------------------
+    /* -------------------------------
        MERGE / SAVE / REVERT FUNCTIONS
-       --------------------------------- */
+       ------------------------------- */
     function mergeLinksFromStorage() {
       const storedLinks = localStorage.getItem("linksData");
       if (storedLinks) {
@@ -696,34 +839,40 @@
       }
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        DEFAULT RESET BUTTON FUNCTIONS
-       --------------------------------- */
+       ------------------------------- */
     function defaultResetAll() {
-      localStorage.removeItem("linksData");
-      linksData = [...snippetLinks];
-      saveLinksToStorage();
-      currentCategory = "all";
-      renderLinks();
+      if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+        localStorage.removeItem("linksData");
+        linksData = [...snippetLinks];
+        saveLinksToStorage();
+        currentCategory = "all";
+        renderLinks();
+      }
     }
     function defaultResetHosted() {
-      localStorage.removeItem("linksData");
-      linksData = [...snippetLinks];
-      saveLinksToStorage();
-      currentCategory = "hosted";
-      renderLinks();
+      if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+        localStorage.removeItem("linksData");
+        linksData = [...snippetLinks];
+        saveLinksToStorage();
+        currentCategory = "hosted";
+        renderLinks();
+      }
     }
     function defaultResetNonHosted() {
-      localStorage.removeItem("linksData");
-      linksData = [...snippetLinks];
-      saveLinksToStorage();
-      currentCategory = "nonhosted";
-      renderLinks();
+      if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+        localStorage.removeItem("linksData");
+        linksData = [...snippetLinks];
+        saveLinksToStorage();
+        currentCategory = "nonhosted";
+        renderLinks();
+      }
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        RENDER & FILTER FUNCTIONS
-       --------------------------------- */
+       ------------------------------- */
     function renderLinks() {
       const linksList = document.getElementById("linksList");
       linksList.innerHTML = "";
@@ -733,21 +882,29 @@
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
+    
+        // Anchor (opens in current tab)
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.textContent = link.name;
+    
+        // Copy Button
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
+    
+        // Edit & Remove Buttons
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
+    
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
+    
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
@@ -778,9 +935,9 @@
       });
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        MANAGE PANEL FUNCTIONS
-       --------------------------------- */
+       ------------------------------- */
     function toggleManagePanel() {
       const panel = document.getElementById("managePanel");
       if (panel.style.display === "none" || panel.style.display === "") {
@@ -792,9 +949,9 @@
       }
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        ADD/EDIT LINKS FUNCTIONS
-       --------------------------------- */
+       ------------------------------- */
     function submitForm(event) {
       event.preventDefault();
       const name = document.getElementById("linkName").value.trim();
@@ -824,18 +981,18 @@
       document.body.classList.add("manage-mode");
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        REMOVE LINK FUNCTION
-       --------------------------------- */
+       ------------------------------- */
     function removeLink(index) {
       linksData.splice(index, 1);
       saveLinksToStorage();
       renderLinks();
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        COPY URL FUNCTION
-       --------------------------------- */
+       ------------------------------- */
     function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
         .then(() => {
@@ -846,9 +1003,9 @@
         .catch(err => console.error("Copy failed: ", err));
     }
     
-    /* ---------------------------------
+    /* -------------------------------
        BACK TO TOP FUNCTION
-       --------------------------------- */
+       ------------------------------- */
     function topFunction() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -859,6 +1016,11 @@
       } else {
         topBtn.style.display = "none";
       }
+    });
+    
+    // Load settings on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSettings();
     });
   </script>
 </body>
