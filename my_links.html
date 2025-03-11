@@ -94,7 +94,7 @@
        ------------------------------- */
     #mainContent {
       display: none;
-      margin-top: 100px; /* ensures content isn't squashed under the header */
+      margin-top: 100px; /* ensures content isn't squashed under the fixed header */
     }
     
     /* -------------------------------
@@ -217,10 +217,10 @@
        ------------------------------- */
     #managePanel {
       position: fixed;
-      top: 120px;        /* below header */
-      left: 20px;        /* some left margin */
-      width: 300px;      /* portrait width */
-      max-height: 70vh;  /* scrollable if content is tall */
+      top: 120px;       /* below header */
+      left: 20px;       /* fixed left offset */
+      width: 300px;     /* portrait width */
+      max-height: 70vh;
       overflow-y: auto;
       background-color: var(--card-bg);
       padding: 15px;
@@ -365,6 +365,24 @@
         transform: translateY(0) rotateX(0);
       }
     }
+    
+    /* -------------------------------
+       MODERN COPY BUTTON STYLE
+       ------------------------------- */
+    .copy-btn {
+      margin-left: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: var(--button-color);
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .copy-btn:hover {
+      background-color: #4a6d8c; /* a slightly darker shade for hover */
+    }
   </style>
 </head>
 <body>
@@ -400,7 +418,7 @@
       <input type="text" id="searchBox" placeholder="Search links..." />
       
       <!-- Default Button -->
-      <button class="default-btn" onclick="revertToDefault()">Default</button>
+      <button class="default-btn" onclick="defaultReset()">Default</button>
       
       <!-- Logout Button -->
       <button class="logout-btn" onclick="logout()">Logout</button>
@@ -500,7 +518,7 @@
       }
     }
 
-    // Full snippet array of 90 sites – paste the full array exactly as provided.
+    // Full snippet array of 90 sites – please ensure these are exactly as provided.
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -594,16 +612,16 @@
       { name: "Wolverhampton", url: "https://wolverhampton.casemanageronline.com", category: "hosted" },
       { name: "Wychavon", url: "https://wychavon.casemanageronline.com", category: "hosted" }
     ];
-
+    
     let linksData = [];
     let currentCategory = "all";
     let editIndex = null;
-
+    
     window.addEventListener("DOMContentLoaded", () => {
       checkLogin();
       setupTheme();
       mergeLinksFromStorage();
-
+    
       const searchEl = document.getElementById("searchBox");
       searchEl.focus();
       searchEl.addEventListener("focus", () => searchEl.select());
@@ -623,7 +641,7 @@
       });
       renderLinks();
     });
-
+    
     /* ---------------------------------
        MERGE / SAVE / REVERT FUNCTIONS
        --------------------------------- */
@@ -657,7 +675,32 @@
         renderLinks();
       }
     }
-
+    
+    /* ---------------------------------
+       DEFAULT RESET FUNCTION
+       --------------------------------- */
+    function defaultReset() {
+      const choice = prompt("Reset default to: type 'hosted', 'nonhosted', or 'both'");
+      if(choice === null) return;
+      // Reset the stored links to the full snippet
+      localStorage.removeItem("linksData");
+      linksData = [...snippetLinks];
+      saveLinksToStorage();
+    
+      const lowerChoice = choice.trim().toLowerCase();
+      if(lowerChoice === "hosted") {
+        currentCategory = "hosted";
+      } else if(lowerChoice === "nonhosted") {
+        currentCategory = "nonhosted";
+      } else if(lowerChoice === "both") {
+        currentCategory = "all";
+      } else {
+        alert("Invalid choice. Defaulting to both.");
+        currentCategory = "all";
+      }
+      renderLinks();
+    }
+    
     /* ---------------------------------
        RENDER & FILTER FUNCTIONS
        --------------------------------- */
@@ -670,28 +713,36 @@
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
+    
+        // Anchor (opens in current tab)
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.textContent = link.name;
+    
+        // Copy Button (modern style)
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
+    
+        // Edit & Remove Buttons
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
+    
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
+    
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
         card.appendChild(removeBtn);
         linksList.appendChild(card);
       });
-      searchLinks();
+      searchLinks(); // reapply search filter
     }
     function clickCategory(cat) {
       document.getElementById("searchBox").value = "";
@@ -714,7 +765,7 @@
         card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
       });
     }
-
+    
     /* ---------------------------------
        MANAGE PANEL FUNCTIONS
        --------------------------------- */
@@ -728,7 +779,7 @@
         document.body.classList.remove("manage-mode");
       }
     }
-
+    
     /* ---------------------------------
        ADD/EDIT LINKS FUNCTIONS
        --------------------------------- */
@@ -738,6 +789,7 @@
       const url = document.getElementById("linkURL").value.trim();
       const category = document.getElementById("linkCategory").value;
       if (!name || !url || !category) return;
+    
       if (editIndex !== null) {
         linksData[editIndex].name = name;
         linksData[editIndex].url = url;
@@ -760,7 +812,7 @@
       document.getElementById("managePanel").style.display = "block";
       document.body.classList.add("manage-mode");
     }
-
+    
     /* ---------------------------------
        REMOVE LINK FUNCTION
        --------------------------------- */
@@ -769,7 +821,7 @@
       saveLinksToStorage();
       renderLinks();
     }
-
+    
     /* ---------------------------------
        COPY URL FUNCTION
        --------------------------------- */
@@ -782,7 +834,7 @@
         })
         .catch(err => console.error("Copy failed: ", err));
     }
-
+    
     /* ---------------------------------
        BACK TO TOP FUNCTION
        --------------------------------- */
