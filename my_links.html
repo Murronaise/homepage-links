@@ -191,7 +191,7 @@
       color: #aaa;
     }
     
-    /* Header item order */
+    /* Header order */
     header > * { order: 1; }
     #searchBox { order: 2; }
     
@@ -233,9 +233,9 @@
        ------------------------------- */
     #managePanel {
       position: fixed;
-      top: 120px;
-      left: 20px;
-      width: 300px;
+      top: 120px;       /* below header */
+      left: 20px;       /* fixed left offset */
+      width: 300px;     /* portrait width */
       max-height: 70vh;
       overflow-y: auto;
       background-color: var(--card-bg);
@@ -307,8 +307,8 @@
       box-shadow: 0 2px 10px var(--shadow-color);
       transition: transform 0.3s, box-shadow 0.3s, background 0.3s, margin 0.3s;
       cursor: pointer;
-      opacity: 0;
-      animation: fadeInRotate 0.7s ease-out forwards;
+      /* Removed animation for instant interactivity */
+      opacity: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -383,7 +383,7 @@
     }
     
     /* -------------------------------
-       MODERN COPY BUTTON STYLE
+       MODERN COPY BUTTON STYLE (unchanged)
        ------------------------------- */
     .copy-btn {
       margin-left: 10px;
@@ -470,7 +470,7 @@
   <script>
     // Shared password
     const sharedPassword = "Chip751DE";
-
+    
     // LOGIN FUNCTIONS
     function submitLogin(event) {
       event.preventDefault();
@@ -538,7 +538,7 @@
       }
     }
     
-    // FULL SNIPPET ARRAY OF 90 SITES (exactly as provided)
+    // SNIPPET ARRAY OF 90 SITES (exactly as provided)
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -634,7 +634,7 @@
     ];
     
     let linksData = [];
-    let currentCategory = "all"; // default is All Sites
+    let currentCategory = "all"; // default on load is All Sites
     let editIndex = null;
     
     window.addEventListener("DOMContentLoaded", () => {
@@ -685,7 +685,6 @@
       localStorage.setItem("linksData", JSON.stringify(linksData));
     }
     function revertToDefault() {
-      // Fallback function if needed
       document.getElementById("searchBox").value = "";
       searchLinks();
       if (confirm("Are you sure you want to revert to the default 90 sites? This will remove any changes.")) {
@@ -734,29 +733,21 @@
       filteredData.forEach((link, idx) => {
         const card = document.createElement("div");
         card.classList.add("card", "link-item");
-    
-        // Anchor (opens in current tab)
         const anchor = document.createElement("a");
         anchor.href = link.url;
         anchor.textContent = link.name;
-    
-        // Copy Button (modern style; remains unchanged)
         const copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
         copyBtn.textContent = "Copy";
         copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
-    
-        // Edit & Remove Buttons
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "Edit";
         editBtn.onclick = () => fillFormForEdit(idx);
-    
         const removeBtn = document.createElement("button");
         removeBtn.className = "remove-btn";
         removeBtn.textContent = "X";
         removeBtn.onclick = () => removeLink(idx);
-    
         card.appendChild(anchor);
         card.appendChild(copyBtn);
         card.appendChild(editBtn);
