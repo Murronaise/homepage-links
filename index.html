@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, settings, and persistence" />
   <title>My Quick Links - Protected</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -16,7 +17,7 @@
       <p id="loginError">Incorrect password. Try again!</p>
     </form>
   </div>
-  
+
   <!-- PROTECTED CONTENT -->
   <div id="mainContent">
     <header>
@@ -45,10 +46,8 @@
         <button onclick="defaultResetNonHosted()">Reset Non Hosted</button>
       </div>
       
-      <!-- Settings Button -->
+      <!-- Settings & Logout Buttons -->
       <button class="settings-btn" onclick="toggleSettings()">Settings</button>
-      
-      <!-- Logout Button -->
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
     
@@ -68,7 +67,7 @@
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
     
-    <!-- SETTINGS PANEL -->
+    <!-- SETTINGS PANEL (MODAL) WITH TABS -->
     <div id="settingsPanel">
       <h2>Settings</h2>
       <div class="settings-tabs">
@@ -77,8 +76,7 @@
           <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
           <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
         </div>
-        
-        <!-- GENERAL TAB -->
+        <!-- General Tab -->
         <div id="tab-general" class="tab-content active">
           <h3>General Settings</h3>
           <div>
@@ -94,8 +92,7 @@
             <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
           </div>
         </div>
-        
-        <!-- APPEARANCE TAB -->
+        <!-- Appearance Tab -->
         <div id="tab-appearance" class="tab-content">
           <h3>Appearance Settings</h3>
           <div>
@@ -134,8 +131,7 @@
             <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">Preview</div>
           </div>
         </div>
-        
-        <!-- ADVANCED TAB -->
+        <!-- Advanced Tab -->
         <div id="tab-advanced" class="tab-content">
           <h3>Advanced Settings</h3>
           <div>
@@ -156,14 +152,14 @@
       </div>
     </div>
     
-    <!-- WHERE LINKS WILL SHOW -->
+    <!-- SITE CARDS -->
     <div id="linksList"></div>
     
     <!-- BACK TO TOP BUTTON -->
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
-  
-  <!-- SCRIPTS (IN THIS ORDER) -->
+
+  <!-- Include External JS Files -->
   <script src="data/sites.js"></script>
   <script src="js/main.js"></script>
   <script src="js/settings.js"></script>
