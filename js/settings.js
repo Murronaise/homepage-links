@@ -6,10 +6,16 @@ console.log("settings.js loaded");
 function switchTab(event) {
   const target = event.target.getAttribute("data-target");
   console.log("Switching to tab:", target);
+
+  // Remove 'active' from all tab buttons
   const buttons = document.querySelectorAll(".tab-buttons button");
-  const contents = document.querySelectorAll(".tab-content");
   buttons.forEach(btn => btn.classList.remove("active"));
+
+  // Remove 'active' from all tab contents
+  const contents = document.querySelectorAll(".tab-content");
   contents.forEach(content => content.classList.remove("active"));
+
+  // Mark the clicked button + target tab as active
   event.target.classList.add("active");
   document.getElementById(target).classList.add("active");
 }
@@ -55,13 +61,11 @@ function loadSettings() {
   document.getElementById("presetTheme").value = settings.presetTheme;
   document.getElementById("animationStyle").value = settings.animationStyle;
 
-  // Update the preview box + card to reflect these initial values
   updatePreview();
 
   // Advanced tab
   document.getElementById("customCSS").value = settings.customCSS;
 
-  // Attach live preview listeners
   attachPreviewListeners();
 }
 
@@ -82,22 +86,20 @@ function attachPreviewListeners() {
   watchers.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      // Changing the theme pickers if user picks a new theme
       if (id === "presetTheme") {
+        // When user changes the theme, auto-update color pickers
         el.addEventListener("change", (e) => {
-          // If user picks a new theme, we auto-update color pickers
           updateThemePickers(e.target.value);
           updatePreview();
         });
       }
-      // Otherwise just normal preview updates
       el.addEventListener("input", updatePreview);
       el.addEventListener("change", updatePreview);
     }
   });
 }
 
-/* If user picks a new theme from the dropdown, update the color pickers to that theme's defaults. */
+/* If user picks a new theme from the dropdown, update color pickers to that theme's defaults. */
 function updateThemePickers(theme) {
   console.log("updateThemePickers called with:", theme);
   switch (theme) {
