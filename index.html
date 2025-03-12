@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, settings, and persistence" />
   <title>My Quick Links - Protected</title>
-
-  <!-- We still load style.css, but we won't modify it here. -->
   <link rel="stylesheet" href="css/style.css" />
+  <!-- We add a small inline style for tab-content to fix the 'tabs do nothing' issue -->
+  <style>
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
 </head>
 <body>
   <!-- LOGIN CONTAINER -->
@@ -22,7 +25,7 @@
 
   <!-- PROTECTED CONTENT -->
   <div id="mainContent">
-    <!-- Site Header (fixed) -->
+    <!-- Fixed Header -->
     <header>
       <!-- Dark Mode Toggle -->
       <div class="toggle-switch">
@@ -86,23 +89,22 @@
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
 
-  <!-- FULL-PAGE SETTINGS (EXCLUDING HEADER) -->
-  <div id="settingsPanel"
-       style="
-         position: absolute;
-         top: 70px;     /* just below the header */
-         left: 0; 
-         right: 0; 
-         bottom: 0; 
-         background: var(--card-bg);
-         color: var(--text-color);
-         overflow-y: auto; 
-         padding: 30px; 
-         border-top: 2px solid var(--shadow-color);
-         display: none; /* hidden by default, toggled by main.js */
-         z-index: 10000;
-       ">
-    <h2>Full-Page Settings</h2>
+  <!-- FULL-PAGE SETTINGS (NO GLOW, FILLS ENTIRE SCREEN BELOW HEADER) -->
+  <div id="settingsPanel" style="
+       position: fixed;
+       top: 70px;       /* Just below the header's height */
+       left: 0;
+       right: 0;
+       bottom: 0;
+       background: var(--card-bg);
+       color: var(--text-color);
+       overflow-y: auto;
+       z-index: 9999;
+       display: none;
+       padding: 20px;
+       border: none;
+  ">
+    <h2 style="margin-top:0;">Full-Page Settings</h2>
     <p>This page spans the entire screen below the header, giving you a more detailed editor for your site’s appearance.</p>
 
     <div class="settings-tabs" style="margin-top:20px;">
@@ -113,7 +115,7 @@
       </div>
 
       <!-- General Tab -->
-      <div id="tab-general" class="tab-content active" style="display:block;">
+      <div id="tab-general" class="tab-content active" style="margin-bottom:20px;">
         <h3>General Settings</h3>
         <div>
           <p>Default Category:</p>
@@ -130,7 +132,7 @@
       </div>
 
       <!-- Appearance Tab -->
-      <div id="tab-appearance" class="tab-content" style="display:none;">
+      <div id="tab-appearance" class="tab-content" style="margin-bottom:20px;">
         <h3>Appearance Settings</h3>
 
         <!-- Additional themes -->
@@ -242,7 +244,7 @@
       </div>
 
       <!-- Advanced Tab -->
-      <div id="tab-advanced" class="tab-content" style="display:none;">
+      <div id="tab-advanced" class="tab-content" style="margin-bottom:20px;">
         <h3>Advanced Settings</h3>
         <div>
           <label>Custom CSS:</label>
@@ -257,6 +259,7 @@
       </div>
     </div>
 
+    <!-- Save/Cancel at bottom -->
     <div style="margin-top:20px; text-align:right;">
       <button type="submit" onclick="saveSettings(event)">Save Settings</button>
       <button type="button" onclick="hideSettings()">Cancel</button>
