@@ -1,15 +1,10 @@
 // js/main.js
-
 console.log("main.js loaded");
 
-/* -----------------------------------------------------------
-   SHARED PASSWORD CONFIGURATION
------------------------------------------------------------ */
+/* SHARED PASSWORD CONFIGURATION */
 const sharedPassword = "Chip751DE";
 
-/* -----------------------------------------------------------
-   LOGIN / LOGOUT FUNCTIONS
------------------------------------------------------------ */
+/* LOGIN / LOGOUT */
 function submitLogin(event) {
   event.preventDefault();
   login();
@@ -31,7 +26,7 @@ function login() {
 }
 
 function logout() {
-  console.log("Logout called");
+  console.log("logout called");
   localStorage.removeItem("loggedIn");
   location.reload();
 }
@@ -58,9 +53,7 @@ function focusSearchBar() {
   searchEl.select();
 }
 
-/* -----------------------------------------------------------
-   THEME FUNCTIONS
------------------------------------------------------------ */
+/* THEME FUNCTIONS */
 function setupTheme() {
   console.log("setupTheme called");
   const storedTheme = localStorage.getItem("theme");
@@ -98,9 +91,7 @@ function toggleTheme() {
   }
 }
 
-/* -----------------------------------------------------------
-   RESET BUTTON FUNCTIONS
------------------------------------------------------------ */
+/* RESET BUTTON FUNCTIONS */
 function defaultResetAll() {
   console.log("defaultResetAll called");
   if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
@@ -134,11 +125,9 @@ function defaultResetNonHosted() {
   }
 }
 
-/* -----------------------------------------------------------
-   MERGE / SAVE LINKS
------------------------------------------------------------ */
+/* MERGE / SAVE LINKS */
 let linksData = [];
-let currentCategory = "all"; // Default category on load
+let currentCategory = "all"; // Default category
 let editIndex = null;
 
 function mergeLinksFromStorage() {
@@ -164,9 +153,7 @@ function saveLinksToStorage() {
   localStorage.setItem("linksData", JSON.stringify(linksData));
 }
 
-/* -----------------------------------------------------------
-   RENDER & FILTER LINKS
------------------------------------------------------------ */
+/* RENDER & FILTER LINKS */
 function renderLinks() {
   console.log("renderLinks called, currentCategory:", currentCategory);
   const linksList = document.getElementById("linksList");
@@ -199,11 +186,11 @@ function renderLinks() {
     editBtn.textContent = "Edit";
     editBtn.onclick = () => fillFormForEdit(idx);
 
-    // Remove Button
+    // Remove Button (with custom confirmation)
     const removeBtn = document.createElement("button");
     removeBtn.className = "remove-btn";
     removeBtn.textContent = "X";
-    removeBtn.onclick = () => removeLink(idx);
+    removeBtn.onclick = () => confirmRemoveLink(idx);
 
     // Append to card
     card.appendChild(anchor);
@@ -239,6 +226,13 @@ function clickCategory(cat) {
   renderLinks();
 }
 
+function clearSearch() {
+  console.log("clearSearch called");
+  document.getElementById("searchBox").value = "";
+  searchLinks();
+}
+
+/* MANAGE PANEL (Add/Edit/Remove Links) */
 function clickManage() {
   console.log("clickManage called");
   document.getElementById("searchBox").value = "";
@@ -246,15 +240,6 @@ function clickManage() {
   toggleManagePanel();
 }
 
-function clearSearch() {
-  console.log("clearSearch called");
-  document.getElementById("searchBox").value = "";
-  searchLinks();
-}
-
-/* -----------------------------------------------------------
-   MANAGE PANEL (Add/Edit/Remove Links)
------------------------------------------------------------ */
 function toggleManagePanel() {
   console.log("toggleManagePanel called");
   const panel = document.getElementById("managePanel");
@@ -267,6 +252,17 @@ function toggleManagePanel() {
   }
 }
 
+/* Cancel button in Manage Panel */
+function cancelManage() {
+  console.log("cancelManage called");
+  const panel = document.getElementById("managePanel");
+  panel.style.display = "none";
+  document.body.classList.remove("manage-mode");
+  document.getElementById("submitBtn").textContent = "Add Link";
+  editIndex = null;
+}
+
+/* Submit Form for Manage Panel */
 function submitForm(event) {
   event.preventDefault();
   console.log("submitForm called");
@@ -294,8 +290,10 @@ function submitForm(event) {
   saveLinksToStorage();
   event.target.reset();
   renderLinks();
+  cancelManage();
 }
 
+/* Fill form for Edit */
 function fillFormForEdit(index) {
   console.log("fillFormForEdit called with index:", index);
   editIndex = index;
@@ -307,6 +305,19 @@ function fillFormForEdit(index) {
   document.body.classList.add("manage-mode");
 }
 
+/* Confirm remove link with a custom prompt */
+function confirmRemoveLink(index) {
+  console.log("confirmRemoveLink called with index:", index);
+  const link = linksData[index];
+  const msg = `Are you sure you want to delete "${link.name}"?`;
+  if (confirm(msg)) {
+    removeLink(index);
+  } else {
+    console.log("User canceled removal");
+  }
+}
+
+/* Remove Link */
 function removeLink(index) {
   console.log("removeLink called with index:", index);
   linksData.splice(index, 1);
@@ -314,9 +325,7 @@ function removeLink(index) {
   renderLinks();
 }
 
-/* -----------------------------------------------------------
-   COPY URL
------------------------------------------------------------ */
+/* COPY URL */
 function copyURL(url, btn) {
   console.log("copyURL called with url:", url);
   navigator.clipboard.writeText(url)
@@ -329,15 +338,13 @@ function copyURL(url, btn) {
     .catch(err => console.error("Copy failed: ", err));
 }
 
-/* -----------------------------------------------------------
-   SETTINGS PANEL TOGGLE
------------------------------------------------------------ */
+/* SETTINGS PANEL TOGGLE */
 function toggleSettings() {
   console.log("toggleSettings called");
   const panel = document.getElementById("settingsPanel");
   if (panel.style.display === "none" || panel.style.display === "") {
     console.log("Showing settings panel");
-    loadSettings(); // load current settings from localStorage
+    loadSettings(); // from settings.js
     panel.style.display = "block";
   } else {
     console.log("Hiding settings panel");
@@ -345,9 +352,7 @@ function toggleSettings() {
   }
 }
 
-/* -----------------------------------------------------------
-   BACK TO TOP
------------------------------------------------------------ */
+/* BACK TO TOP */
 function topFunction() {
   console.log("topFunction called");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -361,15 +366,28 @@ window.addEventListener("scroll", function() {
   }
 });
 
-/* -----------------------------------------------------------
-   DOM LOADED (INIT)
------------------------------------------------------------ */
+/* CLICK OUTSIDE Manage Panel to close it */
+document.addEventListener("mousedown", function(e) {
+  const panel = document.getElementById("managePanel");
+  if (panel.style.display === "block") {
+    // Check if click is outside managePanel
+    if (!panel.contains(e.target) && !e.target.matches(".manage-btn")) {
+      console.log("Clicked outside managePanel, closing it");
+      cancelManage();
+    }
+  }
+});
+
+/* DOM LOADED (INIT) */
 window.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded event fired");
   checkLogin();
   setupTheme();
   mergeLinksFromStorage();
-  loadSettings(); // from settings.js
+
+  // We do not call loadSettings here, but we do in toggleSettings
+  // If you want to load settings on init, uncomment:
+  // loadSettings();
 
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
