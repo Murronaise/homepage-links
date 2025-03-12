@@ -127,7 +127,7 @@ function defaultResetNonHosted() {
 
 /* MERGE / SAVE LINKS */
 let linksData = [];
-let currentCategory = "all"; // Default category
+let currentCategory = "all";  // Start with "all" by default
 let editIndex = null;
 
 function mergeLinksFromStorage() {
@@ -176,28 +176,26 @@ function renderLinks() {
 
     // Copy Button
     const copyBtn = document.createElement("button");
-    copyBtn.className = "copy-btn";
+    copyBtn.className = "copy-btn"; 
     copyBtn.textContent = "Copy";
     copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
 
-    // Edit Button
+    // Edit Button (use same "copy-btn" style)
     const editBtn = document.createElement("button");
-    editBtn.className = "edit-btn";
+    editBtn.classList.add("edit-btn", "copy-btn");
     editBtn.textContent = "Edit";
     editBtn.onclick = () => fillFormForEdit(idx);
 
-    // Remove Button (with custom confirmation)
+    // Remove Button (same "copy-btn" style + confirmation)
     const removeBtn = document.createElement("button");
-    removeBtn.className = "remove-btn";
+    removeBtn.classList.add("remove-btn", "copy-btn");
     removeBtn.textContent = "X";
     removeBtn.onclick = () => confirmRemoveLink(idx);
 
-    // Append to card
     card.appendChild(anchor);
     card.appendChild(copyBtn);
     card.appendChild(editBtn);
     card.appendChild(removeBtn);
-
     linksList.appendChild(card);
   });
   searchLinks();
@@ -232,7 +230,7 @@ function clearSearch() {
   searchLinks();
 }
 
-/* MANAGE PANEL (Add/Edit/Remove Links) */
+/* MANAGE PANEL FUNCTIONS */
 function clickManage() {
   console.log("clickManage called");
   document.getElementById("searchBox").value = "";
@@ -252,17 +250,16 @@ function toggleManagePanel() {
   }
 }
 
-/* Cancel button in Manage Panel */
+/* Cancel button for Manage Panel */
 function cancelManage() {
   console.log("cancelManage called");
-  const panel = document.getElementById("managePanel");
-  panel.style.display = "none";
+  document.getElementById("managePanel").style.display = "none";
   document.body.classList.remove("manage-mode");
   document.getElementById("submitBtn").textContent = "Add Link";
   editIndex = null;
 }
 
-/* Submit Form for Manage Panel */
+/* Submit form for Manage Panel */
 function submitForm(event) {
   event.preventDefault();
   console.log("submitForm called");
@@ -293,7 +290,7 @@ function submitForm(event) {
   cancelManage();
 }
 
-/* Fill form for Edit */
+/* Fill form for editing */
 function fillFormForEdit(index) {
   console.log("fillFormForEdit called with index:", index);
   editIndex = index;
@@ -305,7 +302,7 @@ function fillFormForEdit(index) {
   document.body.classList.add("manage-mode");
 }
 
-/* Confirm remove link with a custom prompt */
+/* Confirm and remove link */
 function confirmRemoveLink(index) {
   console.log("confirmRemoveLink called with index:", index);
   const link = linksData[index];
@@ -317,7 +314,6 @@ function confirmRemoveLink(index) {
   }
 }
 
-/* Remove Link */
 function removeLink(index) {
   console.log("removeLink called with index:", index);
   linksData.splice(index, 1);
@@ -366,15 +362,12 @@ window.addEventListener("scroll", function() {
   }
 });
 
-/* CLICK OUTSIDE Manage Panel to close it */
+/* Close Manage Panel when clicking outside */
 document.addEventListener("mousedown", function(e) {
   const panel = document.getElementById("managePanel");
-  if (panel.style.display === "block") {
-    // Check if click is outside managePanel
-    if (!panel.contains(e.target) && !e.target.matches(".manage-btn")) {
-      console.log("Clicked outside managePanel, closing it");
-      cancelManage();
-    }
+  if (panel.style.display === "block" && !panel.contains(e.target) && !e.target.matches(".manage-btn")) {
+    console.log("Clicked outside managePanel, closing it");
+    cancelManage();
   }
 });
 
@@ -383,18 +376,16 @@ window.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded event fired");
   checkLogin();
   setupTheme();
+  // If you want to load user settings at page load (to override defaultCategory):
+  // loadSettings();  // (Optional, or do this in toggleSettings)
+  
   mergeLinksFromStorage();
-
-  // We do not call loadSettings here, but we do in toggleSettings
-  // If you want to load settings on init, uncomment:
-  // loadSettings();
+  renderLinks();  // Start with "all" unless changed by user in settings
 
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
   searchEl.addEventListener("focus", () => searchEl.select());
   searchEl.addEventListener("input", searchLinks);
-
-  // Pressing Enter in the search box with exactly one result navigates directly
   searchEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       const visibleCards = [...document.querySelectorAll(".link-item")].filter(
@@ -410,6 +401,5 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  renderLinks();
   console.log("Initialization complete");
 });
