@@ -1,5 +1,8 @@
 // js/main.js
 
+// Shared password configuration
+const sharedPassword = "Chip751DE";
+
 let linksData = [];
 let currentCategory = "all"; // Default category on load
 let editIndex = null;
@@ -21,6 +24,7 @@ function mergeLinksFromStorage() {
     saveLinksToStorage();
   }
 }
+
 function saveLinksToStorage() {
   localStorage.setItem("linksData", JSON.stringify(linksData));
 }
@@ -35,34 +39,43 @@ function renderLinks() {
   filteredData.forEach((link, idx) => {
     const card = document.createElement("div");
     card.classList.add("card", "link-item");
-    
+
+    // Create the anchor element for the link
     const anchor = document.createElement("a");
     anchor.href = link.url;
     anchor.textContent = link.name;
-    
+
+    // Create the Copy button
     const copyBtn = document.createElement("button");
     copyBtn.className = "copy-btn";
     copyBtn.textContent = "Copy";
     copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
-    
+
+    // Create the Edit button
     const editBtn = document.createElement("button");
     editBtn.className = "edit-btn";
     editBtn.textContent = "Edit";
     editBtn.onclick = () => fillFormForEdit(idx);
-    
+
+    // Create the Remove button
     const removeBtn = document.createElement("button");
     removeBtn.className = "remove-btn";
     removeBtn.textContent = "X";
     removeBtn.onclick = () => removeLink(idx);
-    
+
+    // Append all elements to the card
     card.appendChild(anchor);
     card.appendChild(copyBtn);
     card.appendChild(editBtn);
     card.appendChild(removeBtn);
+
+    // Append the card to the list
     linksList.appendChild(card);
   });
   searchLinks();
 }
+
+// Search filter function for site cards
 function searchLinks() {
   const input = document.getElementById("searchBox").value.toLowerCase();
   const cards = document.querySelectorAll(".link-item");
@@ -70,22 +83,25 @@ function searchLinks() {
     card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
   });
 }
+
 function clickCategory(cat) {
   document.getElementById("searchBox").value = "";
   currentCategory = cat;
   renderLinks();
 }
+
 function clickManage() {
   document.getElementById("searchBox").value = "";
   searchLinks();
   toggleManagePanel();
 }
+
 function clearSearch() {
   document.getElementById("searchBox").value = "";
   searchLinks();
 }
 
-/* Manage Panel */
+/* Manage Panel functions */
 function toggleManagePanel() {
   const panel = document.getElementById("managePanel");
   if (panel.style.display === "none" || panel.style.display === "") {
@@ -117,6 +133,7 @@ function submitForm(event) {
   event.target.reset();
   renderLinks();
 }
+
 function fillFormForEdit(index) {
   editIndex = index;
   document.getElementById("linkName").value = linksData[index].name;
@@ -164,7 +181,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setupTheme();
   mergeLinksFromStorage();
   loadSettings();
-  
+
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
   searchEl.addEventListener("focus", () => searchEl.select());
