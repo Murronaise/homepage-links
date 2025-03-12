@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, settings, and persistence" />
   <title>My Quick Links - Protected</title>
+
+  <!-- We still load style.css, but we won't modify it here. -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -20,6 +22,7 @@
 
   <!-- PROTECTED CONTENT -->
   <div id="mainContent">
+    <!-- Site Header (fixed) -->
     <header>
       <!-- Dark Mode Toggle -->
       <div class="toggle-switch">
@@ -76,137 +79,6 @@
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
     
-    <!-- SETTINGS PANEL (MODAL) WITH TABS -->
-    <div id="settingsPanel">
-      <h2>Settings</h2>
-      <div class="settings-tabs">
-        <div class="tab-buttons">
-          <button data-target="tab-general" class="active" onclick="switchTab(event)">General</button>
-          <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
-          <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
-        </div>
-        
-        <!-- General Tab -->
-        <div id="tab-general" class="tab-content active">
-          <h3>General Settings</h3>
-          <div>
-            <p>Default Category:</p>
-            <label><input type="radio" name="defaultCategory" value="all"> All Sites</label>
-            <label><input type="radio" name="defaultCategory" value="hosted"> Hosted</label>
-            <label><input type="radio" name="defaultCategory" value="nonhosted"> Non Hosted</label>
-          </div>
-          <div>
-            <label><input type="checkbox" id="enableAnimation" checked> Enable Card Animation</label>
-          </div>
-          <div>
-            <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
-          </div>
-        </div>
-        
-        <!-- Appearance Tab -->
-        <div id="tab-appearance" class="tab-content">
-          <h3>Appearance Settings</h3>
-          <div>
-            <label>Primary Button Color: 
-              <input type="color" id="primaryButtonColor" value="#6a90ab">
-            </label>
-          </div>
-          <div>
-            <label>Card Background Color: 
-              <input type="color" id="cardBgColor" value="#ffffff">
-            </label>
-          </div>
-          <div>
-            <label>Card Hover Background Color: 
-              <input type="color" id="cardHoverBgColor" value="#e6e6e6">
-            </label>
-          </div>
-          <div>
-            <label>Text Color: 
-              <input type="color" id="textColor" value="#333333">
-            </label>
-          </div>
-          <div>
-            <label>Link Color: 
-              <input type="color" id="linkColor" value="#007bff">
-            </label>
-          </div>
-          <div>
-            <label>Hover Scale Factor: 
-              <input type="range" id="hoverScale" min="1" max="1.5" step="0.1" value="1.2">
-              <span id="hoverScaleDisplay">1.2</span>
-            </label>
-          </div>
-          
-          <div style="margin-top:1em;">
-            <label>UI Scale:
-              <input type="range" id="uiScale" min="1" max="2" step="0.1" value="1">
-              <span id="uiScaleDisplay">1</span>
-            </label>
-          </div>
-          <div style="margin-top:1em;">
-            <label>Custom Background URL:
-              <input type="text" id="bgUrl" placeholder="https://example.com/bg.jpg" style="width:100%;">
-            </label>
-          </div>
-          <div style="margin-top:1em;">
-            <label>Preset Theme:
-              <select id="presetTheme">
-                <option value="">None</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-                <option value="matrix">Matrix</option>
-                <option value="retro">Retro</option>
-              </select>
-            </label>
-          </div>
-          <div style="margin-top:1em;">
-            <label>Animation Style:
-              <select id="animationStyle">
-                <option value="none">None</option>
-                <option value="bounce">Bounce</option>
-                <option value="fade">Fade</option>
-                <option value="zoom">Zoom</option>
-              </select>
-            </label>
-          </div>
-          
-          <!-- A small text-based preview box for quick reference -->
-          <div style="margin-top:1em;">
-            <h4>Hover Scale Preview:</h4>
-            <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">
-              Preview text
-            </div>
-          </div>
-          
-          <!-- Card Preview block: simulates a real card -->
-          <div style="margin-top:1em;">
-            <h4>Card Preview:</h4>
-            <div id="cardPreview" class="preview-card"></div>
-          </div>
-        </div>
-        
-        <!-- Advanced Tab -->
-        <div id="tab-advanced" class="tab-content">
-          <h3>Advanced Settings</h3>
-          <div>
-            <label>Custom CSS:</label>
-            <textarea id="customCSS" rows="5" placeholder="Enter custom CSS here..." style="width:100%;"></textarea>
-          </div>
-          <div>
-            <button type="button" onclick="applyCustomCSS()">Apply Custom CSS</button>
-          </div>
-          <div style="margin-top:10px;">
-            <button type="button" onclick="resetSettings()">Reset Settings</button>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:10px; text-align:right;">
-        <button type="submit" onclick="saveSettings(event)">Save Settings</button>
-        <button type="button" onclick="hideSettings()">Cancel</button>
-      </div>
-    </div>
-    
     <!-- LINKS LIST -->
     <div id="linksList"></div>
     
@@ -214,7 +86,184 @@
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
 
-  <!-- Load scripts in this order so loadSettings is defined before main.js calls it -->
+  <!-- FULL-PAGE SETTINGS (EXCLUDING HEADER) -->
+  <div id="settingsPanel"
+       style="
+         position: absolute;
+         top: 70px;     /* just below the header */
+         left: 0; 
+         right: 0; 
+         bottom: 0; 
+         background: var(--card-bg);
+         color: var(--text-color);
+         overflow-y: auto; 
+         padding: 30px; 
+         border-top: 2px solid var(--shadow-color);
+         display: none; /* hidden by default, toggled by main.js */
+         z-index: 10000;
+       ">
+    <h2>Full-Page Settings</h2>
+    <p>This page spans the entire screen below the header, giving you a more detailed editor for your site’s appearance.</p>
+
+    <div class="settings-tabs" style="margin-top:20px;">
+      <div class="tab-buttons" style="display:flex; gap:10px; margin-bottom:10px;">
+        <button data-target="tab-general" class="active" onclick="switchTab(event)">General</button>
+        <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
+        <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
+      </div>
+
+      <!-- General Tab -->
+      <div id="tab-general" class="tab-content active" style="display:block;">
+        <h3>General Settings</h3>
+        <div>
+          <p>Default Category:</p>
+          <label><input type="radio" name="defaultCategory" value="all"> All Sites</label>
+          <label><input type="radio" name="defaultCategory" value="hosted"> Hosted</label>
+          <label><input type="radio" name="defaultCategory" value="nonhosted"> Non Hosted</label>
+        </div>
+        <div style="margin-top:10px;">
+          <label><input type="checkbox" id="enableAnimation" checked> Enable Card Animation</label>
+        </div>
+        <div style="margin-top:10px;">
+          <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
+        </div>
+      </div>
+
+      <!-- Appearance Tab -->
+      <div id="tab-appearance" class="tab-content" style="display:none;">
+        <h3>Appearance Settings</h3>
+
+        <!-- Additional themes -->
+        <div style="margin-top:10px;">
+          <label>Preset Theme:
+            <select id="presetTheme">
+              <option value="">None</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="matrix">Matrix</option>
+              <option value="retro">Retro</option>
+              <option value="neon">Neon</option>
+              <option value="pastel">Pastel</option>
+              <option value="solarized">Solarized</option>
+              <option value="monokai">Monokai</option>
+              <option value="highcontrast">High Contrast</option>
+            </select>
+          </label>
+          <p style="font-size:0.9em; margin-top:4px;">
+            Selecting a theme updates the color pickers below. You can override them manually afterwards.
+          </p>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label>Primary Button Color: 
+            <input type="color" id="primaryButtonColor" value="#6a90ab" style="width:60px; height:40px;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Card Background Color: 
+            <input type="color" id="cardBgColor" value="#ffffff" style="width:60px; height:40px;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Card Hover Background Color: 
+            <input type="color" id="cardHoverBgColor" value="#e6e6e6" style="width:60px; height:40px;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Text Color: 
+            <input type="color" id="textColor" value="#333333" style="width:60px; height:40px;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Link Color: 
+            <input type="color" id="linkColor" value="#007bff" style="width:60px; height:40px;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Hover Scale Factor: 
+            <input type="range" id="hoverScale" min="1" max="1.5" step="0.1" value="1.2" style="width:200px;">
+            <span id="hoverScaleDisplay">1.2</span>
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>UI Scale:
+            <input type="range" id="uiScale" min="1" max="2" step="0.1" value="1" style="width:200px;">
+            <span id="uiScaleDisplay">1</span>
+          </label>
+          <p style="font-size:0.9em; margin-top:4px;">
+            Adjusts the size of site cards and content (not the header).
+          </p>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Custom Background URL:
+            <input type="text" id="bgUrl" placeholder="https://example.com/bg.jpg" style="width:100%;">
+          </label>
+        </div>
+        <div style="margin-top:10px;">
+          <label>Animation Style:
+            <select id="animationStyle">
+              <option value="none">None</option>
+              <option value="bounce">Bounce</option>
+              <option value="fade">Fade</option>
+              <option value="zoom">Zoom</option>
+              <option value="pulse">Pulse</option>
+              <option value="flip">Flip</option>
+              <option value="spin">Spin</option>
+              <option value="shake">Shake</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- A small text-based preview box for quick reference -->
+        <div style="margin-top:20px;">
+          <h4>Hover Scale Preview:</h4>
+          <div id="hoverPreview" style="
+            border:1px solid var(--shadow-color); 
+            padding:10px; 
+            text-align:center;
+            margin-bottom:10px;
+          ">
+            Preview text
+          </div>
+        </div>
+        
+        <!-- Card Preview block: simulates a real card -->
+        <div style="margin-top:20px;">
+          <h4>Card Preview:</h4>
+          <div id="cardPreview" class="preview-card" style="
+            margin-top:10px; 
+            padding:20px; 
+            border-radius:8px; 
+            box-shadow:0 2px 6px var(--shadow-color); 
+            background-color:var(--card-bg); 
+            color:var(--text-color);
+          "></div>
+        </div>
+      </div>
+
+      <!-- Advanced Tab -->
+      <div id="tab-advanced" class="tab-content" style="display:none;">
+        <h3>Advanced Settings</h3>
+        <div>
+          <label>Custom CSS:</label>
+          <textarea id="customCSS" rows="5" placeholder="Enter custom CSS here..." style="width:100%;"></textarea>
+        </div>
+        <div style="margin-top:10px;">
+          <button type="button" onclick="applyCustomCSS()">Apply Custom CSS</button>
+        </div>
+        <div style="margin-top:10px;">
+          <button type="button" onclick="resetSettings()">Reset Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; text-align:right;">
+      <button type="submit" onclick="saveSettings(event)">Save Settings</button>
+      <button type="button" onclick="hideSettings()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Include External JS Files -->
   <script src="data/sites.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/main.js"></script>
