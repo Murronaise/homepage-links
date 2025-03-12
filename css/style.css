@@ -308,18 +308,26 @@ header {
 #settingsPanel button:hover {
   filter: brightness(0.9);
 }
-#hoverPreview {
-  margin-top: 5px;
-  padding: 10px;
-  background: var(--card-bg);
-  border: 1px solid var(--shadow-color);
-  text-align: center;
-  transition: transform 0.3s;
-}
 #customCSS {
   width: 100%;
   color: var(--text-color);
   padding: 8px;
+}
+
+/* A separate preview card that simulates a real card in the Appearance tab */
+#cardPreview {
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px var(--shadow-color);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: transform 0.3s, box-shadow 0.3s;
+  min-height: 60px;
+}
+#cardPreview:hover {
+  box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.4);
+  transform: scale(1.02);
 }
 
 /* SITE CARDS */
@@ -345,7 +353,7 @@ header {
   z-index: 1;
 }
 .card:hover {
-  margin: 30px 0; /* more space above/below */
+  margin: 30px 0; /* more space above/below hovered card */
   transform: scale(var(--hover-scale));
   box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
   background: var(--card-hover-bg);
