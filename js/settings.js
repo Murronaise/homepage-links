@@ -1,7 +1,6 @@
 // js/settings.js
 
-// Debug log for settings module load
-console.log("Settings module loaded");
+console.log("settings.js loaded");
 
 // Switch between tabs in the settings panel.
 function switchTab(event) {
