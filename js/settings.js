@@ -55,8 +55,9 @@ function loadSettings() {
   document.getElementById("presetTheme").value = settings.presetTheme;
   document.getElementById("animationStyle").value = settings.animationStyle;
 
-  // We'll update the preview card to reflect these initial values
+  // We'll update the preview box + card to reflect these initial values
   updatePreview();
+
   // Advanced tab
   document.getElementById("customCSS").value = settings.customCSS;
 
@@ -90,38 +91,46 @@ function attachPreviewListeners() {
 /* Update the #hoverPreview box + #cardPreview to show color/scale changes live */
 function updatePreview() {
   console.log("updatePreview called for #hoverPreview & #cardPreview");
-  const hoverScale = document.getElementById("hoverScale").value;
-  document.getElementById("hoverScaleDisplay").innerText = hoverScale;
 
-  const primaryButtonColor = document.getElementById("primaryButtonColor").value;
-  const cardBgColor = document.getElementById("cardBgColor").value;
-  const cardHoverBgColor = document.getElementById("cardHoverBgColor").value;
-  const textColor = document.getElementById("textColor").value;
-  const linkColor = document.getElementById("linkColor").value;
-  const uiScale = document.getElementById("uiScale").value;
-  document.getElementById("uiScaleDisplay").innerText = uiScale;
+  const hoverScale = document.getElementById("hoverScale")?.value || "1.2";
+  const primaryButtonColor = document.getElementById("primaryButtonColor")?.value || "#6a90ab";
+  const cardBgColor = document.getElementById("cardBgColor")?.value || "#ffffff";
+  const cardHoverBgColor = document.getElementById("cardHoverBgColor")?.value || "#e6e6e6";
+  const textColor = document.getElementById("textColor")?.value || "#333333";
+  const linkColor = document.getElementById("linkColor")?.value || "#007bff";
+  const uiScale = document.getElementById("uiScale")?.value || "1";
+
+  // Display scale values
+  const hoverScaleDisplay = document.getElementById("hoverScaleDisplay");
+  if (hoverScaleDisplay) hoverScaleDisplay.innerText = hoverScale;
+
+  const uiScaleDisplay = document.getElementById("uiScaleDisplay");
+  if (uiScaleDisplay) uiScaleDisplay.innerText = uiScale;
 
   // #hoverPreview (small text-based box)
   const preview = document.getElementById("hoverPreview");
-  preview.style.transform = `scale(${hoverScale})`;
-  preview.style.backgroundColor = cardBgColor;
-  preview.style.color = textColor;
-  preview.style.borderColor = cardHoverBgColor;
-  preview.innerHTML = `<a href="#" style="color:${linkColor}; text-decoration:none;">Preview Link</a> with UI scale: ${uiScale}`;
+  if (preview) {
+    preview.style.transform = `scale(${hoverScale})`;
+    preview.style.backgroundColor = cardBgColor;
+    preview.style.color = textColor;
+    preview.style.borderColor = cardHoverBgColor;
+    preview.innerHTML = `<a href="#" style="color:${linkColor}; text-decoration:none;">Preview Link</a> with UI scale: ${uiScale}`;
+  }
 
   // #cardPreview (simulate a real card)
   const cardPreview = document.getElementById("cardPreview");
-  // Basic styling
-  cardPreview.style.backgroundColor = cardBgColor;
-  cardPreview.style.color = textColor;
-  cardPreview.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <a href="#" style="color:${linkColor}; text-decoration:none; margin-right:10px;">Sample Card Title</a>
-      <button style="background-color:${primaryButtonColor}; color:#fff; border:none; border-radius:6px; padding:6px 12px;">Copy</button>
-      <button style="background-color:#6d6f6f; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Edit</button>
-      <button style="background-color:#c85a5a; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Remove</button>
-    </div>
-  `;
+  if (cardPreview) {
+    cardPreview.style.backgroundColor = cardBgColor;
+    cardPreview.style.color = textColor;
+    cardPreview.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <a href="#" style="color:${linkColor}; text-decoration:none; margin-right:10px;">Sample Card Title</a>
+        <button style="background-color:${primaryButtonColor}; color:#fff; border:none; border-radius:6px; padding:6px 12px;">Copy</button>
+        <button style="background-color:#6d6f6f; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Edit</button>
+        <button style="background-color:#c85a5a; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Remove</button>
+      </div>
+    `;
+  }
 }
 
 /* Save settings to localStorage */
@@ -143,8 +152,10 @@ function saveSettings(event) {
   // Parse float for UI scale
   let uiScale = parseFloat(document.getElementById("uiScale").value);
   if (isNaN(uiScale)) uiScale = 1; // default to 1 if user typed nothing
+  if (uiScale < 1) uiScale = 1;    // clamp
+  if (uiScale > 2) uiScale = 2;    // clamp
 
-  // Trim background URL; if it's blank, set it to empty string
+  // Trim background URL; if it's blank or "undefined", set it to empty string
   let bgUrl = document.getElementById("bgUrl").value.trim();
   if (!bgUrl || bgUrl.toLowerCase() === "undefined") bgUrl = "";
 
