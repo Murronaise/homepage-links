@@ -55,7 +55,7 @@ function loadSettings() {
   document.getElementById("presetTheme").value = settings.presetTheme;
   document.getElementById("animationStyle").value = settings.animationStyle;
 
-  // We'll update the preview box + card to reflect these initial values
+  // Update the preview box + card to reflect these initial values
   updatePreview();
 
   // Advanced tab
@@ -82,10 +82,92 @@ function attachPreviewListeners() {
   watchers.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
+      // Changing the theme pickers if user picks a new theme
+      if (id === "presetTheme") {
+        el.addEventListener("change", (e) => {
+          // If user picks a new theme, we auto-update color pickers
+          updateThemePickers(e.target.value);
+          updatePreview();
+        });
+      }
+      // Otherwise just normal preview updates
       el.addEventListener("input", updatePreview);
       el.addEventListener("change", updatePreview);
     }
   });
+}
+
+/* If user picks a new theme from the dropdown, update the color pickers to that theme's defaults. */
+function updateThemePickers(theme) {
+  console.log("updateThemePickers called with:", theme);
+  switch (theme) {
+    case "light":
+      document.getElementById("primaryButtonColor").value = "#6a90ab";
+      document.getElementById("cardBgColor").value = "#ffffff";
+      document.getElementById("cardHoverBgColor").value = "#e6e6e6";
+      document.getElementById("textColor").value = "#333333";
+      document.getElementById("linkColor").value = "#007bff";
+      break;
+    case "dark":
+      document.getElementById("primaryButtonColor").value = "#5b8fa8";
+      document.getElementById("cardBgColor").value = "#2c2c2c";
+      document.getElementById("cardHoverBgColor").value = "#3a3a3a";
+      document.getElementById("textColor").value = "#ddd";
+      document.getElementById("linkColor").value = "#90caf9";
+      break;
+    case "matrix":
+      document.getElementById("primaryButtonColor").value = "#009900";
+      document.getElementById("cardBgColor").value = "#000000";
+      document.getElementById("cardHoverBgColor").value = "#002200";
+      document.getElementById("textColor").value = "#00ff00";
+      document.getElementById("linkColor").value = "#00ff88";
+      break;
+    case "retro":
+      document.getElementById("primaryButtonColor").value = "#c28f7a";
+      document.getElementById("cardBgColor").value = "#f2efe4";
+      document.getElementById("cardHoverBgColor").value = "#ffd7b3";
+      document.getElementById("textColor").value = "#444444";
+      document.getElementById("linkColor").value = "#cc5500";
+      break;
+    case "neon":
+      document.getElementById("primaryButtonColor").value = "#ff00ff";
+      document.getElementById("cardBgColor").value = "#000000";
+      document.getElementById("cardHoverBgColor").value = "#0f0f0f";
+      document.getElementById("textColor").value = "#00ffff";
+      document.getElementById("linkColor").value = "#39ff14";
+      break;
+    case "pastel":
+      document.getElementById("primaryButtonColor").value = "#b39eb5";
+      document.getElementById("cardBgColor").value = "#ffefd5";
+      document.getElementById("cardHoverBgColor").value = "#ffe4e1";
+      document.getElementById("textColor").value = "#333333";
+      document.getElementById("linkColor").value = "#ffb6c1";
+      break;
+    case "solarized":
+      document.getElementById("primaryButtonColor").value = "#268bd2";
+      document.getElementById("cardBgColor").value = "#fdf6e3";
+      document.getElementById("cardHoverBgColor").value = "#eee8d5";
+      document.getElementById("textColor").value = "#657b83";
+      document.getElementById("linkColor").value = "#2aa198";
+      break;
+    case "monokai":
+      document.getElementById("primaryButtonColor").value = "#66d9ef";
+      document.getElementById("cardBgColor").value = "#272822";
+      document.getElementById("cardHoverBgColor").value = "#3e3d32";
+      document.getElementById("textColor").value = "#f8f8f2";
+      document.getElementById("linkColor").value = "#a6e22e";
+      break;
+    case "highcontrast":
+      document.getElementById("primaryButtonColor").value = "#ffffff";
+      document.getElementById("cardBgColor").value = "#000000";
+      document.getElementById("cardHoverBgColor").value = "#222222";
+      document.getElementById("textColor").value = "#ffffff";
+      document.getElementById("linkColor").value = "#ffff00";
+      break;
+    default:
+      // none
+      break;
+  }
 }
 
 /* Update the #hoverPreview box + #cardPreview to show color/scale changes live */
@@ -278,13 +360,33 @@ function updateUI(scale, bgUrl, animationStyle) {
         card.style.animation = "zoomIn 0.6s ease-in-out";
       });
       break;
+    case "pulse":
+      allCards.forEach(card => {
+        card.style.animation = "pulse 1.5s infinite alternate";
+      });
+      break;
+    case "flip":
+      allCards.forEach(card => {
+        card.style.animation = "flip 1.2s infinite alternate";
+      });
+      break;
+    case "spin":
+      allCards.forEach(card => {
+        card.style.animation = "spin 2s linear infinite";
+      });
+      break;
+    case "shake":
+      allCards.forEach(card => {
+        card.style.animation = "shake 0.8s infinite";
+      });
+      break;
     case "none":
     default:
       break;
   }
 }
 
-/* Example preset themes */
+/* Example preset themes, extended with more options */
 function applyPresetTheme(themeName) {
   console.log("applyPresetTheme called with:", themeName);
   switch (themeName) {
@@ -303,6 +405,31 @@ function applyPresetTheme(themeName) {
       document.documentElement.style.setProperty("--bg-color", "#f2efe4");
       document.documentElement.style.setProperty("--text-color", "#444");
       document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #ffdfba 0%, #ffd7b3 100%)");
+      break;
+    case "neon":
+      document.documentElement.style.setProperty("--bg-color", "#000");
+      document.documentElement.style.setProperty("--text-color", "#0ff");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #000 0%, #111 100%)");
+      break;
+    case "pastel":
+      document.documentElement.style.setProperty("--bg-color", "#ffe4e1");
+      document.documentElement.style.setProperty("--text-color", "#444");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #fffaf0 0%, #ffe4e1 100%)");
+      break;
+    case "solarized":
+      document.documentElement.style.setProperty("--bg-color", "#fdf6e3");
+      document.documentElement.style.setProperty("--text-color", "#657b83");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #eee8d5 0%, #fdf6e3 100%)");
+      break;
+    case "monokai":
+      document.documentElement.style.setProperty("--bg-color", "#272822");
+      document.documentElement.style.setProperty("--text-color", "#f8f8f2");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #383830 0%, #272822 100%)");
+      break;
+    case "highcontrast":
+      document.documentElement.style.setProperty("--bg-color", "#000");
+      document.documentElement.style.setProperty("--text-color", "#fff");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #000 0%, #111 100%)");
       break;
     default:
       // no preset or revert
