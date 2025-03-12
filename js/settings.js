@@ -62,7 +62,7 @@ function loadSettings() {
   // Advanced tab
   document.getElementById("customCSS").value = settings.customCSS;
 
-  // Attach live preview listeners (so changing inputs updates #hoverPreview immediately)
+  // Attach live preview listeners
   attachPreviewListeners();
 }
 
@@ -111,14 +111,13 @@ function updatePreview() {
   preview.style.borderColor = cardHoverBgColor;
   // We'll create a mock link inside the preview
   preview.innerHTML = `<a href="#" style="color:${linkColor}; text-decoration:none;">Preview Link</a> with UI scale: ${uiScale}`;
-
-  // The user can see the color/scale effect in the preview box
 }
 
 /* Save settings to localStorage */
 function saveSettings(event) {
   console.log("saveSettings called");
   event.preventDefault();
+
   const defaultCategory = document.querySelector('input[name="defaultCategory"]:checked')?.value || "all";
   const enableAnimation = document.getElementById("enableAnimation").checked;
   const alwaysShowEdit = document.getElementById("alwaysShowEdit").checked;
@@ -130,9 +129,14 @@ function saveSettings(event) {
   const linkColor = document.getElementById("linkColor").value;
   const customCSS = document.getElementById("customCSS").value;
 
-  // New fields
-  const uiScale = document.getElementById("uiScale").value;
-  const bgUrl = document.getElementById("bgUrl").value.trim();
+  // Parse float for UI scale
+  let uiScale = parseFloat(document.getElementById("uiScale").value);
+  if (isNaN(uiScale)) uiScale = 1; // default to 1 if user typed nothing
+
+  // Trim background URL; if it's blank, set it to empty string
+  let bgUrl = document.getElementById("bgUrl").value.trim();
+  if (!bgUrl) bgUrl = "";
+
   const presetTheme = document.getElementById("presetTheme").value;
   const animationStyle = document.getElementById("animationStyle").value;
 
@@ -224,7 +228,6 @@ function updateUI(scale, bgUrl, animationStyle) {
   mainContent.style.transformOrigin = "top center";
 
   if (bgUrl) {
-    // custom background
     mainContent.style.backgroundImage = `url('${bgUrl}')`;
     mainContent.style.backgroundSize = "cover";
     mainContent.style.backgroundRepeat = "no-repeat";
@@ -264,8 +267,6 @@ function updateUI(scale, bgUrl, animationStyle) {
 /* Example preset themes */
 function applyPresetTheme(themeName) {
   console.log("applyPresetTheme called with:", themeName);
-  // If user picks "light" or "dark", we just set the data-theme attribute.
-  // If user picks "matrix" or "retro", we override some CSS variables.
   switch (themeName) {
     case "light":
       document.documentElement.setAttribute("data-theme", "light");
