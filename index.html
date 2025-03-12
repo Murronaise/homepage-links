@@ -85,6 +85,7 @@
           <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
           <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
         </div>
+        
         <!-- General Tab -->
         <div id="tab-general" class="tab-content active">
           <h3>General Settings</h3>
@@ -101,6 +102,7 @@
             <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
           </div>
         </div>
+        
         <!-- Appearance Tab -->
         <div id="tab-appearance" class="tab-content">
           <h3>Appearance Settings</h3>
@@ -139,7 +141,42 @@
             <p>Hover Scale Preview:</p>
             <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">Preview</div>
           </div>
+          
+          <!-- Additional new fields -->
+          <div style="margin-top:1em;">
+            <label>UI Scale:
+              <input type="range" id="uiScale" min="1" max="2" step="0.1" value="1">
+              <span id="uiScaleDisplay">1</span>
+            </label>
+          </div>
+          <div style="margin-top:1em;">
+            <label>Custom Background URL:
+              <input type="text" id="bgUrl" placeholder="https://example.com/bg.jpg" style="width:100%;">
+            </label>
+          </div>
+          <div style="margin-top:1em;">
+            <label>Preset Theme:
+              <select id="presetTheme">
+                <option value="">None</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="matrix">Matrix</option>
+                <option value="retro">Retro</option>
+              </select>
+            </label>
+          </div>
+          <div style="margin-top:1em;">
+            <label>Animation Style:
+              <select id="animationStyle">
+                <option value="none">None</option>
+                <option value="bounce">Bounce</option>
+                <option value="fade">Fade</option>
+                <option value="zoom">Zoom</option>
+              </select>
+            </label>
+          </div>
         </div>
+        
         <!-- Advanced Tab -->
         <div id="tab-advanced" class="tab-content">
           <h3>Advanced Settings</h3>
