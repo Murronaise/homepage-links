@@ -49,16 +49,14 @@ function loadSettings() {
   document.getElementById("textColor").value = settings.textColor;
   document.getElementById("linkColor").value = settings.linkColor;
 
-  // UI scale, background, etc.
   document.getElementById("uiScale").value = settings.uiScale;
   document.getElementById("uiScaleDisplay").innerText = settings.uiScale;
   document.getElementById("bgUrl").value = settings.bgUrl;
   document.getElementById("presetTheme").value = settings.presetTheme;
   document.getElementById("animationStyle").value = settings.animationStyle;
 
-  // Hover preview
-  updatePreview(); // Set #hoverPreview to show these initial values
-
+  // We'll update the preview card to reflect these initial values
+  updatePreview();
   // Advanced tab
   document.getElementById("customCSS").value = settings.customCSS;
 
@@ -66,7 +64,7 @@ function loadSettings() {
   attachPreviewListeners();
 }
 
-/* Attach event listeners for live preview in #hoverPreview */
+/* Attach event listeners for live preview in #hoverPreview + #cardPreview */
 function attachPreviewListeners() {
   const watchers = [
     "hoverScale",
@@ -89,9 +87,9 @@ function attachPreviewListeners() {
   });
 }
 
-/* Update the #hoverPreview box to show color/scale changes live */
+/* Update the #hoverPreview box + #cardPreview to show color/scale changes live */
 function updatePreview() {
-  console.log("updatePreview called for #hoverPreview");
+  console.log("updatePreview called for #hoverPreview & #cardPreview");
   const hoverScale = document.getElementById("hoverScale").value;
   document.getElementById("hoverScaleDisplay").innerText = hoverScale;
 
@@ -103,14 +101,27 @@ function updatePreview() {
   const uiScale = document.getElementById("uiScale").value;
   document.getElementById("uiScaleDisplay").innerText = uiScale;
 
-  // For the "preview" box
+  // #hoverPreview (small text-based box)
   const preview = document.getElementById("hoverPreview");
   preview.style.transform = `scale(${hoverScale})`;
   preview.style.backgroundColor = cardBgColor;
   preview.style.color = textColor;
   preview.style.borderColor = cardHoverBgColor;
-  // We'll create a mock link inside the preview
   preview.innerHTML = `<a href="#" style="color:${linkColor}; text-decoration:none;">Preview Link</a> with UI scale: ${uiScale}`;
+
+  // #cardPreview (simulate a real card)
+  const cardPreview = document.getElementById("cardPreview");
+  // Basic styling
+  cardPreview.style.backgroundColor = cardBgColor;
+  cardPreview.style.color = textColor;
+  cardPreview.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <a href="#" style="color:${linkColor}; text-decoration:none; margin-right:10px;">Sample Card Title</a>
+      <button style="background-color:${primaryButtonColor}; color:#fff; border:none; border-radius:6px; padding:6px 12px;">Copy</button>
+      <button style="background-color:#6d6f6f; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Edit</button>
+      <button style="background-color:#c85a5a; color:#fff; border:none; border-radius:6px; padding:6px 12px; margin-left:5px;">Remove</button>
+    </div>
+  `;
 }
 
 /* Save settings to localStorage */
@@ -135,7 +146,7 @@ function saveSettings(event) {
 
   // Trim background URL; if it's blank, set it to empty string
   let bgUrl = document.getElementById("bgUrl").value.trim();
-  if (!bgUrl) bgUrl = "";
+  if (!bgUrl || bgUrl.toLowerCase() === "undefined") bgUrl = "";
 
   const presetTheme = document.getElementById("presetTheme").value;
   const animationStyle = document.getElementById("animationStyle").value;
