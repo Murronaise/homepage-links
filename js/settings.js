@@ -48,17 +48,71 @@ function loadSettings() {
   document.getElementById("cardHoverBgColor").value = settings.cardHoverBgColor;
   document.getElementById("textColor").value = settings.textColor;
   document.getElementById("linkColor").value = settings.linkColor;
-  document.getElementById("hoverPreview").style.transform = `scale(${settings.hoverScale})`;
 
-  // New fields
+  // UI scale, background, etc.
   document.getElementById("uiScale").value = settings.uiScale;
   document.getElementById("uiScaleDisplay").innerText = settings.uiScale;
   document.getElementById("bgUrl").value = settings.bgUrl;
   document.getElementById("presetTheme").value = settings.presetTheme;
   document.getElementById("animationStyle").value = settings.animationStyle;
 
+  // Hover preview
+  updatePreview(); // Set #hoverPreview to show these initial values
+
   // Advanced tab
   document.getElementById("customCSS").value = settings.customCSS;
+
+  // Attach live preview listeners (so changing inputs updates #hoverPreview immediately)
+  attachPreviewListeners();
+}
+
+/* Attach event listeners for live preview in #hoverPreview */
+function attachPreviewListeners() {
+  const watchers = [
+    "hoverScale",
+    "primaryButtonColor",
+    "cardBgColor",
+    "cardHoverBgColor",
+    "textColor",
+    "linkColor",
+    "uiScale",
+    "bgUrl",
+    "presetTheme",
+    "animationStyle"
+  ];
+  watchers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", updatePreview);
+      el.addEventListener("change", updatePreview);
+    }
+  });
+}
+
+/* Update the #hoverPreview box to show color/scale changes live */
+function updatePreview() {
+  console.log("updatePreview called for #hoverPreview");
+  const hoverScale = document.getElementById("hoverScale").value;
+  document.getElementById("hoverScaleDisplay").innerText = hoverScale;
+
+  const primaryButtonColor = document.getElementById("primaryButtonColor").value;
+  const cardBgColor = document.getElementById("cardBgColor").value;
+  const cardHoverBgColor = document.getElementById("cardHoverBgColor").value;
+  const textColor = document.getElementById("textColor").value;
+  const linkColor = document.getElementById("linkColor").value;
+  const uiScale = document.getElementById("uiScale").value;
+  document.getElementById("uiScaleDisplay").innerText = uiScale;
+
+  // For the "preview" box
+  const preview = document.getElementById("hoverPreview");
+  preview.style.transform = `scale(${hoverScale})`;
+  preview.style.backgroundColor = cardBgColor;
+  preview.style.color = textColor;
+  preview.style.borderColor = cardHoverBgColor;
+  // We'll create a mock link inside the preview
+  preview.innerHTML = `<a href="#" style="color:${linkColor}; text-decoration:none;">Preview Link</a> with UI scale: ${uiScale}`;
+
+  // The user can see the color/scale effect in the preview box
 }
 
 /* Save settings to localStorage */
@@ -154,6 +208,7 @@ function resetSettings() {
 /* Hide settings panel */
 function hideSettings() {
   console.log("hideSettings called");
+  document.body.classList.remove("settings-open");
   document.getElementById("settingsPanel").style.display = "none";
 }
 
@@ -162,24 +217,28 @@ function hideSettings() {
 /* Update UI scaling, background, and animation style */
 function updateUI(scale, bgUrl, animationStyle) {
   console.log("updateUI called with scale:", scale, "bgUrl:", bgUrl, "animationStyle:", animationStyle);
-  document.body.style.transform = `scale(${scale})`;
-  document.body.style.transformOrigin = "top left";
+
+  // Scale only the #mainContent (not the entire body)
+  const mainContent = document.getElementById("mainContent");
+  mainContent.style.transform = `scale(${scale})`;
+  mainContent.style.transformOrigin = "top center";
 
   if (bgUrl) {
-    document.body.style.backgroundImage = `url('${bgUrl}')`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
+    // custom background
+    mainContent.style.backgroundImage = `url('${bgUrl}')`;
+    mainContent.style.backgroundSize = "cover";
+    mainContent.style.backgroundRepeat = "no-repeat";
   } else {
-    // Revert to default gradient if no custom URL
-    document.body.style.backgroundImage = "none";
+    mainContent.style.backgroundImage = "none";
   }
 
-  // Example animation style handling
+  // Remove any existing inline animations on .card
   const allCards = document.querySelectorAll(".card");
   allCards.forEach(card => {
     card.style.animation = "";
   });
 
+  // Apply new animation style
   switch (animationStyle) {
     case "bounce":
       allCards.forEach(card => {
@@ -198,7 +257,6 @@ function updateUI(scale, bgUrl, animationStyle) {
       break;
     case "none":
     default:
-      // No extra animation
       break;
   }
 }
@@ -206,6 +264,8 @@ function updateUI(scale, bgUrl, animationStyle) {
 /* Example preset themes */
 function applyPresetTheme(themeName) {
   console.log("applyPresetTheme called with:", themeName);
+  // If user picks "light" or "dark", we just set the data-theme attribute.
+  // If user picks "matrix" or "retro", we override some CSS variables.
   switch (themeName) {
     case "light":
       document.documentElement.setAttribute("data-theme", "light");
@@ -214,19 +274,17 @@ function applyPresetTheme(themeName) {
       document.documentElement.setAttribute("data-theme", "dark");
       break;
     case "matrix":
-      // Example matrix-like colors
       document.documentElement.style.setProperty("--bg-color", "#000");
       document.documentElement.style.setProperty("--text-color", "#0f0");
       document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #000 0%, #003300 100%)");
       break;
     case "retro":
-      // Example retro colors
       document.documentElement.style.setProperty("--bg-color", "#f2efe4");
       document.documentElement.style.setProperty("--text-color", "#444");
       document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #ffdfba 0%, #ffd7b3 100%)");
       break;
     default:
-      // No preset or revert
+      // no preset or revert
       break;
   }
 }
