@@ -137,12 +137,7 @@
               <span id="hoverScaleDisplay">1.2</span>
             </label>
           </div>
-          <div>
-            <p>Hover Scale Preview:</p>
-            <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">Preview</div>
-          </div>
           
-          <!-- Additional new fields -->
           <div style="margin-top:1em;">
             <label>UI Scale:
               <input type="range" id="uiScale" min="1" max="2" step="0.1" value="1">
@@ -174,6 +169,12 @@
                 <option value="zoom">Zoom</option>
               </select>
             </label>
+          </div>
+          
+          <!-- Card Preview block: simulates a real card -->
+          <div style="margin-top:1em;">
+            <h4>Card Preview:</h4>
+            <div id="cardPreview" class="preview-card"></div>
           </div>
         </div>
         
