@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, and persistence" />
+  <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, settings, and persistence" />
   <title>My Quick Links - Protected</title>
   <!-- Preconnect for font loading -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    /* -------------------------------
-       GLOBAL & THEME SETTINGS
-       ------------------------------- */
+    /* ==========================================================
+       GLOBAL & THEME SETTINGS & CSS VARIABLES
+    ========================================================== */
     :root {
       --bg-color: #f0f2f5;
       --text-color: #333;
@@ -19,9 +19,9 @@
       --card-bg: #fff;
       --card-hover-bg: #e6e6e6;
       --button-color: #6a90ab;
+      --link-color: #007bff;
       --search-bg: #fff;
       --shadow-color: rgba(0, 0, 0, 0.15);
-      /* We'll use a CSS variable for hover scale */
       --hover-scale: 1.2;
     }
     [data-theme="dark"] {
@@ -31,11 +31,14 @@
       --card-bg: #2c2c2c;
       --card-hover-bg: #3a3a3a;
       --button-color: #5b8fa8;
+      --link-color: #90caf9;
       --search-bg: #2c2c2c;
       --shadow-color: rgba(0, 0, 0, 0.5);
     }
     
-    /* Global styling */
+    /* ==========================================================
+       GLOBAL STYLING
+    ========================================================== */
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -44,22 +47,19 @@
       color: var(--text-color);
       transition: background-color 0.3s, color 0.3s;
     }
-    /* Disable animation if needed */
-    body.no-animation .card,
-    body.no-animation .card:hover {
-      transition: none;
-      transform: none;
-      box-shadow: none;
+    /* Disable animations if set */
+    body.no-animation .card {
+      animation: none !important;
     }
-    /* Always show edit/remove if setting enabled */
+    /* Always show edit/remove if enabled */
     body.always-show-edit .edit-btn,
     body.always-show-edit .remove-btn {
       display: inline-block !important;
     }
     
-    /* -------------------------------
+    /* ==========================================================
        LOGIN CONTAINER
-       ------------------------------- */
+    ========================================================== */
     #loginContainer {
       max-width: 400px;
       width: 90%;
@@ -103,17 +103,17 @@
       display: none;
     }
     
-    /* -------------------------------
+    /* ==========================================================
        PROTECTED CONTENT
-       ------------------------------- */
+    ========================================================== */
     #mainContent {
       display: none;
-      margin-top: 100px; /* ensures content isn't squashed under the header */
+      margin-top: 100px; /* space for fixed header */
     }
     
-    /* -------------------------------
+    /* ==========================================================
        HEADER (FIXED)
-       ------------------------------- */
+    ========================================================== */
     header {
       position: fixed;
       top: 0;
@@ -127,12 +127,20 @@
       box-shadow: 0 2px 5px var(--shadow-color);
       gap: 10px;
     }
+    /* Order of header elements defined for proper layout */
+    .toggle-switch { order: 1; }
+    .categories { order: 2; }
+    #searchBox { order: 3; }
+    .default-reset-buttons { order: 4; }
+    .settings-btn { order: 5; }
+    .logout-btn { order: 6; }
+    
+    /* Toggle Switch */
     .toggle-switch {
       position: relative;
       width: 60px;
       height: 30px;
       flex-shrink: 0;
-      order: 1;
     }
     .toggle-switch input {
       opacity: 0;
@@ -173,10 +181,10 @@
       transform: translate(28px, -50%);
     }
     
+    /* Category Buttons */
     .categories {
       display: flex;
       gap: 10px;
-      order: 2;
     }
     .categories button,
     .manage-btn,
@@ -195,6 +203,7 @@
       filter: brightness(0.9);
     }
     
+    /* Search Box */
     #searchBox {
       flex: 1;
       padding: 10px;
@@ -203,16 +212,15 @@
       background-color: var(--search-bg);
       color: var(--text-color);
       caret-color: var(--text-color);
-      order: 3;
     }
     #searchBox::placeholder {
       color: #aaa;
     }
     
+    /* Default Reset Buttons */
     .default-reset-buttons {
       display: flex;
       gap: 5px;
-      order: 4;
     }
     .default-reset-buttons button {
       background-color: var(--button-color);
@@ -227,7 +235,8 @@
       filter: brightness(0.9);
     }
     
-    .settings-btn {
+    /* Settings and Logout Buttons */
+    .settings-btn, .logout-btn {
       background-color: var(--button-color);
       border: none;
       color: #fff;
@@ -235,34 +244,19 @@
       border-radius: 5px;
       cursor: pointer;
       transition: filter 0.3s;
-      order: 5;
     }
-    .settings-btn:hover {
+    .settings-btn:hover, .logout-btn:hover {
       filter: brightness(0.9);
     }
     
-    .logout-btn {
-      background-color: #c85a5a;
-      border: none;
-      color: #fff;
-      padding: 5px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: filter 0.3s;
-      order: 6;
-    }
-    .logout-btn:hover {
-      filter: brightness(0.9);
-    }
-    
-    /* -------------------------------
+    /* ==========================================================
        LEFT-PINNED MANAGE PANEL (PORTRAIT)
-       ------------------------------- */
+    ========================================================== */
     #managePanel {
       position: fixed;
-      top: 120px;       /* below header */
-      left: 20px;       /* fixed left offset */
-      width: 300px;     /* portrait width */
+      top: 120px;
+      left: 20px;
+      width: 300px;
       max-height: 70vh;
       overflow-y: auto;
       background-color: var(--card-bg);
@@ -293,20 +287,21 @@
       border-radius: 4px;
       padding: 6px 12px;
       cursor: pointer;
+      transition: filter 0.3s;
     }
     #managePanel button:hover {
       filter: brightness(0.9);
     }
     
-    /* -------------------------------
-       SETTINGS PANEL (MODAL)
-       ------------------------------- */
+    /* ==========================================================
+       SETTINGS PANEL (MODAL) WITH TABS
+    ========================================================== */
     #settingsPanel {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 400px;
+      width: 450px;
       background: var(--card-bg);
       padding: 20px;
       border-radius: 8px;
@@ -314,18 +309,51 @@
       display: none;
       z-index: 10000;
     }
-    #settingsPanel form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* Tab buttons container */
+    .settings-tabs {
+      margin-top: 10px;
     }
-    #settingsPanel label {
+    .tab-buttons {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .tab-buttons button {
+      flex: 1;
+      background-color: var(--button-color);
+      border: none;
+      color: #fff;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .tab-buttons button.active {
+      filter: brightness(0.9);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
       display: block;
     }
     
-    /* -------------------------------
+    /* ==========================================================
+       ADVANCED SETTINGS (for additional options)
+    ========================================================== */
+    /* Preview element for hover scale factor */
+    #hoverPreview {
+      margin-top: 5px;
+      padding: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--shadow-color);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    
+    /* ==========================================================
        HIDE EDIT/REMOVE BUTTONS BY DEFAULT
-       ------------------------------- */
+    ========================================================== */
     .edit-btn,
     .remove-btn {
       display: none;
@@ -345,9 +373,9 @@
       display: inline-block;
     }
     
-    /* -------------------------------
+    /* ==========================================================
        SITE CARDS (CENTERED)
-       ------------------------------- */
+    ========================================================== */
     #linksList {
       width: 600px;
       margin: 0 auto 20px;
@@ -361,7 +389,7 @@
       box-shadow: 0 2px 10px var(--shadow-color);
       transition: transform 0.3s, box-shadow 0.3s, background 0.3s, margin 0.3s;
       cursor: pointer;
-      /* No animation delay for instant interactivity */
+      /* Instant load, no fade-in animation */
       opacity: 1;
       display: flex;
       justify-content: space-between;
@@ -372,7 +400,7 @@
     }
     .card:hover {
       margin: 20px 0;
-      transform: scale(var(--hover-scale, 1.2));
+      transform: scale(var(--hover-scale));
       box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
       background: var(--card-hover-bg);
       z-index: 2;
@@ -383,7 +411,7 @@
     }
     .card a {
       text-decoration: none;
-      color: var(--text-color);
+      color: var(--link-color);
       font-weight: 500;
       flex: 1;
       display: inline-flex;
@@ -394,12 +422,12 @@
       content: "\1F517";
       display: inline-block;
       margin-right: 1.2em;
-      color: var(--text-color);
+      color: var(--link-color);
     }
     
-    /* -------------------------------
+    /* ==========================================================
        BACK TO TOP BUTTON
-       ------------------------------- */
+    ========================================================== */
     #topBtn {
       display: none;
       position: fixed;
@@ -436,9 +464,9 @@
       }
     }
     
-    /* -------------------------------
+    /* ==========================================================
        MODERN COPY BUTTON STYLE (unchanged)
-       ------------------------------- */
+    ========================================================== */
     .copy-btn {
       margin-left: 10px;
       padding: 8px 16px;
@@ -453,6 +481,12 @@
     .copy-btn:hover {
       background-color: #4a6d8c;
     }
+    
+    /* ==========================================================
+       EXTRA SPACING (for readability, you can expand further if needed)
+    ========================================================== */
+    /* (Additional whitespace and comments can be added here to increase file length if desired.) */
+    
   </style>
 </head>
 <body>
@@ -475,7 +509,7 @@
         <label for="themeToggle" aria-label="Toggle dark mode"></label>
       </div>
       
-      <!-- Category Buttons & Manage / Clear Buttons -->
+      <!-- Category Buttons & Manage/Clear Buttons -->
       <nav class="categories">
         <button onclick="clickCategory('all')">All Sites</button>
         <button onclick="clickCategory('hosted')">Hosted</button>
@@ -517,49 +551,99 @@
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
     
-    <!-- SETTINGS PANEL (MODAL) -->
+    <!-- SETTINGS PANEL (MODAL) WITH TABS -->
     <div id="settingsPanel">
       <h2>Settings</h2>
-      <form onsubmit="saveSettings(event)">
-        <div>
-          <p>Default Category:</p>
-          <label><input type="radio" name="defaultCategory" value="all"> All Sites</label>
-          <label><input type="radio" name="defaultCategory" value="hosted"> Hosted</label>
-          <label><input type="radio" name="defaultCategory" value="nonhosted"> Non Hosted</label>
+      <div class="settings-tabs">
+        <div class="tab-buttons">
+          <button data-target="tab-general" class="active" onclick="switchTab(event)">General</button>
+          <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
+          <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
         </div>
-        <div>
-          <label><input type="checkbox" id="enableAnimation" checked> Enable Card Animation</label>
+        <div id="tab-general" class="tab-content active">
+          <h3>General Settings</h3>
+          <div>
+            <p>Default Category:</p>
+            <label><input type="radio" name="defaultCategory" value="all"> All Sites</label>
+            <label><input type="radio" name="defaultCategory" value="hosted"> Hosted</label>
+            <label><input type="radio" name="defaultCategory" value="nonhosted"> Non Hosted</label>
+          </div>
+          <div>
+            <label><input type="checkbox" id="enableAnimation" checked> Enable Card Animation</label>
+          </div>
+          <div>
+            <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
+          </div>
         </div>
-        <div>
-          <label><input type="checkbox" id="alwaysShowEdit" checked> Always Show Edit/Remove Buttons</label>
+        <div id="tab-appearance" class="tab-content">
+          <h3>Appearance Settings</h3>
+          <div>
+            <label>Primary Button Color: 
+              <input type="color" id="primaryButtonColor" value="#6a90ab">
+            </label>
+          </div>
+          <div>
+            <label>Card Background Color: 
+              <input type="color" id="cardBgColor" value="#ffffff">
+            </label>
+          </div>
+          <div>
+            <label>Card Hover Background Color: 
+              <input type="color" id="cardHoverBgColor" value="#e6e6e6">
+            </label>
+          </div>
+          <div>
+            <label>Text Color: 
+              <input type="color" id="textColor" value="#333333">
+            </label>
+          </div>
+          <div>
+            <label>Link Color: 
+              <input type="color" id="linkColor" value="#007bff">
+            </label>
+          </div>
+          <div>
+            <label>Hover Scale Factor: 
+              <input type="range" id="hoverScale" min="1" max="1.5" step="0.1" value="1.2">
+              <span id="hoverScaleDisplay">1.2</span>
+            </label>
+          </div>
+          <div>
+            <p>Hover Scale Preview:</p>
+            <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">Preview</div>
+          </div>
         </div>
-        <div>
-          <label>Hover Scale Factor: <input type="range" id="hoverScale" min="1" max="1.5" step="0.1" value="1.2"> <span id="hoverScaleDisplay">1.2</span></label>
+        <div id="tab-advanced" class="tab-content">
+          <h3>Advanced Settings</h3>
+          <div>
+            <label>Custom CSS:</label>
+            <textarea id="customCSS" rows="5" style="width:100%;" placeholder="Enter custom CSS here..."></textarea>
+          </div>
+          <div>
+            <button type="button" onclick="applyCustomCSS()">Apply Custom CSS</button>
+          </div>
+          <div style="margin-top:10px;">
+            <button type="button" onclick="resetSettings()">Reset Settings</button>
+          </div>
         </div>
-        <div>
-          <label>Primary Button Color: <input type="color" id="primaryButtonColor" value="#6a90ab"></label>
-        </div>
-        <div style="margin-top:10px;">
-          <button type="submit">Save Settings</button>
-          <button type="button" onclick="hideSettings()">Cancel</button>
-        </div>
-      </form>
+      </div>
+      <div style="margin-top:10px; text-align:right;">
+        <button type="submit" onclick="saveSettings(event)">Save Settings</button>
+        <button type="button" onclick="hideSettings()">Cancel</button>
+      </div>
     </div>
     
     <!-- SITE CARDS (CENTERED) -->
     <div id="linksList"></div>
     
-    <!-- Back to Top Button -->
+    <!-- BACK TO TOP BUTTON -->
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
   
   <script>
-    // Shared password
-    const sharedPassword = "Chip751DE";
-    
-    /* -------------------------------
+    /* =========================
        LOGIN FUNCTIONS
-       ------------------------------- */
+       ========================= */
     function submitLogin(event) {
       event.preventDefault();
       login();
@@ -596,9 +680,9 @@
       searchEl.select();
     }
     
-    /* -------------------------------
+    /* =========================
        THEME FUNCTIONS
-       ------------------------------- */
+       ========================= */
     function setupTheme() {
       const storedTheme = localStorage.getItem("theme");
       const themeToggle = document.getElementById("themeToggle");
@@ -628,9 +712,9 @@
       }
     }
     
-    /* -------------------------------
-       SNIPPET ARRAY OF 90 SITES (FULL LIST)
-       ------------------------------- */
+    /* =========================
+       SNIPPET ARRAY OF 90 SITES
+       ========================= */
     const snippetLinks = [
       { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
       { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
@@ -729,23 +813,47 @@
     let currentCategory = "all"; // Default on load is All Sites
     let editIndex = null;
     
-    // Load settings from localStorage
+    /* =========================
+       SETTINGS FUNCTIONS WITH TABS
+    ========================= */
     function loadSettings() {
       const settings = JSON.parse(localStorage.getItem("siteSettings")) || {
         defaultCategory: "all",
         enableAnimation: true,
         alwaysShowEdit: false,
         hoverScale: 1.2,
-        primaryButtonColor: "#6a90ab"
+        primaryButtonColor: "#6a90ab",
+        cardBgColor: "#ffffff",
+        cardHoverBgColor: "#e6e6e6",
+        textColor: "#333333",
+        linkColor: "#007bff",
+        customCSS: ""
       };
+      // Set General tab values
       document.querySelector('input[name="defaultCategory"][value="'+settings.defaultCategory+'"]').checked = true;
       document.getElementById("enableAnimation").checked = settings.enableAnimation;
       document.getElementById("alwaysShowEdit").checked = settings.alwaysShowEdit;
+      // Set Appearance tab values
       document.getElementById("hoverScale").value = settings.hoverScale;
       document.getElementById("hoverScaleDisplay").innerText = settings.hoverScale;
       document.getElementById("primaryButtonColor").value = settings.primaryButtonColor;
+      document.getElementById("cardBgColor").value = settings.cardBgColor;
+      document.getElementById("cardHoverBgColor").value = settings.cardHoverBgColor;
+      document.getElementById("textColor").value = settings.textColor;
+      document.getElementById("linkColor").value = settings.linkColor;
+      document.getElementById("hoverPreview").style.transform = "scale(" + settings.hoverScale + ")";
+      // Set Advanced tab value
+      document.getElementById("customCSS").value = settings.customCSS;
       
       currentCategory = settings.defaultCategory;
+      // Apply CSS variables
+      document.documentElement.style.setProperty('--button-color', settings.primaryButtonColor);
+      document.documentElement.style.setProperty('--hover-scale', settings.hoverScale);
+      document.documentElement.style.setProperty('--card-bg', settings.cardBgColor);
+      document.documentElement.style.setProperty('--card-hover-bg', settings.cardHoverBgColor);
+      document.documentElement.style.setProperty('--text-color', settings.textColor);
+      document.documentElement.style.setProperty('--link-color', settings.linkColor);
+      
       if (!settings.enableAnimation) {
         document.body.classList.add("no-animation");
       } else {
@@ -756,11 +864,9 @@
       } else {
         document.body.classList.remove("always-show-edit");
       }
-      document.documentElement.style.setProperty('--hover-scale', settings.hoverScale);
-      document.documentElement.style.setProperty('--button-color', settings.primaryButtonColor);
+      // Apply custom CSS if any
+      applyCustomCSS(true);
     }
-    
-    // Save settings from modal
     function saveSettings(event) {
       event.preventDefault();
       const defaultCategory = document.querySelector('input[name="defaultCategory"]:checked').value;
@@ -768,10 +874,23 @@
       const alwaysShowEdit = document.getElementById("alwaysShowEdit").checked;
       const hoverScale = document.getElementById("hoverScale").value;
       const primaryButtonColor = document.getElementById("primaryButtonColor").value;
-      const settings = { defaultCategory, enableAnimation, alwaysShowEdit, hoverScale, primaryButtonColor };
+      const cardBgColor = document.getElementById("cardBgColor").value;
+      const cardHoverBgColor = document.getElementById("cardHoverBgColor").value;
+      const textColor = document.getElementById("textColor").value;
+      const linkColor = document.getElementById("linkColor").value;
+      const customCSS = document.getElementById("customCSS").value;
+      
+      const settings = { defaultCategory, enableAnimation, alwaysShowEdit, hoverScale, primaryButtonColor, cardBgColor, cardHoverBgColor, textColor, linkColor, customCSS };
       localStorage.setItem("siteSettings", JSON.stringify(settings));
       currentCategory = defaultCategory;
       renderLinks();
+      document.documentElement.style.setProperty('--button-color', primaryButtonColor);
+      document.documentElement.style.setProperty('--hover-scale', hoverScale);
+      document.documentElement.style.setProperty('--card-bg', cardBgColor);
+      document.documentElement.style.setProperty('--card-hover-bg', cardHoverBgColor);
+      document.documentElement.style.setProperty('--text-color', textColor);
+      document.documentElement.style.setProperty('--link-color', linkColor);
+      
       if(!enableAnimation) {
         document.body.classList.add("no-animation");
       } else {
@@ -782,11 +901,22 @@
       } else {
         document.body.classList.remove("always-show-edit");
       }
-      document.documentElement.style.setProperty('--hover-scale', hoverScale);
-      document.documentElement.style.setProperty('--button-color', primaryButtonColor);
+      applyCustomCSS();
       hideSettings();
     }
-    
+    function applyCustomCSS(skipAlert) {
+      const customCSSText = document.getElementById("customCSS").value;
+      let customStyleEl = document.getElementById("customStyle");
+      if (!customStyleEl) {
+        customStyleEl = document.createElement("style");
+        customStyleEl.id = "customStyle";
+        document.head.appendChild(customStyleEl);
+      }
+      customStyleEl.innerHTML = customCSSText;
+      if (!skipAlert) {
+        alert("Custom CSS applied.");
+      }
+    }
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       if(panel.style.display === "none" || panel.style.display === "") {
@@ -799,15 +929,33 @@
     function hideSettings() {
       document.getElementById("settingsPanel").style.display = "none";
     }
+    function resetSettings() {
+      if(confirm("Reset settings to defaults?")) {
+        localStorage.removeItem("siteSettings");
+        loadSettings();
+      }
+    }
     
-    // Update hover scale display as user moves slider
+    // Tab switching in settings panel
+    function switchTab(event) {
+      const target = event.target.getAttribute("data-target");
+      const buttons = document.querySelectorAll(".tab-buttons button");
+      const contents = document.querySelectorAll(".tab-content");
+      buttons.forEach(btn => btn.classList.remove("active"));
+      contents.forEach(content => content.classList.remove("active"));
+      event.target.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    }
+    
+    // Update hover scale preview live
     document.getElementById("hoverScale")?.addEventListener("input", function() {
       document.getElementById("hoverScaleDisplay").innerText = this.value;
+      document.getElementById("hoverPreview").style.transform = "scale(" + this.value + ")";
     });
     
-    /* -------------------------------
+    /* =========================
        MERGE / SAVE / REVERT FUNCTIONS
-       ------------------------------- */
+    ========================= */
     function mergeLinksFromStorage() {
       const storedLinks = localStorage.getItem("linksData");
       if (storedLinks) {
@@ -839,9 +987,9 @@
       }
     }
     
-    /* -------------------------------
+    /* =========================
        DEFAULT RESET BUTTON FUNCTIONS
-       ------------------------------- */
+    ========================= */
     function defaultResetAll() {
       if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
         localStorage.removeItem("linksData");
@@ -870,9 +1018,9 @@
       }
     }
     
-    /* -------------------------------
+    /* =========================
        RENDER & FILTER FUNCTIONS
-       ------------------------------- */
+    ========================= */
     function renderLinks() {
       const linksList = document.getElementById("linksList");
       linksList.innerHTML = "";
@@ -935,9 +1083,9 @@
       });
     }
     
-    /* -------------------------------
+    /* =========================
        MANAGE PANEL FUNCTIONS
-       ------------------------------- */
+    ========================= */
     function toggleManagePanel() {
       const panel = document.getElementById("managePanel");
       if (panel.style.display === "none" || panel.style.display === "") {
@@ -949,9 +1097,9 @@
       }
     }
     
-    /* -------------------------------
+    /* =========================
        ADD/EDIT LINKS FUNCTIONS
-       ------------------------------- */
+    ========================= */
     function submitForm(event) {
       event.preventDefault();
       const name = document.getElementById("linkName").value.trim();
@@ -981,18 +1129,18 @@
       document.body.classList.add("manage-mode");
     }
     
-    /* -------------------------------
+    /* =========================
        REMOVE LINK FUNCTION
-       ------------------------------- */
+    ========================= */
     function removeLink(index) {
       linksData.splice(index, 1);
       saveLinksToStorage();
       renderLinks();
     }
     
-    /* -------------------------------
+    /* =========================
        COPY URL FUNCTION
-       ------------------------------- */
+    ========================= */
     function copyURL(url, btn) {
       navigator.clipboard.writeText(url)
         .then(() => {
@@ -1003,9 +1151,9 @@
         .catch(err => console.error("Copy failed: ", err));
     }
     
-    /* -------------------------------
+    /* =========================
        BACK TO TOP FUNCTION
-       ------------------------------- */
+    ========================= */
     function topFunction() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1018,10 +1166,35 @@
       }
     });
     
-    // Load settings on page load
+    /* =========================
+       INITIALIZATION
+    ========================= */
     window.addEventListener("DOMContentLoaded", () => {
+      checkLogin();
+      setupTheme();
+      mergeLinksFromStorage();
       loadSettings();
+    
+      const searchEl = document.getElementById("searchBox");
+      searchEl.focus();
+      searchEl.addEventListener("focus", () => searchEl.select());
+      searchEl.addEventListener("input", searchLinks);
+      searchEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const visibleCards = [...document.querySelectorAll(".link-item")].filter(
+            card => card.style.display !== "none"
+          );
+          if (visibleCards.length === 1) {
+            const singleLink = visibleCards[0].querySelector("a");
+            if (singleLink) {
+              window.location.href = singleLink.href;
+            }
+          }
+        }
+      });
+      renderLinks();
     });
+    
   </script>
 </body>
 </html>
