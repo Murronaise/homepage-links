@@ -36,6 +36,14 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
+/* Hide site cards and other content behind settings when settings is open */
+body.settings-open #linksList,
+body.settings-open .card,
+body.settings-open #managePanel,
+body.settings-open #topBtn {
+  display: none !important;
+}
+
 /* LOGIN CONTAINER */
 #loginContainer {
   max-width: 400px;
@@ -80,6 +88,7 @@ body {
 #mainContent {
   display: none;
   margin-top: 100px;
+  transform-origin: top center; /* For UI scaling */
 }
 
 /* HEADER */
@@ -229,11 +238,11 @@ header {
 /* SETTINGS PANEL */
 #settingsPanel {
   position: fixed;
-  top: 150px; /* So it doesn't overlap the search bar */
+  top: 150px; /* so it doesn't overlap the search bar */
   left: 50%;
   transform: translateX(-50%);
-  width: 650px; /* fixed width so it's bigger than content */
-  height: 600px; /* a bit bigger than needed */
+  width: 650px; /* bigger than content */
+  height: 600px; /* fixed so site cards won't show behind */
   overflow-y: auto;
   background: var(--card-bg);
   color: var(--text-color);
@@ -242,9 +251,6 @@ header {
   box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6); /* green glow */
   display: none;
   z-index: 10000;
-}
-#settingsPanel:hover {
-  /* No scale animation, just keep the glow */
 }
 .settings-tabs {
   margin-top: 10px;
@@ -339,7 +345,7 @@ header {
   z-index: 1;
 }
 .card:hover {
-  margin: 20px 0;
+  margin: 30px 0; /* more space above/below */
   transform: scale(var(--hover-scale));
   box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
   background: var(--card-hover-bg);
