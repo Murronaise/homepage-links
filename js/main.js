@@ -176,20 +176,20 @@ function renderLinks() {
 
     // Copy Button
     const copyBtn = document.createElement("button");
-    copyBtn.className = "copy-btn"; 
+    copyBtn.classList.add("copy-btn");
     copyBtn.textContent = "Copy";
     copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
 
-    // Edit Button (use same "copy-btn" style)
+    // Edit Button (same styling as copy but a different background in CSS)
     const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-btn", "copy-btn");
+    editBtn.classList.add("edit-btn", "copy-btn"); 
     editBtn.textContent = "Edit";
     editBtn.onclick = () => fillFormForEdit(idx);
 
-    // Remove Button (same "copy-btn" style + confirmation)
+    // Remove Button (with confirmation, different color in CSS, text "Remove")
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-btn", "copy-btn");
-    removeBtn.textContent = "X";
+    removeBtn.textContent = "Remove";
     removeBtn.onclick = () => confirmRemoveLink(idx);
 
     card.appendChild(anchor);
@@ -376,11 +376,8 @@ window.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded event fired");
   checkLogin();
   setupTheme();
-  // If you want to load user settings at page load (to override defaultCategory):
-  // loadSettings();  // (Optional, or do this in toggleSettings)
-  
   mergeLinksFromStorage();
-  renderLinks();  // Start with "all" unless changed by user in settings
+  renderLinks();  // Start with "all"
 
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
@@ -400,6 +397,5 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-
   console.log("Initialization complete");
 });
