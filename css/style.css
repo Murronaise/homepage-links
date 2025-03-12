@@ -1,6 +1,4 @@
-/* ==========================================================
-   GLOBAL & THEME SETTINGS & CSS VARIABLES
-========================================================== */
+/* GLOBAL & THEME SETTINGS */
 :root {
   --bg-color: #f0f2f5;
   --text-color: #333;
@@ -25,7 +23,7 @@
   --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* GLOBAL STYLES */
+/* BASIC STYLES */
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
@@ -54,7 +52,6 @@ body {
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1em;
   background-color: var(--search-bg);
   color: var(--text-color);
 }
@@ -77,7 +74,7 @@ body {
   display: none;
 }
 
-/* PROTECTED CONTENT */
+/* MAIN CONTENT */
 #mainContent {
   display: none;
   margin-top: 100px;
@@ -184,7 +181,7 @@ header {
   position: fixed;
   top: 120px;
   left: 20px;
-  width: 350px;
+  width: 300px;
   max-height: 70vh;
   overflow-y: auto;
   background-color: var(--card-bg);
@@ -195,8 +192,14 @@ header {
   display: none;
   z-index: 9999;
 }
+#managePanel label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 #managePanel input,
 #managePanel select {
+  width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -216,7 +219,7 @@ header {
   filter: brightness(0.9);
 }
 
-/* SETTINGS PANEL (TABS) */
+/* SETTINGS PANEL */
 #settingsPanel {
   position: fixed;
   top: 50%;
@@ -372,8 +375,10 @@ header {
   100% { transform: translateY(-5px); }
 }
 
-/* COPY BUTTON */
-.copy-btn {
+/* MODERN BUTTON STYLING (COPY, EDIT, REMOVE) */
+.copy-btn,
+.edit-btn,
+.remove-btn {
   margin-left: 10px;
   padding: 8px 16px;
   border: none;
@@ -382,8 +387,10 @@ header {
   color: #fff;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: filter 0.3s;
 }
-.copy-btn:hover {
+.copy-btn:hover,
+.edit-btn:hover,
+.remove-btn:hover {
   filter: brightness(0.9);
 }
