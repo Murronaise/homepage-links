@@ -25,9 +25,7 @@
   --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* ==========================================================
-   GLOBAL STYLES
-========================================================== */
+/* GLOBAL STYLES */
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
@@ -38,9 +36,7 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* ==========================================================
-   LOGIN CONTAINER
-========================================================== */
+/* LOGIN CONTAINER */
 #loginContainer {
   max-width: 400px;
   width: 90%;
@@ -81,17 +77,13 @@ body {
   display: none;
 }
 
-/* ==========================================================
-   PROTECTED CONTENT
-========================================================== */
+/* PROTECTED CONTENT */
 #mainContent {
   display: none;
   margin-top: 100px;
 }
 
-/* ==========================================================
-   HEADER
-========================================================== */
+/* HEADER */
 header {
   position: fixed;
   top: 0;
@@ -118,10 +110,8 @@ header {
 }
 .toggle-switch label {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 60px;
-  height: 30px;
+  top: 0; left: 0;
+  width: 60px; height: 30px;
   border-radius: 15px;
   cursor: pointer;
   background: linear-gradient(90deg, #333, #444);
@@ -130,11 +120,9 @@ header {
 .toggle-switch label::after {
   content: "🌙";
   position: absolute;
-  top: 50%;
-  left: 4px;
+  top: 50%; left: 4px;
   transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   background: #fff;
   font-size: 1.1rem;
@@ -191,9 +179,7 @@ header {
   color: #aaa;
 }
 
-/* ==========================================================
-   LEFT-PINNED MANAGE PANEL
-========================================================== */
+/* MANAGE PANEL */
 #managePanel {
   position: fixed;
   top: 120px;
@@ -230,9 +216,7 @@ header {
   filter: brightness(0.9);
 }
 
-/* ==========================================================
-   SETTINGS PANEL WITH TABS
-========================================================== */
+/* SETTINGS PANEL (TABS) */
 #settingsPanel {
   position: fixed;
   top: 50%;
@@ -312,9 +296,7 @@ header {
   padding: 8px;
 }
 
-/* ==========================================================
-   SITE CARDS
-========================================================== */
+/* SITE CARDS */
 #linksList {
   width: 600px;
   margin: 0 auto 20px;
@@ -363,9 +345,7 @@ header {
   color: var(--link-color);
 }
 
-/* ==========================================================
-   BACK TO TOP BUTTON
-========================================================== */
+/* BACK TO TOP BUTTON */
 #topBtn {
   display: none;
   position: fixed;
@@ -392,9 +372,7 @@ header {
   100% { transform: translateY(-5px); }
 }
 
-/* ==========================================================
-   MODERN COPY BUTTON STYLE
-========================================================== */
+/* COPY BUTTON */
 .copy-btn {
   margin-left: 10px;
   padding: 8px 16px;
