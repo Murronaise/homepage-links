@@ -1,5 +1,7 @@
 // js/main.js
 
+console.log("main.js loaded");
+
 /* -----------------------------------------------------------
    SHARED PASSWORD CONFIGURATION
 ----------------------------------------------------------- */
@@ -8,59 +10,139 @@ const sharedPassword = "Chip751DE";
 /* -----------------------------------------------------------
    LOGIN / LOGOUT FUNCTIONS
 ----------------------------------------------------------- */
+function submitLogin(event) {
+  event.preventDefault();
+  login();
+}
+
 function login() {
   const entered = document.getElementById("loginPassword").value;
+  console.log("Login attempt with password:", entered);
   if (entered === sharedPassword) {
-    // Correct password
+    console.log("Password correct, logging in...");
     localStorage.setItem("loggedIn", "true");
     document.getElementById("loginContainer").style.display = "none";
     document.getElementById("mainContent").style.display = "block";
     focusSearchBar();
   } else {
-    // Incorrect password
+    console.log("Incorrect password");
     document.getElementById("loginError").style.display = "block";
   }
 }
 
 function logout() {
+  console.log("Logout called");
   localStorage.removeItem("loggedIn");
-  location.reload(); // Reload to show login prompt again
+  location.reload();
 }
 
 function checkLogin() {
+  console.log("checkLogin called");
   if (localStorage.getItem("loggedIn") === "true") {
-    // Already logged in
+    console.log("User is logged in, showing mainContent");
     document.getElementById("loginContainer").style.display = "none";
     document.getElementById("mainContent").style.display = "block";
     focusSearchBar();
   } else {
-    // Not logged in - focus the password field
+    console.log("User not logged in, showing loginContainer");
     const passEl = document.getElementById("loginPassword");
     passEl.focus();
     passEl.select();
   }
 }
 
-function submitLogin(event) {
-  event.preventDefault();
-  login();
-}
-
 function focusSearchBar() {
+  console.log("focusSearchBar called");
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
   searchEl.select();
 }
 
 /* -----------------------------------------------------------
-   LINKS & DATA
+   THEME FUNCTIONS
+----------------------------------------------------------- */
+function setupTheme() {
+  console.log("setupTheme called");
+  const storedTheme = localStorage.getItem("theme");
+  const themeToggle = document.getElementById("themeToggle");
+  if (storedTheme) {
+    if (storedTheme === "light") {
+      console.log("Stored theme is light");
+      document.documentElement.setAttribute("data-theme", "light");
+      themeToggle.checked = true;
+    } else {
+      console.log("Stored theme is dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+      themeToggle.checked = false;
+    }
+  } else {
+    console.log("No stored theme, defaulting to dark");
+    document.documentElement.setAttribute("data-theme", "dark");
+    themeToggle.checked = false;
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+function toggleTheme() {
+  console.log("toggleTheme called");
+  const htmlEl = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  if (toggle.checked) {
+    console.log("Switching to light theme");
+    htmlEl.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    console.log("Switching to dark theme");
+    htmlEl.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+/* -----------------------------------------------------------
+   RESET BUTTON FUNCTIONS
+----------------------------------------------------------- */
+function defaultResetAll() {
+  console.log("defaultResetAll called");
+  if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+    localStorage.removeItem("linksData");
+    linksData = [...snippetLinks];
+    saveLinksToStorage();
+    currentCategory = "all";
+    renderLinks();
+  }
+}
+
+function defaultResetHosted() {
+  console.log("defaultResetHosted called");
+  if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+    localStorage.removeItem("linksData");
+    linksData = [...snippetLinks];
+    saveLinksToStorage();
+    currentCategory = "hosted";
+    renderLinks();
+  }
+}
+
+function defaultResetNonHosted() {
+  console.log("defaultResetNonHosted called");
+  if (confirm("Are you sure you want to reset list to default? This will remove any custom changes.")) {
+    localStorage.removeItem("linksData");
+    linksData = [...snippetLinks];
+    saveLinksToStorage();
+    currentCategory = "nonhosted";
+    renderLinks();
+  }
+}
+
+/* -----------------------------------------------------------
+   MERGE / SAVE LINKS
 ----------------------------------------------------------- */
 let linksData = [];
 let currentCategory = "all"; // Default category on load
 let editIndex = null;
 
-// Merge default sites (from data/sites.js) with any stored links
 function mergeLinksFromStorage() {
+  console.log("mergeLinksFromStorage called");
   const storedLinks = localStorage.getItem("linksData");
   if (storedLinks) {
     const storedArr = JSON.parse(storedLinks);
@@ -78,6 +160,7 @@ function mergeLinksFromStorage() {
 }
 
 function saveLinksToStorage() {
+  console.log("saveLinksToStorage called");
   localStorage.setItem("linksData", JSON.stringify(linksData));
 }
 
@@ -85,12 +168,15 @@ function saveLinksToStorage() {
    RENDER & FILTER LINKS
 ----------------------------------------------------------- */
 function renderLinks() {
+  console.log("renderLinks called, currentCategory:", currentCategory);
   const linksList = document.getElementById("linksList");
   linksList.innerHTML = "";
 
   const filteredData = (currentCategory === "all")
     ? linksData
     : linksData.filter(link => link.category === currentCategory);
+
+  console.log("filteredData length:", filteredData.length);
 
   filteredData.forEach((link, idx) => {
     const card = document.createElement("div");
@@ -119,41 +205,49 @@ function renderLinks() {
     removeBtn.textContent = "X";
     removeBtn.onclick = () => removeLink(idx);
 
-    // Append elements to card
+    // Append to card
     card.appendChild(anchor);
     card.appendChild(copyBtn);
     card.appendChild(editBtn);
     card.appendChild(removeBtn);
 
-    // Append card to the list
     linksList.appendChild(card);
   });
-
-  // Apply search filter after rendering
   searchLinks();
 }
 
 function searchLinks() {
+  console.log("searchLinks called");
   const input = document.getElementById("searchBox").value.toLowerCase();
   const cards = document.querySelectorAll(".link-item");
+  let visibleCount = 0;
   cards.forEach(card => {
-    card.style.display = card.textContent.toLowerCase().includes(input) ? "flex" : "none";
+    if (card.textContent.toLowerCase().includes(input)) {
+      card.style.display = "flex";
+      visibleCount++;
+    } else {
+      card.style.display = "none";
+    }
   });
+  console.log("searchLinks visibleCount:", visibleCount);
 }
 
 function clickCategory(cat) {
+  console.log("clickCategory called with:", cat);
   document.getElementById("searchBox").value = "";
   currentCategory = cat;
   renderLinks();
 }
 
 function clickManage() {
+  console.log("clickManage called");
   document.getElementById("searchBox").value = "";
   searchLinks();
   toggleManagePanel();
 }
 
 function clearSearch() {
+  console.log("clearSearch called");
   document.getElementById("searchBox").value = "";
   searchLinks();
 }
@@ -162,6 +256,7 @@ function clearSearch() {
    MANAGE PANEL (Add/Edit/Remove Links)
 ----------------------------------------------------------- */
 function toggleManagePanel() {
+  console.log("toggleManagePanel called");
   const panel = document.getElementById("managePanel");
   if (panel.style.display === "none" || panel.style.display === "") {
     panel.style.display = "block";
@@ -174,20 +269,26 @@ function toggleManagePanel() {
 
 function submitForm(event) {
   event.preventDefault();
+  console.log("submitForm called");
   const name = document.getElementById("linkName").value.trim();
   const url = document.getElementById("linkURL").value.trim();
   const category = document.getElementById("linkCategory").value;
-  if (!name || !url || !category) return;
+  console.log("submitForm inputs:", { name, url, category });
+
+  if (!name || !url || !category) {
+    console.log("submitForm: missing data, returning");
+    return;
+  }
 
   if (editIndex !== null) {
-    // Editing existing link
+    console.log("submitForm: editing existing link at index:", editIndex);
     linksData[editIndex].name = name;
     linksData[editIndex].url = url;
     linksData[editIndex].category = category;
     editIndex = null;
     document.getElementById("submitBtn").textContent = "Add Link";
   } else {
-    // Adding new link
+    console.log("submitForm: adding new link");
     linksData.push({ name, url, category });
   }
   saveLinksToStorage();
@@ -196,6 +297,7 @@ function submitForm(event) {
 }
 
 function fillFormForEdit(index) {
+  console.log("fillFormForEdit called with index:", index);
   editIndex = index;
   document.getElementById("linkName").value = linksData[index].name;
   document.getElementById("linkURL").value = linksData[index].url;
@@ -206,6 +308,7 @@ function fillFormForEdit(index) {
 }
 
 function removeLink(index) {
+  console.log("removeLink called with index:", index);
   linksData.splice(index, 1);
   saveLinksToStorage();
   renderLinks();
@@ -215,8 +318,10 @@ function removeLink(index) {
    COPY URL
 ----------------------------------------------------------- */
 function copyURL(url, btn) {
+  console.log("copyURL called with url:", url);
   navigator.clipboard.writeText(url)
     .then(() => {
+      console.log("URL copied to clipboard");
       const originalText = btn.innerText;
       btn.innerText = "Copied!";
       setTimeout(() => { btn.innerText = originalText; }, 2000);
@@ -225,9 +330,26 @@ function copyURL(url, btn) {
 }
 
 /* -----------------------------------------------------------
+   SETTINGS PANEL TOGGLE
+----------------------------------------------------------- */
+function toggleSettings() {
+  console.log("toggleSettings called");
+  const panel = document.getElementById("settingsPanel");
+  if (panel.style.display === "none" || panel.style.display === "") {
+    console.log("Showing settings panel");
+    loadSettings(); // load current settings from localStorage
+    panel.style.display = "block";
+  } else {
+    console.log("Hiding settings panel");
+    panel.style.display = "none";
+  }
+}
+
+/* -----------------------------------------------------------
    BACK TO TOP
 ----------------------------------------------------------- */
 function topFunction() {
+  console.log("topFunction called");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 window.addEventListener("scroll", function() {
@@ -243,16 +365,12 @@ window.addEventListener("scroll", function() {
    DOM LOADED (INIT)
 ----------------------------------------------------------- */
 window.addEventListener("DOMContentLoaded", () => {
-  // Check login
+  console.log("DOMContentLoaded event fired");
   checkLogin();
-  // Set up theme
   setupTheme();
-  // Merge default sites with any stored changes
   mergeLinksFromStorage();
-  // Load settings from localStorage
-  loadSettings();
+  loadSettings(); // from settings.js
 
-  // Focus the search bar
   const searchEl = document.getElementById("searchBox");
   searchEl.focus();
   searchEl.addEventListener("focus", () => searchEl.select());
@@ -267,12 +385,13 @@ window.addEventListener("DOMContentLoaded", () => {
       if (visibleCards.length === 1) {
         const singleLink = visibleCards[0].querySelector("a");
         if (singleLink) {
+          console.log("Navigating directly to:", singleLink.href);
           window.location.href = singleLink.href;
         }
       }
     }
   });
 
-  // Render the list of links
   renderLinks();
+  console.log("Initialization complete");
 });
