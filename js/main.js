@@ -180,13 +180,13 @@ function renderLinks() {
     copyBtn.textContent = "Copy";
     copyBtn.onclick = () => copyURL(anchor.href, copyBtn);
 
-    // Edit Button (same styling as copy but a different background in CSS)
+    // Edit Button
     const editBtn = document.createElement("button");
-    editBtn.classList.add("edit-btn", "copy-btn"); 
+    editBtn.classList.add("edit-btn", "copy-btn");
     editBtn.textContent = "Edit";
     editBtn.onclick = () => fillFormForEdit(idx);
 
-    // Remove Button (with confirmation, different color in CSS, text "Remove")
+    // Remove Button
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-btn", "copy-btn");
     removeBtn.textContent = "Remove";
@@ -340,10 +340,13 @@ function toggleSettings() {
   const panel = document.getElementById("settingsPanel");
   if (panel.style.display === "none" || panel.style.display === "") {
     console.log("Showing settings panel");
+    // Hide site cards behind it
+    document.body.classList.add("settings-open");
     loadSettings(); // from settings.js
     panel.style.display = "block";
   } else {
     console.log("Hiding settings panel");
+    document.body.classList.remove("settings-open");
     panel.style.display = "none";
   }
 }
