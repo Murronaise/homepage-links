@@ -25,7 +25,7 @@
   --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Basic styles */
+/* BASIC STYLES */
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
@@ -229,23 +229,22 @@ header {
 /* SETTINGS PANEL */
 #settingsPanel {
   position: fixed;
-  top: 50%;
+  top: 150px; /* So it doesn't overlap the search bar */
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 550px; /* bigger so it's more spacious */
+  transform: translateX(-50%);
+  width: 650px; /* fixed width so it's bigger than content */
+  height: 600px; /* a bit bigger than needed */
+  overflow-y: auto;
   background: var(--card-bg);
   color: var(--text-color);
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px var(--shadow-color);
+  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6); /* green glow */
   display: none;
   z-index: 10000;
-  transition: transform 0.3s;
 }
 #settingsPanel:hover {
-  /* lighting effect like site card on hover */
-  transform: scale(1.01);
-  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
+  /* No scale animation, just keep the glow */
 }
 .settings-tabs {
   margin-top: 10px;
@@ -414,13 +413,13 @@ header {
 }
 /* Distinct color for remove button so it stands out */
 .remove-btn {
-  background-color: #c85a5a; /* or another color for "danger" */
+  background-color: #c85a5a;
 }
 .remove-btn:hover {
   filter: brightness(0.95);
 }
 .edit-btn {
-  background-color: #6d6f6f; /* or a different neutral color for "edit" */
+  background-color: #6d6f6f;
 }
 .edit-btn:hover {
   filter: brightness(0.95);
