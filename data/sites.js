@@ -1,4 +1,7 @@
 // data/sites.js
+
+console.log("sites.js loaded - snippetLinks array set");
+
 const snippetLinks = [
   { name: "Adur & Worthing", url: "https://adur-worthing.casemanageronline.com", category: "hosted" },
   { name: "Allerdale", url: "https://allerdale.casemanageronline.com", category: "hosted" },
