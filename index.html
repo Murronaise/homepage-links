@@ -55,14 +55,23 @@
     <div id="managePanel">
       <h2>Manage URLs</h2>
       <form onsubmit="submitForm(event)">
+        <label for="linkName">Link Name:</label>
         <input type="text" id="linkName" placeholder="Link Name" required />
+        
+        <label for="linkURL">Link URL:</label>
         <input type="url" id="linkURL" placeholder="Link URL" required />
+        
+        <label for="linkCategory">Category:</label>
         <select id="linkCategory" required>
           <option value="">Select Category</option>
           <option value="hosted">Hosted</option>
           <option value="nonhosted">Non Hosted</option>
         </select>
-        <button id="submitBtn" type="submit">Add Link</button>
+        
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button id="submitBtn" type="submit">Add Link</button>
+          <button type="button" onclick="cancelManage()">Cancel</button>
+        </div>
       </form>
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
