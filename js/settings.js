@@ -216,8 +216,6 @@ function hideSettings() {
   document.getElementById("settingsPanel").style.display = "none";
 }
 
-/* Additional logic for new fields */
-
 /* Update UI scaling, background, and animation style */
 function updateUI(scale, bgUrl, animationStyle) {
   console.log("updateUI called with scale:", scale, "bgUrl:", bgUrl, "animationStyle:", animationStyle);
