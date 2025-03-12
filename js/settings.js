@@ -1,426 +1,232 @@
-/* ==========================================================
-   GLOBAL & THEME SETTINGS & CSS VARIABLES
-========================================================== */
-:root {
-  --bg-color: #f0f2f5;
-  --text-color: #333;
-  --gradient-bg: linear-gradient(135deg, #d9eaff 0%, #eef7ff 100%);
-  --card-bg: #fff;
-  --card-hover-bg: #e6e6e6;
-  --button-color: #6a90ab;
-  --link-color: #007bff;
-  --search-bg: #fff;
-  --shadow-color: rgba(0, 0, 0, 0.15);
-  --hover-scale: 1.2;
-}
-[data-theme="dark"] {
-  --bg-color: #1e1e1e;
-  --text-color: #ddd;
-  --gradient-bg: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
-  --card-bg: #2c2c2c;
-  --card-hover-bg: #3a3a3a;
-  --button-color: #5b8fa8;
-  --link-color: #90caf9;
-  --search-bg: #2c2c2c;
-  --shadow-color: rgba(0, 0, 0, 0.5);
+// js/settings.js
+
+console.log("settings.js loaded");
+
+/* Switch between tabs in the settings panel */
+function switchTab(event) {
+  const target = event.target.getAttribute("data-target");
+  console.log("Switching to tab:", target);
+  const buttons = document.querySelectorAll(".tab-buttons button");
+  const contents = document.querySelectorAll(".tab-content");
+  buttons.forEach(btn => btn.classList.remove("active"));
+  contents.forEach(content => content.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById(target).classList.add("active");
 }
 
-/* BASIC STYLES */
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: var(--gradient-bg) no-repeat center center fixed;
-  background-size: cover;
-  color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+/* Load settings from localStorage */
+function loadSettings() {
+  console.log("loadSettings called");
+  const settings = JSON.parse(localStorage.getItem("siteSettings")) || {
+    defaultCategory: "all",
+    enableAnimation: true,
+    alwaysShowEdit: false,
+    hoverScale: 1.2,
+    primaryButtonColor: "#6a90ab",
+    cardBgColor: "#ffffff",
+    cardHoverBgColor: "#e6e6e6",
+    textColor: "#333333",
+    linkColor: "#007bff",
+    customCSS: "",
+    uiScale: 1,
+    bgUrl: "",
+    presetTheme: "",
+    animationStyle: "none"
+  };
+
+  // General tab
+  const radio = document.querySelector(`input[name="defaultCategory"][value="${settings.defaultCategory}"]`);
+  if (radio) radio.click();
+  document.getElementById("enableAnimation").checked = settings.enableAnimation;
+  document.getElementById("alwaysShowEdit").checked = settings.alwaysShowEdit;
+
+  // Appearance tab
+  document.getElementById("hoverScale").value = settings.hoverScale;
+  document.getElementById("hoverScaleDisplay").innerText = settings.hoverScale;
+  document.getElementById("primaryButtonColor").value = settings.primaryButtonColor;
+  document.getElementById("cardBgColor").value = settings.cardBgColor;
+  document.getElementById("cardHoverBgColor").value = settings.cardHoverBgColor;
+  document.getElementById("textColor").value = settings.textColor;
+  document.getElementById("linkColor").value = settings.linkColor;
+  document.getElementById("hoverPreview").style.transform = `scale(${settings.hoverScale})`;
+
+  // New fields
+  document.getElementById("uiScale").value = settings.uiScale;
+  document.getElementById("uiScaleDisplay").innerText = settings.uiScale;
+  document.getElementById("bgUrl").value = settings.bgUrl;
+  document.getElementById("presetTheme").value = settings.presetTheme;
+  document.getElementById("animationStyle").value = settings.animationStyle;
+
+  // Advanced tab
+  document.getElementById("customCSS").value = settings.customCSS;
 }
 
-/* LOGIN CONTAINER */
-#loginContainer {
-  max-width: 400px;
-  width: 90%;
-  margin: 100px auto;
-  padding: 20px;
-  text-align: center;
-  background: var(--card-bg);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-}
-#loginContainer input[type="password"] {
-  width: 80%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: var(--search-bg);
-  color: var(--text-color);
-}
-#loginContainer button {
-  padding: 10px 20px;
-  font-size: 1em;
-  border: none;
-  border-radius: 4px;
-  background-color: var(--button-color);
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-#loginContainer button:hover {
-  filter: brightness(0.9);
-}
-#loginError {
-  color: red;
-  margin-top: 10px;
-  display: none;
+/* Save settings to localStorage */
+function saveSettings(event) {
+  console.log("saveSettings called");
+  event.preventDefault();
+  const defaultCategory = document.querySelector('input[name="defaultCategory"]:checked')?.value || "all";
+  const enableAnimation = document.getElementById("enableAnimation").checked;
+  const alwaysShowEdit = document.getElementById("alwaysShowEdit").checked;
+  const hoverScale = document.getElementById("hoverScale").value;
+  const primaryButtonColor = document.getElementById("primaryButtonColor").value;
+  const cardBgColor = document.getElementById("cardBgColor").value;
+  const cardHoverBgColor = document.getElementById("cardHoverBgColor").value;
+  const textColor = document.getElementById("textColor").value;
+  const linkColor = document.getElementById("linkColor").value;
+  const customCSS = document.getElementById("customCSS").value;
+
+  // New fields
+  const uiScale = document.getElementById("uiScale").value;
+  const bgUrl = document.getElementById("bgUrl").value.trim();
+  const presetTheme = document.getElementById("presetTheme").value;
+  const animationStyle = document.getElementById("animationStyle").value;
+
+  const settings = {
+    defaultCategory,
+    enableAnimation,
+    alwaysShowEdit,
+    hoverScale,
+    primaryButtonColor,
+    cardBgColor,
+    cardHoverBgColor,
+    textColor,
+    linkColor,
+    customCSS,
+    uiScale,
+    bgUrl,
+    presetTheme,
+    animationStyle
+  };
+  localStorage.setItem("siteSettings", JSON.stringify(settings));
+  console.log("Settings saved:", settings);
+
+  // Apply theming immediately
+  document.documentElement.style.setProperty("--button-color", primaryButtonColor);
+  document.documentElement.style.setProperty("--hover-scale", hoverScale);
+  document.documentElement.style.setProperty("--card-bg", cardBgColor);
+  document.documentElement.style.setProperty("--card-hover-bg", cardHoverBgColor);
+  document.documentElement.style.setProperty("--text-color", textColor);
+  document.documentElement.style.setProperty("--link-color", linkColor);
+
+  if (!enableAnimation) {
+    document.body.classList.add("no-animation");
+  } else {
+    document.body.classList.remove("no-animation");
+  }
+  if (alwaysShowEdit) {
+    document.body.classList.add("always-show-edit");
+  } else {
+    document.body.classList.remove("always-show-edit");
+  }
+
+  applyPresetTheme(presetTheme);
+  updateUI(uiScale, bgUrl, animationStyle);
+  applyCustomCSS(true);
+  hideSettings();
 }
 
-/* MAIN CONTENT */
-#mainContent {
-  display: none;
-  margin-top: 100px;
+/* Apply custom CSS from Advanced tab */
+function applyCustomCSS(skipAlert) {
+  console.log("applyCustomCSS called");
+  const customCSSText = document.getElementById("customCSS").value;
+  let customStyleEl = document.getElementById("customStyle");
+  if (!customStyleEl) {
+    customStyleEl = document.createElement("style");
+    customStyleEl.id = "customStyle";
+    document.head.appendChild(customStyleEl);
+  }
+  customStyleEl.innerHTML = customCSSText;
+  if (!skipAlert) {
+    alert("Custom CSS applied.");
+  }
 }
 
-/* HEADER */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-color);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  box-shadow: 0 2px 5px var(--shadow-color);
-  gap: 10px;
-}
-.toggle-switch {
-  position: relative;
-  width: 60px;
-  height: 30px;
-  flex-shrink: 0;
-}
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.toggle-switch label {
-  position: absolute;
-  top: 0; left: 0;
-  width: 60px; height: 30px;
-  border-radius: 15px;
-  cursor: pointer;
-  background: linear-gradient(90deg, #333, #444);
-  transition: background 0.3s;
-}
-.toggle-switch label::after {
-  content: "🌙";
-  position: absolute;
-  top: 50%; left: 4px;
-  transform: translateY(-50%);
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: #fff;
-  font-size: 1.1rem;
-  line-height: 24px;
-  text-align: center;
-  transition: transform 0.3s, content 0.3s;
-}
-.toggle-switch input:checked + label {
-  background: linear-gradient(90deg, #ffb347, #ffcc33);
-}
-.toggle-switch input:checked + label::after {
-  content: "☀";
-  transform: translate(28px, -50%);
+/* Reset settings to defaults */
+function resetSettings() {
+  console.log("resetSettings called");
+  if (confirm("Reset settings to defaults?")) {
+    localStorage.removeItem("siteSettings");
+    loadSettings();
+  }
 }
 
-.categories,
-.default-reset-buttons {
-  display: flex;
-  gap: 10px;
-}
-.categories button,
-.manage-btn,
-.clear-btn,
-.default-reset-buttons button,
-.settings-btn,
-.logout-btn {
-  background-color: var(--button-color);
-  border: none;
-  color: #fff;
-  padding: 5px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: filter 0.3s;
-}
-.categories button:hover,
-.manage-btn:hover,
-.clear-btn:hover,
-.default-reset-buttons button:hover,
-.settings-btn:hover,
-.logout-btn:hover {
-  filter: brightness(0.9);
+/* Hide settings panel */
+function hideSettings() {
+  console.log("hideSettings called");
+  document.getElementById("settingsPanel").style.display = "none";
 }
 
-#searchBox {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  background-color: var(--search-bg);
-  color: var(--text-color);
-  caret-color: var(--text-color);
-}
-#searchBox::placeholder {
-  color: #aaa;
+/* Additional logic for new fields */
+
+/* Update UI scaling, background, and animation style */
+function updateUI(scale, bgUrl, animationStyle) {
+  console.log("updateUI called with scale:", scale, "bgUrl:", bgUrl, "animationStyle:", animationStyle);
+  document.body.style.transform = `scale(${scale})`;
+  document.body.style.transformOrigin = "top left";
+
+  if (bgUrl) {
+    document.body.style.backgroundImage = `url('${bgUrl}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+  } else {
+    // Revert to default gradient if no custom URL
+    document.body.style.backgroundImage = "none";
+  }
+
+  // Example animation style handling
+  const allCards = document.querySelectorAll(".card");
+  allCards.forEach(card => {
+    card.style.animation = "";
+  });
+
+  switch (animationStyle) {
+    case "bounce":
+      allCards.forEach(card => {
+        card.style.animation = "bounce 2s infinite alternate";
+      });
+      break;
+    case "fade":
+      allCards.forEach(card => {
+        card.style.animation = "fadeIn 1s ease-in-out";
+      });
+      break;
+    case "zoom":
+      allCards.forEach(card => {
+        card.style.animation = "zoomIn 0.6s ease-in-out";
+      });
+      break;
+    case "none":
+    default:
+      // No extra animation
+      break;
+  }
 }
 
-/* MANAGE PANEL */
-#managePanel {
-  position: fixed;
-  top: 120px;
-  left: 20px;
-  width: 300px;
-  max-height: 70vh;
-  overflow-y: auto;
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-  display: none;
-  z-index: 9999;
-}
-#managePanel:hover {
-  /* mild highlight on hover, not as dramatic as cards */
-  box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.3);
-}
-#managePanel label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
-#managePanel input,
-#managePanel select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: var(--search-bg);
-  color: var(--text-color);
-  margin-bottom: 5px;
-}
-#managePanel button {
-  background-color: var(--button-color);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: filter 0.3s;
-}
-#managePanel button:hover {
-  filter: brightness(0.9);
-}
-
-/* SETTINGS PANEL */
-#settingsPanel {
-  position: fixed;
-  top: 150px; /* So it doesn't overlap the search bar */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 650px; /* fixed width so it's bigger than content */
-  height: 600px; /* a bit bigger than needed */
-  overflow-y: auto;
-  background: var(--card-bg);
-  color: var(--text-color);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6); /* green glow */
-  display: none;
-  z-index: 10000;
-}
-#settingsPanel:hover {
-  /* No scale animation, just keep the glow */
-}
-.settings-tabs {
-  margin-top: 10px;
-}
-.tab-buttons {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 10px;
-}
-.tab-buttons button {
-  flex: 1;
-  background-color: var(--button-color);
-  border: none;
-  color: #fff;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-.tab-buttons button.active {
-  filter: brightness(0.9);
-}
-.tab-content {
-  display: none;
-}
-.tab-content.active {
-  display: block;
-}
-#settingsPanel label,
-#settingsPanel input,
-#settingsPanel textarea {
-  color: var(--text-color);
-}
-#settingsPanel input[type="color"],
-#settingsPanel input[type="range"],
-#settingsPanel textarea,
-#settingsPanel select {
-  background-color: var(--search-bg);
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 6px;
-  margin-bottom: 10px;
-  padding: 6px;
-}
-#settingsPanel button {
-  background-color: var(--button-color);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
-  cursor: pointer;
-  transition: filter 0.3s;
-  margin-top: 6px;
-}
-#settingsPanel button:hover {
-  filter: brightness(0.9);
-}
-#hoverPreview {
-  margin-top: 5px;
-  padding: 10px;
-  background: var(--card-bg);
-  border: 1px solid var(--shadow-color);
-  text-align: center;
-  transition: transform 0.3s;
-}
-#customCSS {
-  width: 100%;
-  color: var(--text-color);
-  padding: 8px;
-}
-
-/* SITE CARDS */
-#linksList {
-  width: 600px;
-  margin: 0 auto 20px;
-}
-.card {
-  background-color: var(--card-bg);
-  padding: 20px;
-  margin: 10px 0;
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s, margin 0.3s;
-  cursor: pointer;
-  opacity: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transform-origin: center;
-  position: relative;
-  z-index: 1;
-}
-.card:hover {
-  margin: 20px 0;
-  transform: scale(var(--hover-scale));
-  box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.6);
-  background: var(--card-hover-bg);
-  z-index: 2;
-}
-.card:hover a {
-  font-size: 1.6em;
-  transition: font-size 0.3s;
-}
-.card a {
-  text-decoration: none;
-  color: var(--link-color);
-  font-weight: 500;
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  transition: color 0.3s, font-size 0.3s;
-}
-.card a::before {
-  content: "\1F517";
-  display: inline-block;
-  margin-right: 1.2em;
-  color: var(--link-color);
-}
-
-/* BACK TO TOP BUTTON */
-#topBtn {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 30px;
-  width: 60px;
-  height: 60px;
-  background-color: var(--button-color);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 5px var(--shadow-color);
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#topBtn:hover {
-  animation: bounceUpDown 0.8s infinite alternate;
-}
-@keyframes bounceUpDown {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-5px); }
-}
-
-/* COPY, EDIT, REMOVE BUTTONS (MODERN STYLE) */
-.copy-btn,
-.edit-btn,
-.remove-btn {
-  margin-left: 10px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: var(--button-color);
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  transition: filter 0.3s;
-}
-.copy-btn:hover,
-.edit-btn:hover,
-.remove-btn:hover {
-  filter: brightness(0.9);
-}
-/* Distinct color for remove button so it stands out */
-.remove-btn {
-  background-color: #c85a5a;
-}
-.remove-btn:hover {
-  filter: brightness(0.95);
-}
-.edit-btn {
-  background-color: #6d6f6f;
-}
-.edit-btn:hover {
-  filter: brightness(0.95);
+/* Example preset themes */
+function applyPresetTheme(themeName) {
+  console.log("applyPresetTheme called with:", themeName);
+  switch (themeName) {
+    case "light":
+      document.documentElement.setAttribute("data-theme", "light");
+      break;
+    case "dark":
+      document.documentElement.setAttribute("data-theme", "dark");
+      break;
+    case "matrix":
+      // Example matrix-like colors
+      document.documentElement.style.setProperty("--bg-color", "#000");
+      document.documentElement.style.setProperty("--text-color", "#0f0");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #000 0%, #003300 100%)");
+      break;
+    case "retro":
+      // Example retro colors
+      document.documentElement.style.setProperty("--bg-color", "#f2efe4");
+      document.documentElement.style.setProperty("--text-color", "#444");
+      document.documentElement.style.setProperty("--gradient-bg", "linear-gradient(135deg, #ffdfba 0%, #ffd7b3 100%)");
+      break;
+    default:
+      // No preset or revert
+      break;
+  }
 }
