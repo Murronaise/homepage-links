@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Protected Quick Links page with dark mode, interactive features, link management, settings, and persistence" />
   <title>My Quick Links - Protected</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -53,7 +52,7 @@
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
     
-    <!-- LEFT-PINNED MANAGE PANEL (PORTRAIT) -->
+    <!-- LEFT-PINNED MANAGE PANEL -->
     <div id="managePanel">
       <h2>Manage URLs</h2>
       <form onsubmit="submitForm(event)">
@@ -69,7 +68,7 @@
       <p>Edit or remove links using the buttons on each card below.</p>
     </div>
     
-    <!-- SETTINGS PANEL (MODAL) WITH TABS -->
+    <!-- SETTINGS PANEL -->
     <div id="settingsPanel">
       <h2>Settings</h2>
       <div class="settings-tabs">
@@ -78,7 +77,8 @@
           <button data-target="tab-appearance" onclick="switchTab(event)">Appearance</button>
           <button data-target="tab-advanced" onclick="switchTab(event)">Advanced</button>
         </div>
-        <!-- General Tab -->
+        
+        <!-- GENERAL TAB -->
         <div id="tab-general" class="tab-content active">
           <h3>General Settings</h3>
           <div>
@@ -94,7 +94,8 @@
             <label><input type="checkbox" id="alwaysShowEdit"> Always Show Edit/Remove Buttons</label>
           </div>
         </div>
-        <!-- Appearance Tab -->
+        
+        <!-- APPEARANCE TAB -->
         <div id="tab-appearance" class="tab-content">
           <h3>Appearance Settings</h3>
           <div>
@@ -133,7 +134,8 @@
             <div id="hoverPreview" style="border:1px solid var(--shadow-color); padding:10px; text-align:center;">Preview</div>
           </div>
         </div>
-        <!-- Advanced Tab -->
+        
+        <!-- ADVANCED TAB -->
         <div id="tab-advanced" class="tab-content">
           <h3>Advanced Settings</h3>
           <div>
@@ -154,14 +156,14 @@
       </div>
     </div>
     
-    <!-- LINKS LIST -->
+    <!-- WHERE LINKS WILL SHOW -->
     <div id="linksList"></div>
     
     <!-- BACK TO TOP BUTTON -->
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
   
-  <!-- External JS Files -->
+  <!-- SCRIPTS (IN THIS ORDER) -->
   <script src="data/sites.js"></script>
   <script src="js/main.js"></script>
   <script src="js/settings.js"></script>
