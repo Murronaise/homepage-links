@@ -51,7 +51,7 @@
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
     
-    <!-- LEFT-PINNED MANAGE PANEL -->
+    <!-- LEFT-PINNED MANAGE PANEL (Portrait) -->
     <div id="managePanel">
       <h2>Manage URLs</h2>
       <form onsubmit="submitForm(event)">
@@ -68,7 +68,7 @@
           <option value="nonhosted">Non Hosted</option>
         </select>
         
-        <div style="display:flex; gap:10px; margin-top:10px;">
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
           <button id="submitBtn" type="submit">Add Link</button>
           <button type="button" onclick="cancelManage()">Cancel</button>
         </div>
@@ -168,9 +168,9 @@
     <button id="topBtn" aria-label="Back to top" onclick="topFunction()">↑</button>
   </div>
 
-  <!-- Include External JS Files -->
+  <!-- Load scripts in this order so loadSettings is defined before main.js calls it -->
   <script src="data/sites.js"></script>
-  <script src="js/main.js"></script>
   <script src="js/settings.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
